@@ -3,7 +3,7 @@ html, body { margin: 0; padding: 0; background: #030814; min-height: 100%; }
 *, *::before, *::after { box-sizing: border-box; }
 body { overflow-x: hidden; }
 [class^="pg-"] { min-height: 100vh; background: #030814; }
-.app { min-width: 1280px; }
+.app { min-width: 0; width: 100%; }
 
 .view-loading { height: 100vh; display: flex; align-items: center; justify-content: center; gap: 12px; background: #030814; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #5CE1FF; }
 .view-loading i { width: 8px; height: 8px; background: #5CE1FF; transform: rotate(45deg); box-shadow: 0 0 10px #5CE1FF; animation: blink 1.2s steps(2) infinite; }
