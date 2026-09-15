@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: aerolytics-api
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: AERO_CORS_ORIGINS
+        value: "*"
+      - key: AERO_PRELOAD
+        value: "1"
+      - key: AERO_CONF
+        value: "0.25"
