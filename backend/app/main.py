@@ -54,6 +54,11 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+def root():
+    return {"status": "ok", "app": "Aerolytics API", "version": "1.1"}
+
+
 @app.get("/api/v1/health")
 def health():
     return {"status": "ok", "models": inference.model_info()}
