@@ -26,4 +26,4 @@ MAX_UPLOAD_MB = float(os.getenv("AERO_MAX_UPLOAD_MB", "25"))
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/bmp", "image/tiff"}
 CORS_ORIGINS = _env_list("AERO_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
 # Load all models at startup (slower boot, no first-request latency). Tests turn this off.
-PRELOAD_MODELS = os.getenv("AERO_PRELOAD", "1") == "1"
+PRELOAD_MODELS = os.getenv("AERO_PRELOAD", "0") == "1"

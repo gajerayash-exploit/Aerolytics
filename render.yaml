@@ -11,7 +11,7 @@ services:
       - key: AERO_CORS_ORIGINS
         value: "*"
       - key: AERO_PRELOAD
-        value: "1"
+        value: "0"
       - key: AERO_CONF
         value: "0.25"
 
