@@ -2,7 +2,9 @@ services:
   - type: web
     name: aerolytics-api
     env: docker
+    rootDir: .
     dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
     plan: free
     region: singapore
     envVars:
@@ -12,3 +14,4 @@ services:
         value: "1"
       - key: AERO_CONF
         value: "0.25"
+
