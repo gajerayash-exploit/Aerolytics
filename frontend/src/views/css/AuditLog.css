@@ -1,0 +1,16 @@
+/* Generated from design/landing-page/AuditLog.template.html — scoped to .pg-audit-log */
+.pg-audit-log .audit { display: grid; grid-template-rows: 150px 42px minmax(0, 1fr); gap: 12px; min-height: 0; }
+.pg-audit-log .pulse { position: relative; overflow: hidden; background: #040B1C; }
+.pg-audit-log .pulse .ov { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7F90AD; }
+.pg-audit-log .filters { display: flex; align-items: center; gap: 12px; }
+.pg-audit-log .find { display: flex; align-items: center; gap: 8px; width: 260px; height: 38px; padding: 0 12px; background: rgba(2,7,18,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+.pg-audit-log .find input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #fff; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; }
+.pg-audit-log .body { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 12px; min-height: 0; }
+.pg-audit-log .res { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.pg-audit-log .act { color: #fff; }
+.pg-audit-log .detail { display: flex; flex-direction: column; }
+.pg-audit-log .diff { margin: 0 16px; padding: 12px 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 1.7; background: rgba(2,7,18,.8); box-shadow: inset 0 0 0 1px rgba(120,170,255,.14); }
+.pg-audit-log .diff div { white-space: pre; }
+.pg-audit-log .minus { color: #FF8A63; }
+.pg-audit-log .plus { color: #7BE3A0; }
+.pg-audit-log .ctx { color: #7F90AD; }

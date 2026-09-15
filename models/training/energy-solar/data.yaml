@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 4
+names: ['cover', 'crack', 'dust', 'normal']
+
+roboflow:
+  workspace: gao-shou-zheng-b6xqc
+  project: solar-panel-0swal
+  version: 3
+  license: Private
+  url: https://universe.roboflow.com/gao-shou-zheng-b6xqc/solar-panel-0swal/dataset/3

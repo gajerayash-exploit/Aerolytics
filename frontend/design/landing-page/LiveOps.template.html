@@ -1,0 +1,399 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .lv { display: grid; grid-template-columns: minmax(0, 8.5fr) minmax(0, 3.5fr); gap: 14px; height: 100%; padding: 14px 18px 16px; }
+    .lcol { display: grid; grid-template-rows: 42px minmax(0, 1fr) 176px; gap: 12px; min-height: 0; }
+    .rcol { display: grid; grid-template-rows: minmax(0, 1fr) auto auto; gap: 12px; min-height: 0; }
+
+    .strip { display: flex; align-items: center; gap: 16px; padding: 0 14px; background: rgba(5,14,34,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #9FB0CC; white-space: nowrap; }
+    .live { display: flex; align-items: center; gap: 8px; color: #FF6A3D; font-weight: 500; }
+    .live i { width: 9px; height: 9px; border-radius: 50%; background: #FF6A3D; box-shadow: 0 0 10px #FF6A3D; animation: blink 1.2s steps(2) infinite; }
+    .strip b { color: #fff; font-weight: 500; }
+    .strip .sep { width: 1px; height: 18px; background: rgba(120,170,255,.18); }
+    .strip .push { margin-left: auto; }
+
+    .feed { position: relative; overflow: hidden; background: #000; box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+    .feed.thermal .gl { filter: grayscale(1) contrast(1.45) brightness(1.15); }
+    .feed-fx { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.7) 100%), repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 3px); }
+    .hud { position: absolute; inset: 0; pointer-events: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #C8F4FF; text-shadow: 0 0 6px rgba(92,225,255,.55); }
+    .feed.thermal .hud { color: #FFE2B8; text-shadow: 0 0 6px rgba(255,181,71,.55); }
+    .hud-tl, .hud-tr, .hud-bl, .hud-br { position: absolute; display: flex; flex-direction: column; gap: 4px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+    .hud-tl { left: 18px; top: 16px; }
+    .hud-tr { right: 18px; top: 16px; align-items: flex-end; }
+    .hud-bl { left: 18px; bottom: 16px; }
+    .hud-br { right: 18px; bottom: 16px; align-items: flex-end; }
+    .rec { display: flex; align-items: center; gap: 7px; color: #FF8A63; }
+    .rec i { width: 8px; height: 8px; border-radius: 50%; background: #FF6A3D; animation: blink 1s steps(2) infinite; }
+    .htape { position: absolute; top: 14px; left: 50%; width: 480px; height: 34px; margin-left: -240px; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
+    .htape-strip { position: absolute; left: 0; top: 0; height: 100%; will-change: transform; }
+    .ht { position: absolute; bottom: 0; width: 1px; height: 7px; background: currentColor; }
+    .ht.major { height: 13px; }
+    .ht span { position: absolute; bottom: 15px; left: -14px; width: 28px; text-align: center; font-size: 10px; }
+    .hbox { position: absolute; top: 50px; left: 50%; transform: translateX(-50%); padding: 2px 8px; font-size: 13px; box-shadow: inset 0 0 0 1px currentColor; background: rgba(0,0,0,.35); }
+    .hbox::before { content: ''; position: absolute; left: 50%; top: -7px; margin-left: -5px; border: 5px solid transparent; border-bottom-color: currentColor; border-top: 0; }
+    .reticle { position: absolute; left: 50%; top: 50%; width: 120px; height: 120px; margin: -60px 0 0 -60px; }
+    .horizon { position: absolute; left: 50%; top: 50%; width: 0; height: 0; will-change: transform; }
+    .hz-line { position: absolute; top: 0; height: 1px; background: currentColor; }
+    .hz-line.l { left: -210px; width: 130px; } .hz-line.r { left: 80px; width: 130px; }
+    .pl { position: absolute; left: -70px; width: 140px; height: 0; border-top: 1px dashed currentColor; opacity: .55; }
+    .pl span { position: absolute; top: -7px; left: -26px; font-size: 9.5px; }
+    .tape { position: absolute; top: 50%; width: 78px; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .tape.alt { right: 26px; } .tape.spd { left: 26px; }
+    .tape-box { padding: 4px 8px; font-size: 15px; box-shadow: inset 0 0 0 1px currentColor; background: rgba(0,0,0,.35); font-variant-numeric: tabular-nums; }
+    .tape small { font-size: 9.5px; letter-spacing: .12em; opacity: .8; }
+    .tape-ticks { width: 20px; height: 120px; background: repeating-linear-gradient(0deg, currentColor 0 1px, transparent 1px 12px); opacity: .4; -webkit-mask-image: linear-gradient(0deg, transparent, #000 30%, #000 70%, transparent); mask-image: linear-gradient(0deg, transparent, #000 30%, #000 70%, transparent); }
+    .boxes { position: absolute; inset: 0; pointer-events: none; }
+    .tbox { position: absolute; left: 0; top: 0; display: none; box-shadow: inset 0 0 0 1.5px currentColor; }
+    .tbox b { position: absolute; left: -1px; bottom: 100%; margin-bottom: 3px; padding: 1px 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; letter-spacing: .06em; white-space: nowrap; color: #030814; background: currentColor; text-shadow: none; }
+    .tbox b span { color: #030814; }
+    .feed-modes { position: absolute; right: 18px; top: 62px; pointer-events: auto; }
+
+    .events { display: flex; flex-direction: column; }
+    .ev { display: grid; grid-template-columns: 92px 108px minmax(0, 1fr) auto; gap: 12px; align-items: center; height: 30px; padding: 0 16px; border-bottom: 1px solid rgba(120,170,255,.06); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; color: #CFDAEE; animation: rowIn .35s ease-out both; }
+    .ev time { color: #62738F; font-variant-numeric: tabular-nums; }
+    .ev span.msg { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ev em { font-style: normal; color: #7F90AD; white-space: nowrap; }
+    .t-det { color: #FF6A3D; } .t-warn { color: #FFB547; } .t-sys { color: #7FB2FF; } .t-op { color: #5CE1FF; }
+
+    .map { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #040B1C; }
+    .map-ctl { position: absolute; right: 10px; top: 10px; }
+    .gauges { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .g { padding: 10px 14px; border-bottom: 1px solid rgba(120,170,255,.07); }
+    .g:nth-child(odd) { border-right: 1px solid rgba(120,170,255,.07); }
+    .g b { display: block; margin-top: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 15px; font-weight: 500; color: #fff; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .g em { display: block; margin-top: 1px; font-style: normal; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; color: #62738F; white-space: nowrap; }
+    .g-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .sig { display: flex; align-items: flex-end; gap: 2px; height: 16px; }
+    .sig i { width: 4px; background: #5CE1FF; }
+    .sig i.off { background: rgba(120,170,255,.2); }
+    .ctrl { padding: 12px 14px 14px; }
+    .ctrl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+    .ctrl-note { margin-top: 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #53637D; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:live-->
+  <!--TOPBAR:Command center|Live ops-->
+
+  <main class="main">
+    <div class="lv">
+      <div class="lcol">
+        <div class="strip">
+          <span class="live"><i></i>Live</span>
+          <span class="badge b-sim">Simulated stream</span>
+          <span class="sep"></span>
+          <span><b>{{ mission }}</b> · {{ pc.site }}</span>
+          <span class="sep"></span>
+          <span>Elapsed <b data-hud="elapsed">00:00</b></span>
+          <span class="push">Link <b>WebSocket · demo</b></span>
+          <span>Latency <b data-hud="lat-ms">48 ms</b></span>
+        </div>
+
+        <section class="{{ feedCls }}">
+          <canvas class="gl" data-gl="fpv"></canvas>
+          <div class="feed-fx"></div>
+          <div class="boxes" data-gl-labels="fpv"></div>
+          <div class="hud">
+            <div class="htape"><div class="htape-strip" data-hud="tape"><sc-for list="{{ ticks }}" as="k" hint-placeholder-count="20"><i class="{{ k.cls }}" style="left: {{ k.left }}"><span>{{ k.label }}</span></i></sc-for></div></div>
+            <div class="hbox" data-hud="hdg">090</div>
+            <div class="horizon" data-hud="horizon">
+              <i class="hz-line l"></i><i class="hz-line r"></i>
+              <i class="pl" style="top: -70px"><span>10</span></i><i class="pl" style="top: 70px"><span>-10</span></i>
+              <i class="pl" style="top: -140px"><span>20</span></i><i class="pl" style="top: 140px"><span>-20</span></i>
+            </div>
+            <svg class="reticle" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M60 40v12M60 68v12M40 60h12M68 60h12"></path><circle cx="60" cy="60" r="2" fill="currentColor"></circle><path d="M30 38v-8h8M90 38v-8h-8M30 82v8h8M90 82v8h-8"></path></svg>
+            <div class="tape spd"><small>GS m/s</small><div class="tape-box" data-hud="spd">8.2</div><div class="tape-ticks"></div></div>
+            <div class="tape alt"><small>ALT AGL m</small><div class="tape-box" data-hud="alt">42.0</div><div class="tape-ticks"></div></div>
+            <div class="hud-tl"><span>{{ camLabel }}</span><span class="badge b-sim" style="text-shadow: none">Simulated feed</span></div>
+            <div class="hud-tr"><span class="rec"><i></i>REC <b data-hud="rec" style="font-weight: 400">00:00:00</b></span><span>Gimbal −45° · Zoom 1.0×</span></div>
+            <div class="hud-bl"><span data-hud="pos">22.30000° N 70.80000° E</span><span style="color: #FFB547">Position ±approx. · manifest</span></div>
+            <div class="hud-br"><span>Lane <b data-hud="lane" style="font-weight: 400">1 / 7</b></span><span>Model {{ pc.model }}</span></div>
+          </div>
+          <div class="glass feed-modes"><div class="segs"><sc-for list="{{ modes }}" as="m" hint-placeholder-count="2"><button class="{{ m.cls }}" onClick="{{ m.pick }}">{{ m.name }}</button></sc-for></div></div>
+        </section>
+
+        <section class="panel">
+          <div class="ph"><div class="ph-l"><span class="lbl strong">Event stream</span><span class="chip st-new">{{ eventCount }} events</span></div><span class="lbl">Newest first · UTC</span></div>
+          <div class="scroll events">
+            <sc-for list="{{ events }}" as="e" hint-placeholder-count="5">
+              <div class="ev"><time>{{ e.time }}</time><span class="{{ e.cls }}">{{ e.type }}</span><span class="msg">{{ e.msg }}</span><em>{{ e.extra }}</em></div>
+            </sc-for>
+          </div>
+        </section>
+      </div>
+
+      <div class="rcol">
+        <section class="panel">
+          <div class="ph"><span class="lbl strong">Tactical map</span><span class="badge b-sim">Synced to feed</span></div>
+          <div class="map">
+            <canvas class="gl" data-gl="map"></canvas>
+            <div class="glass map-ctl"><div class="segs"><sc-for list="{{ mapViews }}" as="v" hint-placeholder-count="2"><button class="{{ v.cls }}" onClick="{{ v.pick }}">{{ v.name }}</button></sc-for></div></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="ph"><span class="lbl strong">Aircraft telemetry</span><span class="lbl">DEMO-01</span></div>
+          <div class="gauges">
+            <div class="g"><div class="g-row"><span class="lbl">Battery</span><svg width="22" height="22" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="none" stroke="rgba(120,170,255,.2)" stroke-width="4"></circle><circle data-hud="batt-ring" cx="20" cy="20" r="16" fill="none" stroke="#7BE3A0" stroke-width="4" stroke-dasharray="78 100.5" transform="rotate(-90 20 20)"></circle></svg></div><b data-hud="batt">78%</b><em data-hud="batt-left">≈ 14 min remaining</em></div>
+            <div class="g"><div class="g-row"><span class="lbl">Link</span><span class="sig" data-hud="sig"><i style="height: 4px"></i><i style="height: 7px"></i><i style="height: 10px"></i><i style="height: 13px"></i><i class="off" style="height: 16px"></i></span></div><b data-hud="rssi">−62 dBm</b><em>Simulated radio</em></div>
+            <div class="g"><span class="lbl">Distance flown</span><b data-hud="dist">0.00 km</b><em>Of ≈ 1.49 km plan</em></div>
+            <div class="g"><span class="lbl">Wind</span><b>3.2 m/s NW</b><em>Sample value</em></div>
+            <div class="g"><span class="lbl">GNSS</span><b style="color: #FFB547">Not linked</b><em>Manifest positions</em></div>
+            <div class="g"><span class="lbl">Coverage</span><b data-hud="cov">0%</b><em>7 survey lanes</em></div>
+          </div>
+        </section>
+
+        <section class="panel ctrl">
+          <div class="sect-row" style="display: flex; justify-content: space-between; align-items: center"><span class="lbl strong">Mission control</span><span class="chip {{ ctlChip.cls }}">{{ ctlChip.name }}</span></div>
+          <div class="ctrl-grid">
+            <button class="btn btn-ghost" onClick="{{ togglePause }}">{{ pauseLabel }}</button>
+            <button class="btn btn-ghost" onClick="{{ markPoint }}">Mark point</button>
+            <button class="btn btn-danger" onClick="{{ rth }}">Return to home</button>
+            <button class="btn btn-ghost" disabled="{{ true }}">Take control</button>
+          </div>
+          <div class="ctrl-note">Controls are simulated · no aircraft linked</div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', mode: 'visual', paused: false, rth: false, mapView: 'follow', events: [] };
+    this._t0 = Date.now();
+  }
+
+  _now() { return new Date().toISOString().slice(11, 19); }
+
+  _pushEvent(type, msg, extra) {
+    const cls = { Detection: 't-det', Warning: 't-warn', System: 't-sys', Operator: 't-op' }[type] || 't-sys';
+    const ev = { time: this._now(), type: type.toUpperCase(), cls, msg, extra: extra || '' };
+    this.setState({ events: [ev].concat(this.state.events).slice(0, 14) });
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, mode, paused, rth, mapView, events } = this.state;
+    const pc = D.P[pillar];
+    const ids = { energy: 'AER-EN-0143', agri: 'AER-AG-0058', rescue: 'AER-RS-0020' };
+    const ticks = [];
+    for (let deg = -180; deg <= 540; deg += 10) {
+      const n = ((deg % 360) + 360) % 360;
+      const label = n % 90 === 0 ? ['N', 'E', 'S', 'W'][n / 90] : n % 30 === 0 ? String(n / 10).padStart(2, '0') : '';
+      ticks.push({ left: (deg + 180) * 4 + 'px', cls: n % 30 === 0 ? 'ht major' : 'ht', label });
+    }
+    const pick = (k) => {
+      this.setState({ pillar: k, mode: k === 'rescue' ? 'thermal' : 'visual', events: [] });
+      if (this._twin) this._twin.setPillar(k);
+      this._resetFeed = true;
+      setTimeout(() => this._pushEvent('System', 'Stream switched to ' + ids[k] + ' · ' + D.P[k].site), 0);
+    };
+    return {
+      pillars: this._pillarTabs(pillar, pick),
+      pc,
+      mission: ids[pillar],
+      ticks,
+      feedCls: mode === 'thermal' ? 'feed thermal' : 'feed',
+      camLabel: mode === 'thermal' ? 'CAM 2 · LWIR · 640×512' : 'CAM 1 · RGB · 4K',
+      modes: [['visual', 'Visual'], ['thermal', 'Thermal']].map(([k, name]) => ({ name, cls: mode === k ? 'on' : '', pick: () => this.setState({ mode: k }) })),
+      events,
+      eventCount: events.length,
+      mapViews: [['follow', 'Follow'], ['orbit', 'Site']].map(([k, name]) => ({ name, cls: mapView === k ? 'on' : '', pick: () => { this.setState({ mapView: k }); if (this._twin) this._twin.setView(k); } })),
+      pauseLabel: paused ? 'Resume mission' : 'Pause mission',
+      togglePause: () => {
+        const p = !this.state.paused;
+        this.setState({ paused: p });
+        if (this._twin) this._twin.setPlaying(!p);
+        this._pushEvent('Operator', p ? 'Mission paused · aircraft holding position (simulated)' : 'Mission resumed');
+      },
+      markPoint: () => {
+        const pos = document.querySelector('[data-hud="pos"]');
+        this._pushEvent('Operator', 'Point of interest marked', pos ? pos.textContent : '');
+      },
+      rth: () => {
+        this.setState({ rth: true });
+        this._pushEvent('Warning', 'Return-to-home requested · simulated, no aircraft linked');
+      },
+      ctlChip: rth ? { name: 'RTH requested', cls: 't-warn' } : paused ? { name: 'Holding', cls: 't-warn' } : { name: 'Auto · survey', cls: 'st-new' },
+    };
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._startClock();
+    this._boot(0);
+    this._pushEvent('System', 'Link established · WebSocket demo endpoint', 'ws://demo');
+    this._pushEvent('System', 'Telemetry source: simulated flight manifest');
+    this._pushEvent('System', 'Mission AER-EN-0143 started · lane 1 of 7');
+  }
+
+  componentWillUnmount() {
+    this._alive = false;
+    this._stopClock();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._twin) this._twin.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const fpvCanvas = document.querySelector('[data-gl="fpv"]'), mapCanvas = document.querySelector('[data-gl="map"]');
+    if (!fpvCanvas || !mapCanvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    const K = this._engine();
+    this._twin = this._twinScene(K, mapCanvas, { pillar: this.state.pillar, mode: 'overview' });
+    if (this._twin) this._twin.setView('follow');
+    const fpv = this._twin ? this._fpvScene(K, fpvCanvas, this._twin) : null;
+    this._loop([this._twin, fpv]);
+  }
+
+  // First-person feed rendered from the twin's live pose, with a flight HUD and target boxes.
+  _fpvScene(K, canvas, twin) {
+    const R = K.renderer(canvas, [0.02, 0.035, 0.07]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp, clamp } = K;
+    const self = this;
+    const boxesEl = document.querySelector('[data-gl-labels="fpv"]');
+    const H = {};
+    ['tape', 'hdg', 'horizon', 'spd', 'alt', 'pos', 'lane', 'elapsed', 'rec', 'lat-ms', 'batt', 'batt-ring', 'batt-left', 'rssi', 'dist', 'cov', 'sig'].forEach((k) => { H[k] = document.querySelector('[data-hud="' + k + '"]'); });
+    const pool = [];
+    const box = (i) => {
+      while (pool.length <= i) {
+        const el = document.createElement('div');
+        el.className = 'tbox';
+        el.innerHTML = '<b></b>';
+        if (boxesEl) boxesEl.appendChild(el);
+        pool.push(el);
+      }
+      return pool[i];
+    };
+    let lastHy = null, roll = 0, lastD = 0, hudT = 0, flown = 0;
+    const seen = new Set();
+    const fmt = (s) => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+
+    return {
+      frame(t, dt) {
+        const asp = R.resize();
+        const P = twin.pose(), W = twin.world();
+        if (self._resetFeed || P.d < lastD - 1) { seen.clear(); self._resetFeed = false; }
+        if (P.d > lastD) flown += P.d - lastD;
+        lastD = P.d;
+        if (lastHy === null) lastHy = P.hy;
+        let dh = P.hy - lastHy;
+        while (dh > Math.PI) dh -= Math.PI * 2;
+        while (dh < -Math.PI) dh += Math.PI * 2;
+        lastHy = P.hy;
+        roll = lerp(roll, clamp((dh / Math.max(dt, 1e-3)) * 0.3, -0.45, 0.45), Math.min(1, dt * 3));
+
+        const fx = Math.cos(P.hy), fz = Math.sin(P.hy), bob = Math.sin(t * 1.7) * 0.25;
+        const eye = [P.x - fx * 4, P.alt + bob, P.z - fz * 4];
+        const target = [P.x + fx * 30, 0, P.z + fz * 30];
+        const c = Math.cos(roll), s = Math.sin(roll);
+        const M = K.mul(K.perspective(1.0, asp, 0.5, 600), K.mul([c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], K.lookAt(eye, target)));
+        R.begin(M, eye, 30, 150);
+        R.draw(W.terrainArr, 'lines', 'add');
+        R.draw(W.staticArr, 'lines', 'add');
+
+        const fill = new Batch(), edge = new Batch(), glow = new Batch();
+        W.cells.forEach((q) => {
+          if (Math.abs(q.x - P.x) > 70 || Math.abs(q.z - P.z) > 70) return;
+          const g = W.ground(q.x, q.z);
+          if (W.pillar === 'energy') {
+            const hot = q.hot && P.d > q.trig;
+            const p1 = [q.x - 2.3, g + 0.5, q.z + 1.25], p2 = [q.x + 2.3, g + 0.5, q.z + 1.25], p3 = [q.x + 2.3, g + 2.1, q.z - 1.25], p4 = [q.x - 2.3, g + 2.1, q.z - 1.25];
+            fill.quad(p1, p2, p3, p4, hot ? a(COL.crit, 0.75) : [0.1, 0.26, 0.62, 0.55]);
+            const ec = hot ? a(COL.crit, 1) : a(COL.cyan, 0.45);
+            edge.line(...p1, ...p2, ec); edge.line(...p2, ...p3, ec); edge.line(...p3, ...p4, ec); edge.line(...p4, ...p1, ec);
+            edge.line((p1[0] + p4[0]) / 2, (p1[1] + p4[1]) / 2, (p1[2] + p4[2]) / 2, (p2[0] + p3[0]) / 2, (p2[1] + p3[1]) / 2, (p2[2] + p3[2]) / 2, a(COL.cyan, 0.2));
+          } else if (W.pillar === 'agri') {
+            const n = q.n, col = n < 0.45 ? [0.75, 0.5, 0.2] : [0.25, lerp(0.45, 0.75, n), 0.25];
+            fill.quad([q.x - 2.9, g + 0.2, q.z - 2.9], [q.x + 2.9, g + 0.2, q.z - 2.9], [q.x + 2.9, g + 0.2, q.z + 2.9], [q.x - 2.9, g + 0.2, q.z + 2.9], [col[0], col[1], col[2], 0.55]);
+            for (let r = -2; r <= 2; r++) edge.line(q.x - 2.8, g + 0.3, q.z + r * 1.2, q.x + 2.8, g + 0.3, q.z + r * 1.2, [col[0] + 0.1, col[1] + 0.15, col[2], 0.5]);
+          } else {
+            fill.quad([q.x - 3, g + 0.2, q.z - 3], [q.x + 3, g + 0.2, q.z - 3], [q.x + 3, g + 0.2, q.z + 3], [q.x - 3, g + 0.2, q.z + 3], [0.2 + 0.3 * q.n, 0.18 + 0.2 * q.n, 0.3, 0.35]);
+          }
+        });
+        R.draw(fill, 'tris', 'alpha');
+        R.draw(edge, 'lines', 'add');
+
+        let used = 0;
+        W.dets.forEach((q) => {
+          if (P.d < q.trig - 60) return;
+          const g = W.ground(q.x, q.z) + (W.pillar === 'energy' ? 1.2 : 0.3);
+          const col = q.sev === 'crit' ? COL.crit : COL.warn;
+          if (W.pillar === 'rescue') { glow.v(q.x, g + 0.6, q.z, [1, 0.95, 0.85, 1]); glow.v(q.x, g + 0.6, q.z, a(COL.crit, 0.7)); }
+          else glow.v(q.x, g, q.z, a(col, 0.8));
+          // screen-space target box from the projected 3D extent
+          let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9, ok = true;
+          for (const ox of [-3, 3]) for (const oy of [0, 4]) for (const oz of [-3, 3]) {
+            const p = K.project(M, q.x + ox, g + oy, q.z + oz, R.w, R.h);
+            if (!p) { ok = false; break; }
+            minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]); minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]);
+          }
+          const onScreen = ok && maxX > 0 && minX < R.w && maxY > 0 && minY < R.h && maxX - minX < R.w * 0.6;
+          const acquired = P.d > q.trig - 25;
+          if (onScreen && acquired && W.layers.dets) {
+            const el = box(used++);
+            el.style.display = 'block';
+            el.style.color = q.sev === 'crit' ? '#FF6A3D' : '#FFB547';
+            el.style.transform = 'translate(' + minX.toFixed(0) + 'px,' + minY.toFixed(0) + 'px)';
+            el.style.width = Math.max(18, maxX - minX).toFixed(0) + 'px';
+            el.style.height = Math.max(18, maxY - minY).toFixed(0) + 'px';
+            el.firstChild.textContent = q.cls.toUpperCase() + ' ' + q.conf.toFixed(2);
+            if (!seen.has(q.id)) {
+              seen.add(q.id);
+              const lat = (22.3 - (q.z * 1.5) / 111320).toFixed(5), lon = (70.8 + (q.x * 1.5) / 102990).toFixed(5);
+              setTimeout(() => self._pushEvent('Detection', q.cls + ' · confidence ' + q.conf.toFixed(2) + (q.sev === 'crit' ? ' · critical' : ''), lat + ', ' + lon), 0);
+            }
+          }
+        });
+        for (let i = used; i < pool.length; i++) pool[i].style.display = 'none';
+        R.draw(glow, 'points', 'add', 70);
+
+        hudT += dt;
+        if (hudT > 0.08) {
+          hudT = 0;
+          const set = (k, v) => { if (H[k]) H[k].textContent = v; };
+          const hdg = (Math.atan2(Math.cos(P.hy), -Math.sin(P.hy)) * 180 / Math.PI + 360) % 360;
+          if (H.tape) H.tape.style.transform = 'translateX(' + (240 - (hdg + 180) * 4).toFixed(1) + 'px)';
+          set('hdg', String(Math.round(hdg)).padStart(3, '0'));
+          if (H.horizon) H.horizon.style.transform = 'rotate(' + (-roll).toFixed(3) + 'rad) translateY(' + (bob * 18).toFixed(1) + 'px)';
+          set('spd', P.playing ? (8.2 + Math.sin(t * 0.7) * 0.3).toFixed(1) : '0.0');
+          set('alt', (P.alt * 1.5 + bob).toFixed(1));
+          set('pos', (22.3 - (P.z * 1.5) / 111320).toFixed(5) + '° N ' + (70.8 + (P.x * 1.5) / 102990).toFixed(5) + '° E');
+          set('lane', P.lane >= 0 ? (P.lane + 1) + ' / 7' : 'Transit');
+          const el = (Date.now() - self._t0) / 1000;
+          set('elapsed', fmt(el));
+          set('rec', '00:' + fmt(el));
+          set('lat-ms', Math.round(44 + 8 * Math.sin(t * 0.9) + 4 * Math.sin(t * 3.1)) + ' ms');
+          const batt = Math.max(12, 78 - el * 0.02);
+          set('batt', Math.round(batt) + '%');
+          set('batt-left', '≈ ' + Math.round(batt / 5.5) + ' min remaining');
+          if (H['batt-ring']) H['batt-ring'].setAttribute('stroke-dasharray', (batt * 1.005).toFixed(1) + ' 100.5');
+          const rssi = Math.round(-62 + 4 * Math.sin(t * 0.5));
+          set('rssi', '−' + Math.abs(rssi) + ' dBm');
+          set('dist', ((flown * 1.5) / 1000).toFixed(2) + ' km');
+          set('cov', Math.round(Math.min(100, (P.d / P.laneEnd) * 100)) + '%');
+        }
+      },
+    };
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

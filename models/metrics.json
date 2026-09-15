@@ -1,0 +1,42 @@
+{
+  "energy": {
+    "weights": "solar_best.pt",
+    "split": "test",
+    "mAP50": 0.843,
+    "mAP50_95": 0.42,
+    "precision": 0.798,
+    "recall": 0.795,
+    "per_class_mAP50_95": {
+      "cover": 0.21,
+      "crack": 0.503,
+      "dust": 0.507,
+      "normal": 0.458
+    }
+  },
+  "agri": {
+    "weights": "agri_best.pt",
+    "split": "test",
+    "mAP50": 0.8,
+    "mAP50_95": 0.463,
+    "precision": 0.804,
+    "recall": 0.701,
+    "per_class_mAP50_95": {
+      "Blast": 0.235,
+      "brownspots": 0.267,
+      "leaf blight": 0.505,
+      "leaf rust": 0.652,
+      "others": 0.658
+    }
+  },
+  "rescue": {
+    "weights": "thermal_best.pt",
+    "split": "test",
+    "mAP50": 0.902,
+    "mAP50_95": 0.467,
+    "precision": 0.89,
+    "recall": 0.833,
+    "per_class_mAP50_95": {
+      "person": 0.467
+    }
+  }
+}

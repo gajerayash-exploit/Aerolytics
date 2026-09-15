@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .cols { display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 14px; min-height: 0; }
+    .grid { display: grid; gap: 10px; padding: 12px; align-content: start; }
+    .grid.s { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .grid.l { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .fc { position: relative; border: 0; padding: 0; background: #06112A; cursor: pointer; text-align: left; box-shadow: inset 0 0 0 1px rgba(120,170,255,.14); animation: rowIn .3s ease-out both; }
+    .fc:hover { box-shadow: inset 0 0 0 1px rgba(120,170,255,.4); }
+    .fc.sel { box-shadow: 0 0 0 2px #5CE1FF; }
+    .fc .thumb { width: 100%; aspect-ratio: 4 / 3; }
+    .clean.th-energy { background: repeating-linear-gradient(90deg, transparent 0 23%, rgba(3,8,20,.92) 23% 25%), repeating-linear-gradient(0deg, transparent 0 31%, rgba(3,8,20,.92) 31% 34%), linear-gradient(160deg, #22407F, #0C1A3E); }
+    .clean.th-agri { background: repeating-linear-gradient(115deg, #2C6628 0 6%, #3B8733 6% 12%); }
+    .clean.th-rescue { background: radial-gradient(circle at 28% 72%, rgba(96,64,128,.6), rgba(0,0,0,0) 40%), linear-gradient(180deg, #1B1432, #0B0A18); }
+    .box { position: absolute; box-shadow: inset 0 0 0 1.5px currentColor; }
+    .box b { position: absolute; left: -1px; bottom: 100%; padding: 1px 5px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; font-weight: 500; white-space: nowrap; color: #030814; background: currentColor; }
+    .box b span { color: #030814; }
+    .fc-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 7px 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #CFDAEE; }
+    .fc-meta em { font-style: normal; color: #62738F; }
+    .fc-n { position: absolute; right: 6px; top: 6px; min-width: 18px; height: 18px; padding: 0 5px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; color: #030814; background: #FF6A3D; }
+    .fc-src { position: absolute; left: 6px; top: 6px; }
+    .fc-src .badge { height: 18px; padding: 0 5px; font-size: 9px; background-color: rgba(3,8,20,.75); }
+
+    .viewer { position: relative; width: 100%; aspect-ratio: 4 / 3; }
+    .viewer .box b { font-size: 10.5px; }
+    .heat { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; }
+    .v-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; border-bottom: 1px solid rgba(120,170,255,.1); }
+    .v-nav { display: flex; gap: 6px; }
+    .v-nav button { width: 32px; height: 32px; border: 0; background: rgba(120,170,255,.08); color: #CFDAEE; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(120,170,255,.24); font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+    .v-body { flex: 1; }
+    .dl { grid-template-columns: 8px minmax(0, 1fr) auto; padding: 9px 16px; }
+    .minimap { display: block; margin: 10px 16px 14px; background: #040B1C; box-shadow: inset 0 0 0 1px rgba(120,170,255,.14); }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:missions-->
+  <!--TOPBAR:Missions|Frames-->
+
+  <main class="main">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <div class="kicker" style="color: {{ pc.color }}"><i></i>{{ pc.mission }} · frames</div>
+          <h1 class="h1" style="margin-top: 10px">Frame gallery</h1>
+        </div>
+        <div class="meta">{{ pc.frames }} frames · {{ shown }} shown · stylised sample imagery</div>
+        <div class="acts">
+          <div class="segs"><sc-for list="{{ filters }}" as="f" hint-placeholder-count="3"><button class="{{ f.cls }}" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for></div>
+          <div class="segs"><sc-for list="{{ sizes }}" as="f" hint-placeholder-count="2"><button class="{{ f.cls }}" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for></div>
+          <a class="btn btn-ghost" href="#">← Mission twin</a>
+        </div>
+      </div>
+
+      <div class="cols">
+        <section class="panel">
+          <div class="scroll" style="flex: 1">
+            <div class="{{ gridCls }}">
+              <sc-for list="{{ frames }}" as="f" hint-placeholder-count="15">
+                <button class="fc {{ f.selCls }}" onClick="{{ f.pick }}">
+                  <div class="thumb {{ f.thumbCls }}" style="background-position: {{ f.bp }}">
+                    <sc-for list="{{ f.boxes }}" as="b" hint-placeholder-count="1"><span class="box" style="left: {{ b.l }}; top: {{ b.t }}; width: {{ b.w }}; height: {{ b.h }}; color: {{ b.color }}"></span></sc-for>
+                    <span class="fc-src"><span class="badge {{ f.srcCls }}">{{ f.src }}</span></span>
+                    <sc-if value="{{ f.hasDets }}" hint-placeholder-val="{{ false }}"><span class="fc-n">{{ f.n }}</span></sc-if>
+                  </div>
+                  <div class="fc-meta"><span>{{ f.id }}</span><em>{{ f.time }}</em></div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="v-bar">
+            <div class="ph-l"><span class="lbl strong">{{ cur.id }}</span><span class="badge {{ cur.srcCls }}">{{ cur.src }}</span></div>
+            <div class="segs"><sc-for list="{{ overlays }}" as="o" hint-placeholder-count="3"><button class="{{ o.cls }}" onClick="{{ o.pick }}">{{ o.name }}</button></sc-for></div>
+            <div class="v-nav"><button onClick="{{ prev }}">‹</button><button onClick="{{ next }}">›</button></div>
+          </div>
+          <div class="scroll v-body">
+            <div class="viewer thumb {{ cur.thumbCls }}" style="background-position: {{ cur.bp }}">
+              <sc-if value="{{ showHeat }}" hint-placeholder-val="{{ false }}"><div class="heat" style="background: {{ cur.heat }}"></div></sc-if>
+              <sc-if value="{{ showBoxes }}" hint-placeholder-val="{{ true }}">
+                <div>
+                  <sc-for list="{{ cur.boxes }}" as="b" hint-placeholder-count="1">
+                    <span class="box" style="left: {{ b.l }}; top: {{ b.t }}; width: {{ b.w }}; height: {{ b.h }}; color: {{ b.color }}"><sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><b>{{ b.label }}</b></sc-if></span>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <sc-for list="{{ cur.detRows }}" as="d" hint-placeholder-count="1">
+              <div class="li dl" style="cursor: default"><i class="dia {{ d.sevCls }}"></i><span style="min-width: 0"><span class="li-t" style="font-size: 14px">{{ d.cls }} · {{ d.confStr }}</span><span class="li-s">BBox {{ d.bboxStr }} · {{ d.loc }}</span></span><span class="chip {{ d.statusCls }}">{{ d.status }}</span></div>
+            </sc-for>
+            <sc-if value="{{ cur.noDets }}" hint-placeholder-val="{{ false }}"><div class="note" style="border-top: 0">No detections above the 0.50 threshold in this frame</div></sc-if>
+            <sc-for list="{{ cur.meta }}" as="m" hint-placeholder-count="6"><div class="kvl-row"><span>{{ m.k }}</span><b>{{ m.v }}</b><i></i></div></sc-for>
+            <svg class="minimap" width="406" height="120" viewBox="0 0 406 120">
+              <sc-for list="{{ lanes }}" as="l" hint-placeholder-count="7"><line x1="{{ l.x1 }}" y1="{{ l.y }}" x2="{{ l.x2 }}" y2="{{ l.y }}" stroke="#FFB547" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.7"></line></sc-for>
+              <circle cx="{{ cur.mx }}" cy="{{ cur.my }}" r="9" fill="none" stroke="#5CE1FF" stroke-width="1.2" opacity="0.5"></circle>
+              <rect x="{{ cur.mxr }}" y="{{ cur.myr }}" width="8" height="8" fill="#5CE1FF" transform="{{ cur.rot }}"></rect>
+              <text x="8" y="114" font-family="IBM Plex Mono, monospace" font-size="9" fill="#62738F">FLIGHT PATH · FRAME POSITION (APPROX.)</text>
+            </svg>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', filter: 'all', size: 's', sel: 0, ov: { boxes: true, labels: true, heat: false } };
+  }
+
+  _frames(pillar) {
+    const D = this._data();
+    const pc = D.P[pillar];
+    const N = 24;
+    const detFrames = {};
+    pc.dets.forEach((q) => { const n = parseInt(q.frame.slice(4), 10); (detFrames[n] = detFrames[n] || []).push(q); });
+    const nums = Array.from({ length: N }, (_, i) => Math.round(((i + 0.5) / N) * pc.frames));
+    Object.keys(detFrames).map(Number).forEach((n) => {
+      let bi = 0, bd = 1e9;
+      nums.forEach((v, i) => { const d = Math.abs(v - n); if (d < bd && !detFrames[v]) { bd = d; bi = i; } });
+      nums[bi] = n;
+    });
+    const uniq = Array.from(new Set(nums)).sort((a, b) => a - b);
+    const FLIGHT = 860;
+    return uniq.map((n, i) => {
+      const dets = detFrames[n] || [];
+      const src = i % 5 === 3 ? 'none' : pillar === 'agri' ? 'exif' : 'manifest';
+      const secs = Math.round((n / pc.frames) * FLIGHT);
+      const lane = Math.min(6, Math.floor((n / pc.frames) * 7));
+      const along = ((n / pc.frames) * 7) % 1;
+      return {
+        idx: i, n, id: 'FRM-' + String(n).padStart(4, '0'), dets, src, lane, along,
+        time: 'T+' + String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0'),
+        bp: (i * 13) % 100 + '% ' + (i * 29) % 100 + '%',
+      };
+    });
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, filter, size, sel, ov } = this.state;
+    const pc = D.P[pillar];
+    const all = this._frames(pillar);
+    const list = all.filter((f) => filter === 'all' || (filter === 'dets' ? f.dets.length : f.src === 'none'));
+    const cur0 = all[Math.max(0, Math.min(all.length - 1, sel))];
+    const boxesOf = (f) => f.dets.map((q) => ({
+      l: (q.bbox[0] / 10).toFixed(1) + '%', t: (q.bbox[1] / 7.5).toFixed(1) + '%',
+      w: ((q.bbox[2] - q.bbox[0]) / 10).toFixed(1) + '%', h: ((q.bbox[3] - q.bbox[1]) / 7.5).toFixed(1) + '%',
+      color: q.sev === 'crit' ? '#FF6A3D' : '#FFB547', label: q.cls.toUpperCase() + ' ' + q.conf.toFixed(2),
+    }));
+    const srcBadge = (s) => (s === 'exif' ? ['EXIF', 'b-exif'] : s === 'manifest' ? ['Manifest', 'b-man'] : ['No GPS', 'b-sim']);
+    const mxOf = (f) => { const dir = f.lane % 2 ? 1 - f.along : f.along; return [30 + dir * 346, 12 + f.lane * 14]; };
+    const [mx, my] = mxOf(cur0);
+    const lat = (22.3 - ((-36 + cur0.lane * 12) * 1.5) / 111320).toFixed(5), lon = (70.8 + ((-56 + (cur0.lane % 2 ? 1 - cur0.along : cur0.along) * 112) * 1.5) / 102990).toFixed(5);
+    const camera = { energy: 'RGB 20 MP · sample', agri: 'Multispectral 5-band · sample', rescue: 'LWIR 640×512 · sample' }[pillar];
+    const cur = Object.assign({}, cur0, {
+      thumbCls: pc.thumb + (cur0.dets.length ? '' : ' clean'), boxes: boxesOf(cur0),
+      src: srcBadge(cur0.src)[0], srcCls: srcBadge(cur0.src)[1],
+      heat: cur0.dets.length ? 'radial-gradient(circle at ' + (cur0.dets[0].bbox[0] / 10 + 6) + '% ' + (cur0.dets[0].bbox[1] / 7.5 + 8) + '%, rgba(255,106,61,.55), rgba(255,181,71,.15) 18%, rgba(0,0,0,0) 34%)' : 'none',
+      detRows: cur0.dets.map((q) => Object.assign({}, q, { confStr: q.conf.toFixed(2), bboxStr: q.bbox.join(', ') })),
+      noDets: cur0.dets.length === 0,
+      meta: [
+        ['Captured', cur0.time + ' · lane ' + (cur0.lane + 1) + ' of 7'],
+        ['Latitude', lat + '° N' + (cur0.src === 'none' ? ' · interpolated' : '')],
+        ['Longitude', lon + '° E'],
+        ['Altitude / heading', '42.0 m AGL · ' + (cur0.lane % 2 ? '270°' : '090°')],
+        ['Camera', camera],
+        ['Exposure', '[EXIF EXPOSURE · ISO]'],
+      ].map(([k, v]) => ({ k, v })),
+      mx: mx.toFixed(1), my: my.toFixed(1), mxr: (mx - 4).toFixed(1), myr: (my - 4).toFixed(1), rot: 'rotate(45 ' + mx.toFixed(1) + ' ' + my.toFixed(1) + ')',
+    });
+    const step = (d) => () => this.setState({ sel: Math.max(0, Math.min(all.length - 1, this.state.sel + d)) });
+    const tog = (k) => () => this.setState({ ov: Object.assign({}, this.state.ov, { [k]: !this.state.ov[k] }) });
+    return {
+      pillars: this._pillarTabs(pillar, (k) => { const fr = this._frames(k); const i = fr.findIndex((f) => f.dets.length); this.setState({ pillar: k, sel: Math.max(0, i), filter: 'all' }); }),
+      pc,
+      shown: list.length,
+      filters: [['all', 'All'], ['dets', 'With detections'], ['nogps', 'No GPS']].map(([k, name]) => ({ name, cls: filter === k ? 'on' : '', pick: () => this.setState({ filter: k }) })),
+      sizes: [['s', 'Grid'], ['l', 'Large']].map(([k, name]) => ({ name, cls: size === k ? 'on' : '', pick: () => this.setState({ size: k }) })),
+      gridCls: 'grid ' + size,
+      frames: list.map((f) => ({
+        id: f.id, time: f.time, bp: f.bp, thumbCls: pc.thumb + (f.dets.length ? '' : ' clean'), boxes: boxesOf(f),
+        src: srcBadge(f.src)[0], srcCls: srcBadge(f.src)[1], hasDets: f.dets.length > 0, n: f.dets.length,
+        selCls: f.idx === cur0.idx ? 'sel' : '', pick: () => this.setState({ sel: f.idx }),
+      })),
+      cur,
+      overlays: [['boxes', 'Boxes'], ['labels', 'Labels'], ['heat', 'Heat']].map(([k, name]) => ({ name, cls: ov[k] ? 'on' : '', pick: tog(k) })),
+      showBoxes: ov.boxes, showLabels: ov.labels, showHeat: ov.heat,
+      prev: step(-1), next: step(1),
+      lanes: Array.from({ length: 7 }, (_, i) => ({ x1: 30, x2: 376, y: 12 + i * 14 })),
+    };
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._startClock();
+    const i = this._frames(this.state.pillar).findIndex((f) => f.dets.length);
+    this.setState({ sel: Math.max(0, i) });
+  }
+
+  componentWillUnmount() { this._alive = false; this._stopClock(); }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+/* Generated from design/landing-page/SignalLost.template.html — scoped to .pg-signal-lost */
+.pg-signal-lost .lost { position: relative; height: 100vh; min-height: 720px; overflow: hidden; background: #02060F; }
+.pg-signal-lost .noise { position: absolute; inset: -50%; pointer-events: none; opacity: .12; background: repeating-radial-gradient(circle at 17% 32%, rgba(255,255,255,.5) 0 1px, transparent 1px 3px), repeating-radial-gradient(circle at 73% 61%, rgba(255,255,255,.4) 0 1px, transparent 1px 4px); animation: jitter .18s steps(3) infinite; }
+.pg-signal-lost .scan { position: absolute; left: 0; right: 0; height: 120px; pointer-events: none; background: linear-gradient(180deg, rgba(92,225,255,0), rgba(92,225,255,.06), rgba(92,225,255,0)); animation: sweep 5s linear infinite; }
+.pg-signal-lost .shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(2,6,15,.92) 0%, rgba(2,6,15,.55) 38%, rgba(2,6,15,0) 62%), radial-gradient(120% 100% at 60% 50%, rgba(0,0,0,0) 50%, rgba(0,0,0,.7) 100%); }
+@keyframes jitter { 33% { transform: translate(3px, -2px); } 66% { transform: translate(-2px, 3px); } }
+@keyframes sweep { from { top: -120px; } to { top: 900px; } }
+@keyframes glitch { 0%, 92%, 100% { transform: none; opacity: 1; } 94% { transform: translateX(-4px) skewX(-6deg); opacity: .7; } 96% { transform: translateX(3px); opacity: .9; } }
+.pg-signal-lost .top { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; padding: 26px 48px; z-index: 3; }
+.pg-signal-lost .top img { height: 38px; width: auto; display: block; }
+/* logo lockup: mark and wordmark on one centred line */
+.pg-signal-lost .lockup { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.pg-signal-lost :where(.lockup) { height: 34px; }
+.pg-signal-lost :where(.lockup) img { height: 100%; width: auto; display: block; }
+.pg-signal-lost .lockup b { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 20px; line-height: 1; letter-spacing: .01em; color: #fff; white-space: nowrap; text-transform: none; }
+.pg-signal-lost .copy { position: absolute; left: 48px; top: 210px; width: 600px; z-index: 3; }
+.pg-signal-lost .code { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 125%; font-style: italic; font-weight: 800; font-size: 150px; line-height: .9; color: transparent; -webkit-text-stroke: 1.5px #5CE1FF; animation: glitch 4s infinite; }
+.pg-signal-lost .code.err { -webkit-text-stroke-color: #FF6A3D; }
+.pg-signal-lost .copy h1 { margin: 16px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 120%; font-style: italic; font-weight: 700; font-size: 56px; line-height: .95; text-transform: uppercase; color: #fff; }
+.pg-signal-lost .copy p { margin: 18px 0 0; max-width: 500px; font-size: 17px; line-height: 1.6; color: #A9B8D0; text-wrap: pretty; }
+.pg-signal-lost .copy .acts { margin-left: 0; margin-top: 32px; }
+.pg-signal-lost .hud { position: absolute; right: 48px; bottom: 44px; width: 340px; z-index: 3; padding: 14px 16px; }
+.pg-signal-lost .hud .kvl-row { padding: 0; }
+.pg-signal-lost .variant { position: absolute; left: 48px; bottom: 44px; z-index: 3; display: flex; align-items: center; gap: 12px; }

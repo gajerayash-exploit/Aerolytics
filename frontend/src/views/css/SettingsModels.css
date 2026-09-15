@@ -1,0 +1,51 @@
+/* Generated from design/landing-page/SettingsModels.template.html — scoped to .pg-settings-models */
+.pg-settings-models .mbody { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 14px; min-height: 0; }
+.pg-settings-models .mcards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.pg-settings-models .mcard { padding: 14px 16px 14px; border: 0; text-align: left; cursor: pointer; }
+.pg-settings-models .mcard.sel { box-shadow: inset 0 0 0 1px #5CE1FF; }
+.pg-settings-models .mcard-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.pg-settings-models .mcard h3 { margin: 8px 0 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 15px; font-weight: 500; color: #fff; }
+.pg-settings-models .mcard .meta { margin-top: 3px; }
+.pg-settings-models .mets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 12px; box-shadow: inset 0 0 0 1px rgba(120,170,255,.12); }
+.pg-settings-models .met { padding: 8px 10px; }
+.pg-settings-models .met + .met { box-shadow: inset 1px 0 0 rgba(120,170,255,.1); }
+.pg-settings-models .met b { display: block; margin-top: 3px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 20px; color: #fff; font-variant-numeric: tabular-nums; }
+.pg-settings-models .lower { display: grid; grid-template-columns: minmax(0, 6.3fr) minmax(0, 5.7fr); gap: 14px; min-height: 0; }
+.pg-settings-models .chart { position: relative; padding: 6px 14px 4px; }
+.pg-settings-models .chart svg { display: block; overflow: visible; }
+.pg-settings-models .ax { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; fill: #62738F; }
+.pg-settings-models .dl { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; }
+.pg-settings-models .legend { display: flex; align-items: center; gap: 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .06em; color: #CFDAEE; }
+.pg-settings-models .legend span { display: flex; align-items: center; gap: 6px; }
+.pg-settings-models .tip { position: absolute; z-index: 5; min-width: 140px; padding: 7px 9px; pointer-events: none; transform: translate(-50%, calc(-100% - 10px)); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #A9B8D0; background: #081631; box-shadow: inset 0 0 0 1px rgba(120,170,255,.35); white-space: nowrap; }
+.pg-settings-models .tip b { display: block; margin-bottom: 3px; font-weight: 500; color: #fff; }
+.pg-settings-models .tip div { display: flex; justify-content: space-between; gap: 14px; }
+.pg-settings-models .tip em { font-style: normal; color: #fff; }
+.pg-settings-models .detail { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; }
+.pg-settings-models .arch { position: relative; height: 180px; overflow: hidden; background: #040B1C; border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-settings-models .classes { display: flex; flex-wrap: wrap; gap: 5px; }
+.pg-settings-models .classes .chip { color: #CFDAEE; text-transform: none; letter-spacing: .04em; }
+
+/* Responsive adjustments for SettingsModels */
+@media (max-width: 1024px) {
+  .pg-settings-models .mbody {
+    grid-template-rows: auto;
+    overflow-y: auto;
+  }
+  .pg-settings-models .mcards {
+    grid-template-columns: 1fr;
+  }
+  .pg-settings-models .mets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pg-settings-models .lower {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .pg-settings-models .mets {
+    grid-template-columns: 1fr;
+  }
+}
+

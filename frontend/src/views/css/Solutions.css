@@ -1,0 +1,72 @@
+/* Generated from design/landing-page/Solutions.template.html — scoped to .pg-solutions */
+.pg-solutions .hero { position: relative; height: 760px; overflow: hidden; background: #040B1C; }
+.pg-solutions .hero-copy { position: absolute; left: 48px; top: 140px; width: 540px; z-index: 3; }
+.pg-solutions .ptabs { position: absolute; left: 48px; bottom: 40px; z-index: 3; display: flex; gap: 12px; }
+.pg-solutions .ptab { width: 200px; padding: 14px 0 0; border: 0; border-top: 2px solid rgba(160,190,240,.18); background: none; text-align: left; cursor: pointer; color: #7F90AD; }
+.pg-solutions .ptab.on { color: #fff; border-top-color: currentColor; }
+.pg-solutions .ptab small { display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; }
+.pg-solutions .ptab span { display: block; margin-top: 4px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 116%; font-style: italic; font-weight: 600; font-size: 20px; text-transform: uppercase; }
+.pg-solutions .route { position: absolute; right: 48px; bottom: 46px; z-index: 3; }
+.pg-solutions .card-model { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin-top: 48px; }
+.pg-solutions .mc { padding: 18px 20px; }
+.pg-solutions .mc + .mc { border-left: 1px solid rgba(120,170,255,.1); }
+.pg-solutions .mc b { display: block; margin-top: 8px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 34px; color: #fff; font-variant-numeric: tabular-nums; }
+.pg-solutions .mc em { display: block; margin-top: 4px; font-style: normal; font-size: 12.5px; color: #8C9CB6; }
+.pg-solutions .model-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.pg-solutions .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+.pg-solutions .step { padding: 22px; }
+.pg-solutions .step .n { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .16em; }
+.pg-solutions .step h3 { margin: 10px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 114%; font-weight: 600; font-size: 21px; color: #fff; }
+.pg-solutions .step p { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #A9B8D0; }
+.pg-solutions .outs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+.pg-solutions .out { padding: 0 0 22px; }
+.pg-solutions .out .thumb { width: 100%; height: 170px; }
+.pg-solutions .out h3 { margin: 18px 22px 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 116%; font-style: italic; font-weight: 700; font-size: 22px; text-transform: uppercase; color: #fff; }
+.pg-solutions .out p { margin: 10px 22px 0; font-size: 14px; line-height: 1.6; color: #A9B8D0; }
+.pg-solutions .limits { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 40px; }
+.pg-solutions .limits .warnbox { font-size: 14px; padding: 14px 16px; }
+
+/* Responsive adjustments for Solutions */
+@media (max-width: 1024px) {
+  .pg-solutions .hero {
+    height: auto;
+    min-height: 560px;
+    padding-bottom: 120px;
+  }
+  .pg-solutions .hero-copy {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    padding: 110px 24px 20px;
+  }
+  .pg-solutions .ptabs {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    flex-wrap: wrap;
+    padding: 12px 24px;
+  }
+  .pg-solutions .ptab {
+    width: 100%;
+  }
+  .pg-solutions .card-model {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pg-solutions .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pg-solutions .outs {
+    grid-template-columns: 1fr;
+  }
+  .pg-solutions .limits {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .pg-solutions .card-model, .pg-solutions .steps {
+    grid-template-columns: 1fr;
+  }
+}
+

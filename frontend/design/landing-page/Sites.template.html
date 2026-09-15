@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .cols { display: grid; grid-template-columns: minmax(0, 4.2fr) minmax(0, 7.8fr); gap: 14px; min-height: 0; }
+    .site { grid-template-columns: 10px minmax(0, 1fr) 118px; padding: 14px 16px; }
+    .site .dia { width: 10px; height: 10px; }
+    .site-r { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .site-r .hbar { width: 100%; height: 4px; }
+    .site-r em { font-style: normal; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #9FB0CC; }
+    .site-meta { display: flex; gap: 10px; margin-top: 8px; }
+    .card { width: 310px; padding: 14px 16px 16px; }
+    .card .h2 { margin-top: 10px; font-size: 21px; }
+    .card .kvg { margin-top: 14px; }
+    .card-acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+    .legend { display: flex; gap: 12px; padding: 6px 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9FB0CC; }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid rgba(120,170,255,.1); }
+    .totals div { padding: 10px 16px; }
+    .totals div + div { border-left: 1px solid rgba(120,170,255,.08); }
+    .totals b { display: block; margin-top: 3px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 22px; color: #fff; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:sites-->
+  <!--TOPBAR:Command center|Sites-->
+
+  <main class="main">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <div class="kicker"><i></i>Sites · area of operations</div>
+          <h1 class="h1" style="margin-top: 10px">Sites</h1>
+        </div>
+        <div class="meta">{{ siteCount }} sites · Rajkot district · sample data</div>
+        <div class="acts">
+          <div class="segs"><sc-for list="{{ filters }}" as="f" hint-placeholder-count="4"><button class="{{ f.cls }}" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for></div>
+          <button class="btn btn-primary">+ Add site</button>
+        </div>
+      </div>
+
+      <div class="cols">
+        <section class="panel">
+          <div class="totals">
+            <div><span class="lbl">Sites</span><b>{{ siteCount }}</b></div>
+            <div><span class="lbl">Open issues</span><b class="crit">{{ openTotal }}</b></div>
+            <div><span class="lbl">Due in 7 days</span><b>{{ dueSoon }}</b></div>
+          </div>
+          <div class="scroll" style="flex: 1">
+            <sc-for list="{{ list }}" as="s" hint-placeholder-count="6">
+              <button class="li site {{ s.selCls }}" onClick="{{ s.pick }}">
+                <i class="dia" style="background: {{ s.color }}"></i>
+                <span style="min-width: 0">
+                  <span class="li-t">{{ s.name }}</span>
+                  <span class="li-s">{{ s.assets }} · {{ s.area }}</span>
+                  <span class="site-meta"><span class="chip {{ s.chip }}">{{ s.pillarName }}</span><span class="chip st-off">Next {{ s.next }}</span></span>
+                </span>
+                <span class="site-r">
+                  <span class="lbl">Health {{ s.healthStr }}</span>
+                  <span class="hbar"><b style="width: {{ s.healthStr }}; background: {{ s.healthColor }}"></b></span>
+                  <em>{{ s.openStr }}</em>
+                </span>
+              </button>
+            </sc-for>
+          </div>
+          <div class="note">Health = share of inspected assets without open issues · sample</div>
+        </section>
+
+        <section class="panel">
+          <div class="ph"><div class="ph-l"><span class="lbl strong">Area of operations</span><span class="badge b-sim">Approx. positions</span></div><span class="lbl">Drag to orbit · click a pin</span></div>
+          <div class="view3d">
+            <canvas class="gl" data-gl="ao"></canvas>
+            <div class="gl-labels" data-gl-labels="ao"></div>
+            <div class="ov ov-tr glass card">
+              <div style="display: flex; justify-content: space-between; align-items: center"><span class="chip {{ cur.chip }}">{{ cur.pillarName }}</span><span class="meta">{{ cur.lat }} · {{ cur.lon }}</span></div>
+              <h2 class="h2">{{ cur.name }}</h2>
+              <div class="kvg">
+                <div><span class="lbl">Area</span><b>{{ cur.area }}</b></div>
+                <div><span class="lbl">Assets</span><b>{{ cur.assets }}</b></div>
+                <div><span class="lbl">Last mission</span><b>{{ cur.lastMission }}</b></div>
+                <div><span class="lbl">{{ cur.openLbl }}</span><b class="crit">{{ cur.open }}</b></div>
+                <div><span class="lbl">Next inspection</span><b>{{ cur.next }}</b></div>
+                <div><span class="lbl">Missions</span><b>{{ cur.missions }}</b></div>
+              </div>
+              <div class="card-acts"><a class="btn btn-primary btn-sm" href="#">Open site →</a><a class="btn btn-ghost btn-sm" href="#">Plan mission</a></div>
+            </div>
+            <div class="ov ov-bl glass legend">
+              <span><i class="dia" style="background: #5CE1FF"></i>Energy</span>
+              <span><i class="dia" style="background: #9BE15D"></i>Agri</span>
+              <span><i class="dia" style="background: #FF7A4D"></i>Rescue</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', pf: 'all', sel: 'rsp' };
+    this._selSite = 'rsp';
+    this._onAoPick = (key) => this.setState({ sel: key });
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, pf, sel } = this.state;
+    const openLbl = (p) => (p === 'rescue' ? 'Open targets' : p === 'agri' ? 'Disease zones' : 'Open issues');
+    const decorate = (s) => Object.assign({}, s, {
+      color: D.P[s.pillar].color, chip: D.P[s.pillar].chip, pillarName: D.P[s.pillar].name,
+      healthStr: s.health + '%', healthColor: s.health < 75 ? '#FFB547' : '#3FB3E0',
+      openStr: s.open + ' ' + openLbl(s.pillar).split(' ')[1].toLowerCase(), openLbl: openLbl(s.pillar),
+      missions: D.missionsAll.filter((m) => m.siteKey === s.key).length,
+    });
+    const list = D.sites.filter((s) => pf === 'all' || s.pillar === pf);
+    const cur = decorate(D.sites.find((s) => s.key === sel) || D.sites[0]);
+    this._selSite = cur.key;
+    return {
+      pillars: this._pillarTabs(pillar, (k) => {
+        const first = D.sites.find((s) => s.pillar === k);
+        this.setState({ pillar: k, pf: k, sel: first ? first.key : sel });
+      }),
+      filters: [['all', 'All'], ['energy', 'Energy'], ['agri', 'Agri'], ['rescue', 'Rescue']].map(([k, name]) => ({ name, cls: pf === k ? 'on' : '', pick: () => this.setState({ pf: k }) })),
+      siteCount: list.length,
+      openTotal: list.reduce((n, s) => n + s.open, 0),
+      dueSoon: list.filter((s) => /1[4-9]|2[0-1] Sep/.test(s.next)).length,
+      list: list.map((s) => Object.assign(decorate(s), { selCls: s.key === cur.key ? 'sel' : '', pick: () => this.setState({ sel: s.key }) })),
+      cur,
+    };
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._startClock();
+    this._boot(0);
+  }
+
+  componentWillUnmount() {
+    this._alive = false;
+    this._stopClock();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._ao) this._ao.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="ao"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._ao = this._aoScene(this._engine(), canvas, document.querySelector('[data-gl-labels="ao"]'));
+    this._loop([this._ao]);
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

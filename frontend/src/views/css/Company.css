@@ -1,0 +1,72 @@
+/* Generated from design/landing-page/Company.template.html — scoped to .pg-company */
+.pg-company .hero { position: relative; height: 620px; overflow: hidden; background: #040B1C; }
+.pg-company .hero-copy { position: absolute; left: 48px; top: 150px; width: 560px; z-index: 3; }
+.pg-company .variant { position: absolute; left: 48px; bottom: 40px; z-index: 3; display: flex; align-items: center; gap: 12px; }
+.pg-company .principles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+.pg-company .pr { padding: 22px; }
+.pg-company .pr h3 { margin: 12px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 116%; font-style: italic; font-weight: 700; font-size: 21px; text-transform: uppercase; color: #fff; }
+.pg-company .pr p { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #A9B8D0; }
+.pg-company .timeline { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 56px; }
+.pg-company .timeline::before { content: ''; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: rgba(120,170,255,.25); }
+.pg-company .ms { position: relative; padding-right: 24px; }
+.pg-company .ms .dia { width: 14px; height: 14px; }
+.pg-company .ms .meta { margin-top: 18px; }
+.pg-company .ms h3 { margin: 6px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 112%; font-weight: 600; font-size: 19px; color: #fff; }
+.pg-company .ms p { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: #A9B8D0; }
+.pg-company .team { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+.pg-company .tm { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; align-items: center; padding: 20px; }
+.pg-company .tm-av { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #62738F; box-shadow: inset 0 0 0 1px rgba(120,170,255,.25); background: repeating-linear-gradient(135deg, rgba(120,170,255,.08) 0 4px, transparent 4px 8px); }
+.pg-company .contact { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; margin-top: 8px; }
+.pg-company .form { padding: 24px; }
+.pg-company .form .fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+.pg-company .form .full { grid-column: 1 / -1; }
+.pg-company .ta { height: 110px; padding: 10px 12px; background: rgba(2,7,18,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+.pg-company .ta textarea { width: 100%; height: 100%; border: 0; outline: 0; resize: none; background: transparent; color: #fff; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; }
+.pg-company .err { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #FF8A63; }
+.pg-company .sent { padding: 40px 28px; text-align: center; }
+.pg-company .sent .h2 { margin-top: 16px; }
+.pg-company .sent p { margin: 12px auto 0; max-width: 420px; font-size: 15px; line-height: 1.6; color: #A9B8D0; }
+.pg-company .side { display: flex; flex-direction: column; gap: 16px; }
+.pg-company .faq { border-top: 1px solid rgba(120,170,255,.1); }
+.pg-company .q { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border: 0; background: none; cursor: pointer; text-align: left; font-size: 14.5px; color: #E6ECF5; }
+.pg-company .q em { font-style: normal; font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #5CE1FF; }
+.pg-company .a { padding: 0 18px 14px; font-size: 14px; line-height: 1.6; color: #A9B8D0; }
+
+/* Responsive adjustments for Company */
+@media (max-width: 1024px) {
+  .pg-company .hero {
+    height: auto;
+    min-height: 480px;
+    padding-bottom: 80px;
+  }
+  .pg-company .hero-copy {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    padding: 110px 24px 20px;
+  }
+  .pg-company .principles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pg-company .timeline {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .pg-company .team {
+    grid-template-columns: 1fr;
+  }
+  .pg-company .contact {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .pg-company .principles, .pg-company .timeline {
+    grid-template-columns: 1fr;
+  }
+  .pg-company .form .fgrid {
+    grid-template-columns: 1fr;
+  }
+}
+

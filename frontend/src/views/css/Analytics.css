@@ -1,0 +1,36 @@
+/* Generated from design/landing-page/Analytics.template.html — scoped to .pg-analytics */
+.pg-analytics .an { display: grid; grid-template-rows: 58px 100px minmax(0, 1fr) 262px; gap: 14px; height: 100%; padding: 18px 24px 20px; }
+.pg-analytics .an-head { display: flex; align-items: flex-end; gap: 20px; }
+.pg-analytics .an-head .acts { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.pg-analytics .tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.pg-analytics .tile { padding: 14px 16px; }
+.pg-analytics .tile .big { margin-top: 10px; font-size: 30px; }
+.pg-analytics .tile .big small { margin-left: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; font-weight: 400; color: #7F90AD; }
+.pg-analytics .tile em { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: #8C9CB6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pg-analytics .tile.na .big { color: #62738F; font-size: 20px; margin-top: 14px; }
+.pg-analytics .rowA { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 14px; min-height: 0; }
+.pg-analytics .rowB { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; min-height: 0; }
+.pg-analytics .chart { position: relative; flex: 1; min-height: 0; padding: 8px 12px 10px; }
+.pg-analytics .chart svg { display: block; overflow: visible; }
+.pg-analytics .ax { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; fill: #62738F; }
+.pg-analytics .legend { display: flex; align-items: center; gap: 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #CFDAEE; }
+.pg-analytics .legend span { display: flex; align-items: center; gap: 6px; }
+.pg-analytics .tip { position: absolute; z-index: 5; min-width: 150px; padding: 8px 10px; pointer-events: none; transform: translate(-50%, calc(-100% - 10px)); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #E6ECF5; background: #081631; box-shadow: inset 0 0 0 1px rgba(120,170,255,.35), 0 8px 20px rgba(0,0,0,.4); white-space: nowrap; }
+.pg-analytics .tip b { display: block; margin-bottom: 4px; font-weight: 500; color: #fff; }
+.pg-analytics .tip div { display: flex; align-items: center; justify-content: space-between; gap: 14px; color: #A9B8D0; }
+.pg-analytics .tip div span { display: flex; align-items: center; gap: 6px; }
+.pg-analytics .tip div em { font-style: normal; color: #fff; }
+.pg-analytics .surf { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #040B1C; }
+.pg-analytics .ramp { position: absolute; left: 12px; bottom: 12px; width: 190px; padding: 8px 10px; }
+.pg-analytics .ramp-bar { height: 8px; margin-top: 6px; background: linear-gradient(90deg, #12305E, #1F6FAF, #3FB3E0, #B8F1FF); }
+.pg-analytics .ramp-lbl { display: flex; justify-content: space-between; margin-top: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; color: #7F90AD; }
+.pg-analytics .surf-hint { position: absolute; right: 12px; top: 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #53637D; }
+.pg-analytics .funnel { display: flex; flex-direction: column; gap: 14px; padding: 16px; }
+.pg-analytics .fn-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #CFDAEE; }
+.pg-analytics .fn-row em { font-style: normal; color: #7F90AD; text-transform: none; letter-spacing: 0; }
+.pg-analytics .fn-bar { grid-column: 1 / -1; height: 14px; background: rgba(120,170,255,.08); }
+.pg-analytics .fn-bar b { display: block; height: 100%; background: #3FB3E0; }
+.pg-analytics .note { margin-top: auto; padding: 10px 16px; border-top: 1px solid rgba(120,170,255,.08); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #53637D; }
+.pg-analytics .sites .tbl td { height: 36px; }
+.pg-analytics .spark { display: block; }
+.pg-analytics .tbl-sm td, .pg-analytics .tbl-sm th { padding-left: 10px; padding-right: 10px; }

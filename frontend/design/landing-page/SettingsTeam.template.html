@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+/*SETTINGS_CSS*/
+
+    .set-cols { grid-template-columns: minmax(0, 7.6fr) minmax(0, 4.4fr); }
+    .toolbar { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid rgba(120,170,255,.1); }
+    .toolbar .input { width: 230px; }
+    .who { display: flex; align-items: center; gap: 10px; }
+    .ini { width: 30px; height: 30px; flex: none; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #CFE0FF; background: #0A1B3D; box-shadow: inset 0 0 0 1px rgba(92,225,255,.3); }
+    .who b { display: block; font-weight: 500; color: #fff; font-size: 12px; }
+    .who em { display: block; font-style: normal; font-size: 10.5px; color: #62738F; }
+    .pa { display: flex; gap: 5px; }
+    .pa i { width: 8px; height: 8px; transform: rotate(45deg); box-shadow: inset 0 0 0 1px rgba(160,190,240,.35); }
+    .perm { width: 100%; border-collapse: collapse; }
+    .perm th { padding: 8px 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: #62738F; text-align: center; border-bottom: 1px solid rgba(120,170,255,.1); }
+    .perm th:first-child, .perm td:first-child { text-align: left; padding-left: 18px; }
+    .perm th.on { color: #5CE1FF; }
+    .perm td { height: 32px; padding: 0 6px; text-align: center; font-size: 13px; color: #E6ECF5; border-bottom: 1px solid rgba(120,170,255,.06); }
+    .perm td.on { background: rgba(92,225,255,.05); }
+    .perm .dia { width: 9px; height: 9px; }
+    .big-ini { width: 56px; height: 56px; font-size: 18px; }
+    .ptog { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 9px 18px; border-top: 1px solid rgba(120,170,255,.07); }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:settings-->
+  <!--TOPBAR:Settings|Team-->
+
+  <main class="main">
+    <div class="settings">
+      <!--SETTINGSNAV:team-->
+      <div class="set-main">
+        <div class="page-head">
+          <div>
+            <div class="kicker"><i></i>Settings · access control</div>
+            <h1 class="h1" style="margin-top: 10px">Team &amp; roles</h1>
+          </div>
+          <div class="meta">{{ activeCount }} active · {{ invitedCount }} invited · seats 4 of 10 used by pilots and operators</div>
+        </div>
+
+        <div class="set-cols">
+          <div class="scroll stack">
+            <section class="panel">
+              <div class="toolbar">
+                <span class="input"><input type="text" placeholder="Search members" onInput="{{ onSearch }}"></span>
+                <div class="segs"><sc-for list="{{ roleF }}" as="f" hint-placeholder-count="6"><button class="{{ f.cls }}" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for></div>
+              </div>
+              <table class="tbl">
+                <thead><tr><th>Member</th><th>Role</th><th>Pillars</th><th>Last active</th><th>Status</th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ members }}" as="m" hint-placeholder-count="7">
+                    <tr class="{{ m.selCls }}" onClick="{{ m.pick }}">
+                      <td><div class="who"><span class="ini">{{ m.ini }}</span><span><b>{{ m.handle }}</b><em>{{ m.email }}</em></span></div></td>
+                      <td><span class="chip {{ m.roleCls }}">{{ m.role }}</span></td>
+                      <td><span class="pa"><sc-for list="{{ m.pills }}" as="p" hint-placeholder-count="3"><i style="background: {{ p.bg }}"></i></sc-for></span></td>
+                      <td>{{ m.last }}</td>
+                      <td><span class="chip {{ m.stCls }}">{{ m.status }}</span></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Roles &amp; permissions</span><span class="lbl">Highlighted column = selected member's role</span></div>
+              <div style="padding: 6px 0 8px">
+                <table class="perm">
+                  <thead><tr><th>Permission</th><sc-for list="{{ roleCols }}" as="r" hint-placeholder-count="5"><th class="{{ r.cls }}">{{ r.name }}</th></sc-for></tr></thead>
+                  <tbody>
+                    <sc-for list="{{ perms }}" as="p" hint-placeholder-count="9">
+                      <tr><td>{{ p.name }}</td><sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="5"><td class="{{ c.cls }}"><i class="dia {{ c.dia }}"></i></td></sc-for></tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div class="note">Aircraft control stays disabled until hardware is linked and the pilot's certificate is on file</div>
+            </section>
+          </div>
+
+          <div class="scroll stack">
+            <section class="panel">
+              <div class="card-h">
+                <div class="who"><span class="ini big-ini">{{ cur.ini }}</span><span><b style="font-size: 16px">{{ cur.handle }}</b><em style="font-size: 12px">{{ cur.email }}</em></span></div>
+                <span class="chip {{ cur.stCls }}">{{ cur.status }}</span>
+              </div>
+              <div class="card-b">
+                <span class="lbl">Role</span>
+                <div class="segs" style="margin-top: 8px"><sc-for list="{{ roleOpts }}" as="r" hint-placeholder-count="5"><button class="{{ r.cls }}" onClick="{{ r.pick }}" disabled="{{ r.locked }}">{{ r.name }}</button></sc-for></div>
+              </div>
+              <div class="card-h" style="padding-top: 0"><span class="lbl">Pillar access</span></div>
+              <sc-for list="{{ access }}" as="a" hint-placeholder-count="3">
+                <div class="ptog"><i class="dia" style="background: {{ a.color }}"></i><span class="srow-t">{{ a.name }}</span><button class="tgl {{ a.cls }}" onClick="{{ a.toggle }}" disabled="{{ a.locked }}"><i></i></button></div>
+              </sc-for>
+              <div class="card-b" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+                <button class="btn btn-ghost btn-sm">Reset password</button>
+                <button class="btn btn-danger btn-sm" disabled="{{ cur.isYou }}">Remove</button>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Invite a member</span><span class="lbl">Expires in 7 days</span></div>
+              <div class="card-b">
+                <label class="field"><span class="lbl">Email</span><span class="input"><input type="email" placeholder="[EMAIL ADDRESS]" onInput="{{ onInviteEmail }}"></span></label>
+                <div class="field" style="margin-top: 12px"><span class="lbl">Role</span><div class="segs"><sc-for list="{{ inviteRoles }}" as="r" hint-placeholder-count="5"><button class="{{ r.cls }}" onClick="{{ r.pick }}">{{ r.name }}</button></sc-for></div></div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 14px" onClick="{{ sendInvite }}">{{ inviteLabel }}</button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      pillar: 'energy', rf: 'all', q: '', sel: 'OPS-1', inviteRole: 'Viewer', inviteEmail: '', sent: 0,
+      members: [
+        { handle: 'ADM-1', ini: 'AD', email: '[ADMIN EMAIL]', role: 'Admin', pillars: ['energy', 'agri', 'rescue'], last: '1 h ago', status: 'Active' },
+        { handle: 'OPS-1 · you', id: 'OPS-1', ini: 'RK', email: '[WORK EMAIL]', role: 'Operator', pillars: ['energy', 'agri', 'rescue'], last: 'Now', status: 'Active' },
+        { handle: 'PLT-1', ini: 'P1', email: '[PILOT EMAIL]', role: 'Pilot', pillars: ['energy', 'agri'], last: '3 h ago', status: 'Active' },
+        { handle: 'PLT-2', ini: 'P2', email: '[PILOT EMAIL]', role: 'Pilot', pillars: ['rescue'], last: 'Yesterday', status: 'Active' },
+        { handle: 'ANL-1', ini: 'A1', email: '[ANALYST EMAIL]', role: 'Analyst', pillars: ['agri'], last: '2 days ago', status: 'Active' },
+        { handle: 'VWR-1', ini: 'V1', email: '[CLIENT EMAIL]', role: 'Viewer', pillars: ['energy'], last: '—', status: 'Invited' },
+      ].map((m) => Object.assign({ id: m.handle }, m)),
+    };
+  }
+
+  _roles() { return ['Admin', 'Operator', 'Pilot', 'Analyst', 'Viewer']; }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, rf, q, sel, inviteRole, members, sent } = this.state;
+    const ROLES = this._roles();
+    const roleCls = { Admin: 'c-rescue', Operator: 'st-new', Pilot: 'c-agri', Analyst: 'st-assigned', Viewer: 'st-off' };
+    const ql = q.trim().toLowerCase();
+    const list = members.filter((m) => (rf === 'all' || m.role === rf) && (!ql || (m.handle + m.email + m.role).toLowerCase().indexOf(ql) >= 0));
+    const cur0 = members.find((m) => m.id === sel) || members[0];
+    const isYou = cur0.id === 'OPS-1';
+    const update = (patch) => this.setState({ members: this.state.members.map((m) => (m.id === cur0.id ? Object.assign({}, m, patch) : m)) });
+    const PERMS = [
+      ['View missions, twins & reports', [1, 1, 1, 1, 1]],
+      ['Upload media & run inference', [1, 1, 1, 0, 0]],
+      ['Plan missions', [1, 1, 1, 0, 0]],
+      ['Assign crews & dispatch teams', [1, 1, 0, 0, 0]],
+      ['Control aircraft (when linked)', [1, 0, 1, 0, 0]],
+      ['Export reports', [1, 1, 0, 1, 0]],
+      ['Manage fleet & sites', [1, 1, 0, 0, 0]],
+      ['Manage team, keys & settings', [1, 0, 0, 0, 0]],
+    ];
+    const ri = ROLES.indexOf(cur0.role);
+    return {
+      pillars: this._pillarTabs(pillar, (k) => this.setState({ pillar: k })),
+      activeCount: members.filter((m) => m.status === 'Active').length,
+      invitedCount: members.filter((m) => m.status === 'Invited').length,
+      onSearch: (e) => this.setState({ q: (e && e.target && e.target.value) || '' }),
+      roleF: [['all', 'All']].concat(ROLES.map((r) => [r, r])).map(([k, name]) => ({ name, cls: rf === k ? 'on' : '', pick: () => this.setState({ rf: k }) })),
+      members: list.map((m) => ({
+        handle: m.handle, ini: m.ini, email: m.email, role: m.role, roleCls: roleCls[m.role], last: m.last, status: m.status,
+        stCls: m.status === 'Active' ? 'st-resolved' : 'st-warn',
+        pills: ['energy', 'agri', 'rescue'].map((k) => ({ bg: m.pillars.indexOf(k) >= 0 ? D.P[k].color : 'transparent' })),
+        selCls: m.id === cur0.id ? 'sel' : '', pick: () => this.setState({ sel: m.id }),
+      })),
+      roleCols: ROLES.map((r, i) => ({ name: r, cls: i === ri ? 'on' : '' })),
+      perms: PERMS.map(([name, row]) => ({ name, cells: row.map((v, i) => ({ dia: v ? 'sev-ok' : 'dia-off', cls: i === ri ? 'on' : '' })) })),
+      cur: { handle: cur0.handle, ini: cur0.ini, email: cur0.email, status: cur0.status, stCls: cur0.status === 'Active' ? 'st-resolved' : 'st-warn', isYou },
+      roleOpts: ROLES.map((r) => ({ name: r, cls: cur0.role === r ? 'on' : '', locked: isYou, pick: () => update({ role: r }) })),
+      access: ['energy', 'agri', 'rescue'].map((k) => ({
+        name: D.P[k].name + ' · ' + D.P[k].long, color: D.P[k].color, cls: cur0.pillars.indexOf(k) >= 0 ? 'on' : '', locked: cur0.role === 'Admin',
+        toggle: () => update({ pillars: cur0.pillars.indexOf(k) >= 0 ? cur0.pillars.filter((x) => x !== k) : cur0.pillars.concat(k) }),
+      })),
+      inviteRoles: ROLES.map((r) => ({ name: r, cls: inviteRole === r ? 'on' : '', pick: () => this.setState({ inviteRole: r }) })),
+      onInviteEmail: (e) => this.setState({ inviteEmail: (e && e.target && e.target.value) || '' }),
+      inviteLabel: sent ? 'Invite sent · simulated' : 'Send invite',
+      sendInvite: () => {
+        const n = this.state.sent + 1, id = 'INV-' + n;
+        this.setState({
+          sent: n, sel: id,
+          members: this.state.members.concat({ id, handle: id, ini: 'IN', email: this.state.inviteEmail || '[EMAIL ADDRESS]', role: this.state.inviteRole, pillars: ['energy'], last: '—', status: 'Invited' }),
+        });
+      },
+    };
+  }
+
+  componentDidMount() { this._alive = true; this._startClock(); }
+  componentWillUnmount() { this._alive = false; this._stopClock(); }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

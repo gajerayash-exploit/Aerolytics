@@ -1,0 +1,18 @@
+/* Generated from design/landing-page/Sites.template.html — scoped to .pg-sites */
+.pg-sites .cols { display: grid; grid-template-columns: minmax(0, 4.2fr) minmax(0, 7.8fr); gap: 14px; min-height: 0; }
+.pg-sites .site { grid-template-columns: 10px minmax(0, 1fr) 118px; padding: 14px 16px; }
+.pg-sites .site .dia { width: 10px; height: 10px; }
+.pg-sites .site-r { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.pg-sites .site-r .hbar { width: 100%; height: 4px; }
+.pg-sites .site-r em { font-style: normal; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #9FB0CC; }
+.pg-sites .site-meta { display: flex; gap: 10px; margin-top: 8px; }
+.pg-sites .card { width: 310px; padding: 14px 16px 16px; }
+.pg-sites .card .h2 { margin-top: 10px; font-size: 21px; }
+.pg-sites .card .kvg { margin-top: 14px; }
+.pg-sites .card-acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.pg-sites .legend { display: flex; gap: 12px; padding: 6px 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9FB0CC; }
+.pg-sites .legend span { display: flex; align-items: center; gap: 6px; }
+.pg-sites .totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-sites .totals div { padding: 10px 16px; }
+.pg-sites .totals div + div { border-left: 1px solid rgba(120,170,255,.08); }
+.pg-sites .totals b { display: block; margin-top: 3px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 22px; color: #fff; }

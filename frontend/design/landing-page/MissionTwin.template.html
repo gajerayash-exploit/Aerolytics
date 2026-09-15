@@ -1,0 +1,364 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .stage { position: absolute; inset: 0; background: #040B1C; }
+    .vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, rgba(3,8,20,0) 55%, rgba(3,8,20,.75) 100%); }
+
+    /* mission panel */
+    .mis { position: absolute; left: 16px; top: 16px; bottom: 108px; width: 318px; display: flex; flex-direction: column; z-index: 3; animation: rowIn .6s ease-out both; }
+    .mis-head { padding: 16px 18px 14px; border-bottom: 1px solid rgba(120,170,255,.1); }
+    .mis-id { margin-top: 10px; }
+    .mis-site { margin-top: 6px; font-size: 13.5px; color: #CFDAEE; }
+    .mis-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid rgba(120,170,255,.1); }
+    .stat { padding: 10px 18px; }
+    .stat:nth-child(odd) { border-right: 1px solid rgba(120,170,255,.08); }
+    .stat:nth-child(-n+2) { border-bottom: 1px solid rgba(120,170,255,.08); }
+    .stat b { display: block; margin-top: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 14px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .stat b.crit { color: #FF6A3D; }
+    .sect { padding: 10px 18px; border-bottom: 1px solid rgba(120,170,255,.1); }
+    .sect-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .layer-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 10px; margin-top: 4px; }
+    .layer-grid .ck { font-size: 12.5px; }
+    .dl { flex: 1; }
+    .drow { width: 100%; display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 18px; border: 0; border-bottom: 1px solid rgba(120,170,255,.06); background: transparent; cursor: pointer; text-align: left; }
+    .drow:hover { background: rgba(120,170,255,.05); }
+    .drow.sel { background: rgba(92,225,255,.09); box-shadow: inset 2px 0 0 #5CE1FF; }
+    .drow-t { display: block; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 112%; font-style: italic; font-weight: 600; font-size: 14px; text-transform: uppercase; color: #fff; }
+    .drow-s { display: block; margin-top: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #62738F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .drow-c { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #CFDAEE; }
+
+    /* view controls */
+    .ctl { position: absolute; top: 16px; right: 16px; display: flex; gap: 10px; z-index: 3; transition: right .35s cubic-bezier(.2,.7,.2,1); }
+    .ctl.shifted { right: 420px; }
+    .ctl .glass { display: flex; align-items: center; padding: 4px; }
+    .zbtn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #CFDAEE; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 15px; }
+    .zbtn:hover { background: rgba(92,225,255,.1); color: #fff; }
+    .readout { position: absolute; left: 350px; bottom: 108px; padding: 6px 9px; z-index: 3; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .06em; color: #7F90AD; background: rgba(3,8,20,.8); box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); white-space: nowrap; }
+    .readout b { color: #E9F1FF; font-weight: 500; }
+    .amber { color: #FFB547; }
+    .hint { position: absolute; right: 16px; top: 64px; width: 280px; padding: 14px 16px; z-index: 3; font-size: 13px; line-height: 1.5; color: #A9B8D0; }
+    .hint .lbl { display: block; margin-bottom: 6px; }
+
+    /* dossier */
+    .dossier { position: absolute; right: 16px; top: 16px; bottom: 108px; width: 390px; display: flex; flex-direction: column; z-index: 4; animation: slideIn .4s cubic-bezier(.2,.7,.2,1) both; }
+    .ds-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px 12px 18px; border-bottom: 1px solid rgba(120,170,255,.1); }
+    .ds-id { font-size: 11px; letter-spacing: .1em; color: #9FB0CC; }
+    .ds-x { margin-left: auto; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #9FB0CC; cursor: pointer; }
+    .ds-x:hover { color: #fff; background: rgba(120,170,255,.1); }
+    .ds-body { flex: 1; padding: 14px 18px 16px; }
+    .ds-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 6px; }
+    .ds-title .h2 { font-size: 28px; }
+    .ds-title b { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 18px; font-weight: 500; color: #fff; }
+    .frame { position: relative; margin-top: 14px; width: 100%; aspect-ratio: 16 / 10; max-width: 100%; }
+    .fbox { position: absolute; left: 36%; top: 27%; width: 33%; height: 40%; box-shadow: inset 0 0 0 1.5px #5CE1FF, 0 0 0 1px rgba(3,8,20,.6); }
+    .fbox b { position: absolute; left: -1px; top: -19px; padding: 2px 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; letter-spacing: .06em; color: #030814; background: #5CE1FF; white-space: nowrap; }
+    .f-tl { position: absolute; left: 8px; top: 8px; padding: 2px 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; color: #E6ECF5; background: rgba(3,8,20,.7); }
+    .f-br { position: absolute; right: 8px; bottom: 8px; }
+    .f-scale { position: absolute; left: 8px; bottom: 10px; display: flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; color: #E6ECF5; }
+    .f-scale i { width: 40px; height: 4px; border: 1px solid #E6ECF5; border-top: 0; }
+    .f-cross { position: absolute; left: 52.5%; top: 47%; width: 18px; height: 18px; transform: translate(-50%, -50%); }
+    .f-cross::before, .f-cross::after { content: ''; position: absolute; background: rgba(255,255,255,.7); }
+    .f-cross::before { left: 50%; top: 0; bottom: 0; width: 1px; }
+    .f-cross::after { top: 50%; left: 0; right: 0; height: 1px; }
+    .conf { margin-top: 16px; }
+    .conf-top { display: flex; justify-content: space-between; align-items: center; }
+    .conf-bar { position: relative; height: 6px; margin-top: 8px; background: rgba(120,170,255,.12); }
+    .conf-bar b { display: block; height: 100%; background: linear-gradient(90deg, #2F6FE0, #5CE1FF); }
+    .conf-bar i { position: absolute; left: 50%; top: -4px; width: 1px; height: 14px; background: #FFB547; }
+    .conf-note { margin-top: 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; color: #62738F; text-transform: uppercase; }
+    .kv { margin-top: 14px; border-top: 1px solid rgba(120,170,255,.1); }
+    .kv-row { display: grid; grid-template-columns: 112px minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 32px; border-bottom: 1px solid rgba(120,170,255,.06); }
+    .kv-row span { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #62738F; }
+    .kv-row b { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 400; color: #E6ECF5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .prov { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; padding: 10px 12px; font-size: 12.5px; line-height: 1.5; color: #E8CFA5; background: rgba(255,181,71,.06); box-shadow: inset 0 0 0 1px rgba(255,181,71,.25); }
+    .prov .dia { margin-top: 5px; }
+    .ds-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px 18px 16px; border-top: 1px solid rgba(120,170,255,.1); }
+    .ds-actions .wide { grid-column: 1 / -1; }
+
+    /* timeline */
+    .tl { position: absolute; left: 16px; right: 16px; bottom: 16px; height: 76px; display: flex; align-items: center; gap: 18px; padding: 0 16px 0 14px; z-index: 5; }
+    .tl-play { width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border: 0; background: #2F6FE0; color: #fff; cursor: pointer; clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px)); }
+    .tl-play:hover { background: #4C88F5; }
+    .tl-time { flex: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+    .tl-time b { font-size: 18px; font-weight: 500; color: #fff; font-variant-numeric: tabular-nums; }
+    .tl-time span { margin-left: 6px; font-size: 12px; color: #7F90AD; }
+    .tl-time em { display: block; margin-top: 2px; font-style: normal; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: #53637D; }
+    .tl-track { position: relative; flex: 1; height: 44px; cursor: pointer; touch-action: none; }
+    .tl-rail { position: absolute; left: 0; right: 0; top: 21px; height: 2px; background: rgba(120,170,255,.18); }
+    .tl-fill { position: absolute; left: 0; top: 21px; height: 2px; width: 0; background: #FFB547; box-shadow: 0 0 8px rgba(255,181,71,.6); }
+    .tl-head { position: absolute; top: 10px; width: 2px; height: 24px; margin-left: -1px; background: #fff; box-shadow: 0 0 8px rgba(255,255,255,.6); }
+    .tl-ticks { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, rgba(120,170,255,.16) 0 1px, transparent 1px 10%); background-size: 100% 6px; background-repeat: no-repeat; background-position: 0 30px; }
+    .tl-tick { position: absolute; top: 2px; width: 18px; height: 18px; margin-left: -9px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; cursor: pointer; }
+    .tl-tick .dia { width: 9px; height: 9px; }
+    .tl-tick.on .dia { box-shadow: 0 0 0 3px rgba(92,225,255,.5); }
+    .tl-read { flex: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .08em; color: #7F90AD; white-space: nowrap; }
+    .tl-read b { color: #E9F1FF; font-weight: 500; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:missions-->
+  <!--TOPBAR:Missions|Mission twin-->
+
+  <main class="main">
+    <div class="stage">
+      <canvas class="gl" data-gl="twin"></canvas>
+      <div class="vignette"></div>
+      <div class="gl-labels" data-gl-labels="twin"></div>
+
+      <aside class="glass mis">
+        <div class="mis-head">
+          <div class="kicker" style="color: {{ pc.color }}"><i></i>{{ pc.name }} · {{ pc.long }}</div>
+          <h1 class="h1 mis-id">{{ pc.mission }}</h1>
+          <div class="mis-site">{{ pc.site }}</div>
+          <div class="meta" style="margin-top: 4px">{{ pc.date }} UTC · Rajkot AO</div>
+          <div class="mis-badges"><span class="badge b-sim">Simulated telemetry</span><span class="badge b-man">Manifest positions</span></div>
+        </div>
+        <div class="stats">
+          <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+            <div class="stat"><span class="lbl">{{ s.k }}</span><b class="{{ s.cls }}">{{ s.v }}</b></div>
+          </sc-for>
+        </div>
+        <div class="sect">
+          <span class="lbl">Layers</span>
+          <div class="layer-grid"><sc-for list="{{ layerList }}" as="l" hint-placeholder-count="4"><button class="ck {{ l.cls }}" onClick="{{ l.toggle }}"><i></i>{{ l.name }}</button></sc-for></div>
+        </div>
+        <div class="sect sect-row">
+          <span class="lbl">{{ listLbl }}</span>
+          <div class="segs"><sc-for list="{{ filters }}" as="f" hint-placeholder-count="3"><button class="{{ f.cls }}" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for></div>
+        </div>
+        <div class="scroll dl">
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+            <button class="drow {{ r.selCls }}" onClick="{{ r.pick }}">
+              <i class="dia {{ r.sevCls }}"></i>
+              <span style="min-width: 0"><span class="drow-t">{{ r.cls }}</span><span class="drow-s">{{ r.loc }}</span></span>
+              <span class="drow-c">{{ r.confStr }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </aside>
+
+      <div class="{{ ctlCls }}">
+        <div class="glass"><div class="segs"><sc-for list="{{ views }}" as="v" hint-placeholder-count="3"><button class="{{ v.cls }}" onClick="{{ v.pick }}">{{ v.name }}</button></sc-for></div></div>
+        <div class="glass">
+          <button class="zbtn" onClick="{{ zoomIn }}">+</button>
+          <button class="zbtn" onClick="{{ zoomOut }}">−</button>
+          <button class="zbtn" onClick="{{ resetView }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12a8 8 0 108-8H7"></path><path d="M9 1L6 4l3 3"></path></svg></button>
+        </div>
+      </div>
+
+      <sc-if value="{{ noSel }}" hint-placeholder-val="{{ false }}">
+        <div class="glass hint"><span class="lbl">Inspection dossier</span>Select a marker in the twin or a row in the list to open its dossier. Drag to orbit the site.</div>
+      </sc-if>
+
+      <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ true }}">
+        <aside class="glass dossier">
+          <div class="ds-head">
+            <span class="badge {{ det.sevBadge }}">{{ det.sevLabel }}</span>
+            <span class="mono ds-id">{{ det.id }}</span>
+            <button class="ds-x" onClick="{{ closeSel }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+          </div>
+          <div class="scroll ds-body">
+            <span class="lbl">Inspection dossier</span>
+            <div class="ds-title"><h2 class="h2">{{ det.cls }}</h2><b>{{ det.confStr }}</b></div>
+            <div class="frame thumb {{ det.thumb }}">
+              <span class="fbox"><b>{{ det.tag }}</b></span>
+              <span class="f-cross"></span>
+              <span class="f-tl">{{ det.frame }} · crop</span>
+              <span class="f-scale"><i></i>~2 m</span>
+              <span class="badge b-sim f-br">Sample frame</span>
+            </div>
+            <div class="conf">
+              <div class="conf-top"><span class="lbl">Model confidence</span><span class="chip {{ det.statusCls }}">{{ det.status }}</span></div>
+              <div class="conf-bar"><b style="width: {{ det.confW }}"></b><i></i></div>
+              <div class="conf-note">Amber mark = inference threshold 0.50</div>
+            </div>
+            <div class="kv">
+              <sc-for list="{{ det.kv }}" as="row" hint-placeholder-count="8">
+                <div class="kv-row"><span>{{ row.k }}</span><b>{{ row.v }}</b><sc-if value="{{ row.hasBadge }}" hint-placeholder-val="{{ false }}"><em class="badge b-man" style="font-style: normal">{{ row.badge }}</em></sc-if></div>
+              </sc-for>
+            </div>
+            <div class="prov"><i class="dia sev-warn"></i><span>Position comes from the flight manifest, not recorded GPS. Treat it as approximate, not survey-grade.</span></div>
+          </div>
+          <div class="ds-actions">
+            <button class="btn btn-primary wide">{{ det.primaryAction }}</button>
+            <button class="btn btn-ghost">{{ det.resolveLabel }}</button>
+            <button class="btn btn-ghost">Copy coordinates</button>
+          </div>
+        </aside>
+      </sc-if>
+
+      <div class="readout">DRONE <b data-hud="lat">22.30000° N</b> <b data-hud="lon">70.80000° E</b> · HDG <b data-hud="hdg">090°</b> <span class="amber">±APPROX.</span></div>
+
+      <div class="glass tl">
+        <button class="tl-play" onClick="{{ togglePlay }}">
+          <sc-if value="{{ isPlaying }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14"></rect><rect x="14" y="5" width="4" height="14"></rect></svg></sc-if>
+          <sc-if value="{{ notPlaying }}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"></path></svg></sc-if>
+        </button>
+        <div class="tl-time"><b data-hud="time">T+11:43</b><span>/ 14:20</span><em>Flight time · sample</em></div>
+        <div class="tl-track" onPointerDown="{{ trackDown }}">
+          <div class="tl-ticks"></div>
+          <div class="tl-rail"></div>
+          <div class="tl-fill" data-hud="prog"></div>
+          <sc-for list="{{ ticks }}" as="m" hint-placeholder-count="6">
+            <button class="tl-tick {{ m.selCls }}" style="left: {{ m.left }}" onClick="{{ m.pick }}"><i class="dia {{ m.cls }}"></i></button>
+          </sc-for>
+          <div class="tl-head" data-hud="head"></div>
+        </div>
+        <div class="segs"><sc-for list="{{ speeds }}" as="s" hint-placeholder-count="3"><button class="{{ s.cls }}" onClick="{{ s.pick }}">{{ s.name }}</button></sc-for></div>
+        <div class="tl-read">LANE <b data-hud="lane">7 / 7</b> · COVERAGE <b data-hud="cov">100%</b></div>
+        <a class="btn btn-primary" href="#">Generate report →</a>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', sel: 'DET-EN-01', filter: 'all', view: 'orbit', playing: false, speed: 1, ticks: [], layers: { terrain: true, path: true, dets: true, overlay: true } };
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, sel, filter, view, playing, speed, ticks, layers } = this.state;
+    const pc = D.P[pillar];
+    const all = pc.dets;
+    const q = all.find((x) => x.id === sel) || null;
+    const list = filter === 'all' ? all : all.filter((x) => x.sev === filter);
+    const rescue = pillar === 'rescue';
+    const pick = (k) => {
+      const first = D.P[k].dets[0].id;
+      this.setState({ pillar: k, sel: first, filter: 'all' });
+      if (this._twin) { this._twin.setPillar(k); this._twin.select(first); this.setState({ ticks: this._twin.markers() }); }
+    };
+    const blank = { id: '', cls: '', confStr: '', thumb: '', tag: '', frame: '', sevBadge: '', sevLabel: '', status: '', statusCls: '', confW: '0%', kv: [], primaryAction: '', resolveLabel: '' };
+    return {
+      pillars: this._pillarTabs(pillar, pick),
+      pc,
+      stats: [
+        { k: 'Frames', v: String(pc.frames), cls: '' },
+        { k: rescue ? 'Signatures' : 'Detections', v: all.length + ' priority', cls: '' },
+        { k: 'Critical', v: String(all.filter((x) => x.sev === 'crit').length), cls: 'crit' },
+        { k: 'Model', v: pc.model, cls: '' },
+      ],
+      layerList: [['terrain', 'Terrain'], ['path', rescue ? 'Search path' : 'Flight path'], ['dets', rescue ? 'Signatures' : 'Detections'], ['overlay', pc.overlay.replace(' overlay', '')]].map(([k, name]) => ({
+        name, cls: layers[k] ? 'on' : '', toggle: () => {
+          const next = Object.assign({}, this.state.layers, { [k]: !this.state.layers[k] });
+          this.setState({ layers: next });
+          if (this._twin) this._twin.setLayers(next);
+        },
+      })),
+      listLbl: rescue ? 'Heat signatures' : 'Detections',
+      filters: [['all', 'All'], ['crit', 'Crit'], ['warn', 'Warn']].map(([k, name]) => ({ name, cls: filter === k ? 'on' : '', pick: () => this.setState({ filter: k }) })),
+      rows: list.map((x) => ({ cls: x.cls, loc: x.loc, confStr: x.conf.toFixed(2), sevCls: x.sevCls, selCls: x.id === sel ? 'sel' : '', pick: () => this._select(x.id) })),
+      hasSel: !!q,
+      noSel: !q,
+      det: q ? {
+        id: q.id, cls: q.cls, confStr: q.conf.toFixed(2), thumb: pc.thumb, tag: q.cls.toUpperCase() + ' ' + q.conf.toFixed(2), frame: q.frame,
+        sevBadge: q.sev === 'crit' ? 'b-crit' : 'b-sim', sevLabel: q.sevLabel, status: q.status, statusCls: q.statusCls, confW: q.confPct + '%',
+        primaryAction: rescue ? 'Dispatch team' : 'Assign to crew', resolveLabel: rescue ? 'Confirm found' : 'Mark resolved',
+        kv: [
+          ['Location', q.loc], ['Latitude', q.lat, 'Manifest'], ['Longitude', q.lon, 'Manifest'],
+          ['World offset', 'E ' + q.offX + ' m · N ' + q.offZ + ' m'], ['Capture alt.', q.alt + ' AGL'], ['Heading', q.hdg],
+          ['Frame', q.frame + ' · RGB'], ['Model', pc.model], ['BBox xyxy', q.bbox.join(', ')], ['Detected', q.ago],
+        ].map(([k, v, badge]) => ({ k, v, badge: badge || '', hasBadge: !!badge })),
+      } : blank,
+      closeSel: () => this._select(null),
+      ctlCls: q ? 'ctl shifted' : 'ctl',
+      views: [['orbit', '3D'], ['top', 'Top'], ['follow', 'Follow']].map(([k, name]) => ({
+        name, cls: view === k ? 'on' : '', pick: () => { this.setState({ view: k }); if (this._twin) this._twin.setView(k); },
+      })),
+      zoomIn: () => this._twin && this._twin.zoom(0.8),
+      zoomOut: () => this._twin && this._twin.zoom(1.25),
+      resetView: () => { if (this._twin) this._twin.resetView(); this.setState({ view: 'orbit', sel: null }); },
+      isPlaying: playing,
+      notPlaying: !playing,
+      togglePlay: () => { if (!this._twin) return; const p = !this._twin.isPlaying(); this._twin.setPlaying(p); this.setState({ playing: p }); },
+      speeds: [1, 2, 4].map((s) => ({ name: s + '×', cls: speed === s ? 'on' : '', pick: () => { this.setState({ speed: s }); if (this._twin) this._twin.setSpeed(s); } })),
+      ticks: ticks.map((m) => ({
+        left: (m.frac * 100).toFixed(2) + '%', cls: m.sev === 'crit' ? 'sev-crit' : 'sev-warn', selCls: m.id === sel ? 'on' : '',
+        pick: () => { this._select(m.id, true); if (this._twin) this._twin.setTime(Math.min(1, m.frac + 0.01)); },
+      })),
+      trackDown: (e) => this._scrub(e),
+    };
+  }
+
+  _select(id, force) {
+    const next = !force && this.state.sel === id ? null : id;
+    this.setState({ sel: next });
+    if (this._twin) this._twin.select(next);
+  }
+
+  _scrub(e) {
+    if (!this._twin || (e.target && e.target.closest && e.target.closest('.tl-tick'))) return;
+    const track = e.currentTarget;
+    const set = (cx) => { const r = track.getBoundingClientRect(); this._twin.setTime((cx - r.left) / Math.max(1, r.width)); };
+    set(e.clientX);
+    const move = (ev) => set(ev.clientX);
+    const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._startClock();
+    this._boot(0);
+  }
+
+  componentWillUnmount() {
+    this._alive = false;
+    this._stopClock();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._twin) this._twin.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="twin"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    const hud = {};
+    ['lat', 'lon', 'hdg', 'lane', 'time', 'cov', 'prog', 'head'].forEach((k) => { hud[k] = document.querySelector('[data-hud="' + k + '"]'); });
+    const FLIGHT = 860;
+    this._twin = this._twinScene(this._engine(), canvas, {
+      pillar: this.state.pillar,
+      mode: 'mission',
+      labelsEl: document.querySelector('[data-gl-labels="twin"]'),
+      onPick: (id) => this._select(id, true),
+      onHud: (h) => {
+        ['lat', 'lon', 'hdg', 'lane'].forEach((k) => { if (hud[k]) hud[k].textContent = h[k]; });
+        const s = Math.round(h.frac * FLIGHT);
+        if (hud.time) hud.time.textContent = 'T+' + String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+        if (hud.cov) hud.cov.textContent = Math.round(h.cov) + '%';
+        const pct = (h.frac * 100).toFixed(2) + '%';
+        if (hud.prog) hud.prog.style.width = pct;
+        if (hud.head) hud.head.style.left = pct;
+        if (h.playing !== this.state.playing) this.setState({ playing: h.playing });
+      },
+    });
+    if (this._twin) {
+      this._twin.select(this.state.sel);
+      this.setState({ ticks: this._twin.markers() });
+    }
+    this._loop([this._twin]);
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

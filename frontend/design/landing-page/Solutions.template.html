@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+/*MARKETING_CSS*/
+
+    .hero { position: relative; height: 760px; overflow: hidden; background: #040B1C; }
+    .hero-copy { position: absolute; left: 48px; top: 140px; width: 540px; z-index: 3; }
+    .ptabs { position: absolute; left: 48px; bottom: 40px; z-index: 3; display: flex; gap: 12px; }
+    .ptab { width: 200px; padding: 14px 0 0; border: 0; border-top: 2px solid rgba(160,190,240,.18); background: none; text-align: left; cursor: pointer; color: #7F90AD; }
+    .ptab.on { color: #fff; border-top-color: currentColor; }
+    .ptab small { display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; }
+    .ptab span { display: block; margin-top: 4px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 116%; font-style: italic; font-weight: 600; font-size: 20px; text-transform: uppercase; }
+    .route { position: absolute; right: 48px; bottom: 46px; z-index: 3; }
+    .card-model { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin-top: 48px; }
+    .mc { padding: 18px 20px; }
+    .mc + .mc { border-left: 1px solid rgba(120,170,255,.1); }
+    .mc b { display: block; margin-top: 8px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 34px; color: #fff; font-variant-numeric: tabular-nums; }
+    .mc em { display: block; margin-top: 4px; font-style: normal; font-size: 12.5px; color: #8C9CB6; }
+    .model-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+    .step { padding: 22px; }
+    .step .n { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .16em; }
+    .step h3 { margin: 10px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 114%; font-weight: 600; font-size: 21px; color: #fff; }
+    .step p { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #A9B8D0; }
+    .outs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+    .out { padding: 0 0 22px; }
+    .out .thumb { width: 100%; height: 170px; }
+    .out h3 { margin: 18px 22px 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 116%; font-style: italic; font-weight: 700; font-size: 22px; text-transform: uppercase; color: #fff; }
+    .out p { margin: 10px 22px 0; font-size: 14px; line-height: 1.6; color: #A9B8D0; }
+    .limits { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 40px; }
+    .limits .warnbox { font-size: 14px; padding: 14px 16px; }
+  </style>
+</helmet>
+
+<div class="mk">
+  <!--MKNAV:solutions-->
+
+  <section class="hero">
+    <canvas class="gl" data-gl="twin"></canvas>
+    <div class="gl-labels" data-gl-labels="twin"></div>
+    <div class="mk-shade"></div>
+    <div class="hero-copy">
+      <div class="kicker" style="color: {{ p.color }}"><i></i>Solutions · {{ p.name }}</div>
+      <h1 class="mk-h1">{{ p.h1a }}<br><span style="color: {{ p.color }}">{{ p.h1b }}</span></h1>
+      <p class="mk-lede">{{ p.lede }}</p>
+      <div class="mk-cta"><a class="btn btn-primary" href="#">Request a {{ p.name }} pilot</a><a class="btn btn-ghost" href="#">See it in the demo</a></div>
+    </div>
+    <div class="ptabs">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3"><button class="ptab {{ t.cls }}" style="color: {{ t.color }}" onClick="{{ t.pick }}"><small>{{ t.idx }}</small><span>{{ t.name }}</span></button></sc-for>
+    </div>
+    <div class="route readout">ROUTE <b>/solutions/{{ p.key }}</b> · <span class="amber">SIMULATED TWIN</span></div>
+  </section>
+
+  <section class="mk-sec">
+    <div class="kicker"><i></i>01 / Model card</div>
+    <h2 class="mk-h2">Measured, not promised.</h2>
+    <p class="mk-p">Numbers below come from the training run of <span class="mono" style="color: #fff">{{ p.weights }}</span>, scored on its validation split after {{ p.epochs }} epochs. They are not field accuracy.</p>
+    <div class="panel card-model">
+      <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="6"><div class="mc"><span class="lbl">{{ m.k }}</span><b>{{ m.v }}</b><em>{{ m.note }}</em></div></sc-for>
+    </div>
+    <div class="model-meta">
+      <span class="lbl" style="margin-right: 6px">Classes</span>
+      <sc-for list="{{ classes }}" as="c" hint-placeholder-count="4"><span class="chip" style="color: #CFDAEE">{{ c.name }}</span></sc-for>
+      <span class="chip st-off">Dataset · {{ p.dataset }}</span>
+    </div>
+  </section>
+
+  <section class="mk-sec">
+    <div class="kicker"><i></i>02 / How a mission runs</div>
+    <h2 class="mk-h2">{{ p.flowTitle }}</h2>
+    <div class="steps">
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4"><div class="panel step"><div class="n" style="color: {{ p.color }}">{{ s.n }}</div><h3>{{ s.t }}</h3><p>{{ s.b }}</p></div></sc-for>
+    </div>
+  </section>
+
+  <section class="mk-sec">
+    <div class="kicker"><i></i>03 / What operators get</div>
+    <h2 class="mk-h2">From detection to decision.</h2>
+    <div class="outs">
+      <sc-for list="{{ outs }}" as="o" hint-placeholder-count="3"><div class="panel out"><div class="thumb {{ o.thumb }}"><span class="bbox"></span></div><h3>{{ o.t }}</h3><p>{{ o.b }}</p></div></sc-for>
+    </div>
+    <div class="limits">
+      <sc-for list="{{ limits }}" as="l" hint-placeholder-count="2"><div class="warnbox"><i class="dia sev-warn"></i><span>{{ l.t }}</span></div></sc-for>
+    </div>
+  </section>
+
+  <!--MKFOOT-->
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":2600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy' };
+  }
+
+  // Model facts copied from models/training/*/data.yaml, args.yaml and results.csv (final epoch).
+  _facts() {
+    return {
+      energy: {
+        h1a: 'Every panel,', h1b: 'inspected to the row.', weights: 'solar_best.pt', epochs: 15,
+        lede: 'Find cracked, soiled and covered panels across an entire PV plant from one flight, each finding pinned to its row and panel.',
+        m: [0.636, 0.372, 0.719, 0.573], split: [1880, 310, 90], classes: ['cover', 'crack', 'dust', 'normal'], dataset: 'Roboflow solar-panel v3 · private',
+        flowTitle: 'One flight over the array.',
+        steps: [['Plan', 'Lanes follow panel rows at 40–45 m with enough overlap to see every module.'], ['Fly & upload', 'RGB frames, plus thermal when fitted, upload with EXIF GPS or a flight manifest.'], ['Detect', 'solar_best.pt flags cracks, dust and cover obstructions with a confidence score.'], ['Act', 'Critical panels are assigned to crews and tracked until resolved.']],
+        limits: ['Hotspot detection needs a radiometric thermal payload; the current model reads RGB defects.', 'Precision and recall are validation-split figures from 15 epochs, not field-verified accuracy.'],
+      },
+      agri: {
+        h1a: 'See disease', h1b: 'before it spreads.', weights: 'agri_best.pt', epochs: 15,
+        lede: 'Spot leaf rust, blight, blast and brown spots early, see where they cluster, and estimate the affected area.',
+        m: [0.766, 0.449, 0.759, 0.708], split: [2770, 331, 332], classes: ['Blast', 'brownspots', 'leaf blight', 'leaf rust', 'others'], dataset: 'Roboflow crop-disease v1 · CC BY 4.0',
+        flowTitle: 'One sweep over the field.',
+        steps: [['Plan', 'A block is covered in parallel lanes; multispectral payloads fly lower for detail.'], ['Fly & upload', 'Frames upload with EXIF GPS; files without it are matched to the manifest.'], ['Detect', 'agri_best.pt classifies disease symptoms per frame and marks affected cells.'], ['Act', 'Zones are prioritised for scouting or spraying, and re-flown to track spread.']],
+        limits: ['The NDVI-style view is a visual aid, not a calibrated vegetation index.', 'Affected-area estimates depend on positions, which are approximate without RTK.'],
+      },
+      rescue: {
+        h1a: 'Find people', h1b: 'through the dark.', weights: 'thermal_best.pt', epochs: 15,
+        lede: 'Scan disaster zones with thermal cameras, detect people through darkness and debris, and put every signature on the responders’ map.',
+        m: [0.879, 0.455, 0.885, 0.824], split: [2008, 287, 571], classes: ['person'], dataset: 'Roboflow drone-thermal v4 · private',
+        flowTitle: 'One sweep over the search area.',
+        steps: [['Plan', 'Search lanes are flown low and slow over the response zone.'], ['Fly & stream', 'Thermal frames upload during or after the flight, with position from the aircraft or manifest.'], ['Detect', 'thermal_best.pt marks each person with a confidence score.'], ['Act', 'Targets are dispatched, confirmed and logged for the after-action report.']],
+        limits: ['The model detects people only; vehicle detection is planned.', 'A detection is a lead for responders, not a confirmed find.'],
+      },
+    };
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar } = this.state;
+    const P = D.P[pillar], F = this._facts()[pillar];
+    const [map50, map5095, prec, rec] = F.m;
+    return {
+      p: Object.assign({ key: pillar, name: P.name, color: P.color }, F),
+      tabs: ['energy', 'agri', 'rescue'].map((k) => ({
+        idx: D.P[k].idx, name: D.P[k].name, color: D.P[k].color, cls: k === pillar ? 'on' : '',
+        pick: () => { this.setState({ pillar: k }); if (this._twin) this._twin.setPillar(k); },
+      })),
+      metrics: [
+        ['mAP50', map50.toFixed(3), 'Validation split'],
+        ['mAP50-95', map5095.toFixed(3), 'Stricter IoU range'],
+        ['Precision', prec.toFixed(3), 'Share of boxes that were right'],
+        ['Recall', rec.toFixed(3), 'Share of objects found'],
+        ['Train images', F.split[0].toLocaleString('en-US'), F.split[1] + ' val · ' + F.split[2] + ' test'],
+        ['Base model', 'v8n', 'YOLOv8 nano · 640 px'],
+      ].map(([k, v, note]) => ({ k, v, note })),
+      classes: F.classes.map((name) => ({ name })),
+      steps: F.steps.map(([t, b], i) => ({ n: String(i + 1).padStart(2, '0'), t, b })),
+      outs: [
+        ['Inspection dossier', 'Frame crop, confidence, location and status for every finding.'],
+        ['3D digital twin', 'Findings on a model of the site, with flight path and coverage.'],
+        ['PDF & JSON report', 'Built from the session data, with the provenance statement included.'],
+      ].map(([t, b]) => ({ t, b, thumb: P.thumb })),
+      limits: F.limits.map((t) => ({ t })),
+    };
+  }
+
+  componentDidMount() { this._alive = true; this._boot(0); }
+  componentWillUnmount() { this._alive = false; if (this._raf) cancelAnimationFrame(this._raf); if (this._twin) this._twin.destroy(); }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="twin"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._twin = this._twinScene(this._engine(), canvas, { pillar: this.state.pillar, mode: 'overview', labelsEl: document.querySelector('[data-gl-labels="twin"]') });
+    this._loop([this._twin]);
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

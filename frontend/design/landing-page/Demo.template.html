@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .demo { position: relative; height: 900px; display: grid; grid-template-rows: 64px 34px minmax(0, 1fr); background: #030814; overflow: hidden; }
+    .pub { position: relative; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: rgba(4,11,28,.95); border-bottom: 1px solid rgba(120,170,255,.1); z-index: 5; }
+    .pub img { height: 34px; width: auto; display: block; }
+    .pub .acts { margin-left: auto; }
+    .banner { display: flex; align-items: center; justify-content: center; gap: 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #FFB547; background: repeating-linear-gradient(135deg, rgba(255,181,71,.12) 0 8px, rgba(255,181,71,.04) 8px 16px); border-bottom: 1px solid rgba(255,181,71,.25); z-index: 4; }
+    .stage { position: relative; min-height: 0; }
+    .tour { position: absolute; left: 24px; top: 24px; width: 380px; z-index: 4; padding: 20px 22px 18px; }
+    .tour .h2 { margin-top: 10px; font-size: 26px; }
+    .tour p { margin: 10px 0 0; font-size: 14.5px; line-height: 1.6; color: #A9B8D0; text-wrap: pretty; }
+    .dots { display: flex; gap: 6px; margin-top: 18px; }
+    .dots i { width: 22px; height: 3px; background: rgba(120,170,255,.2); }
+    .dots i.on { background: #5CE1FF; box-shadow: 0 0 8px #5CE1FF; }
+    .tour-acts { display: flex; gap: 8px; margin-top: 16px; }
+    .tour-acts .btn { flex: 1; }
+    .dossier { position: absolute; right: 24px; top: 24px; width: 320px; z-index: 4; padding: 14px 16px 16px; animation: slideIn .4s ease-out both; }
+    .dossier .thumb { width: 100%; aspect-ratio: 16 / 10; margin-top: 10px; }
+    .dossier .kvg { margin-top: 12px; }
+    .kpis { position: absolute; right: 24px; bottom: 24px; z-index: 4; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 420px; }
+    .kpi { padding: 12px 16px; }
+    .kpi + .kpi { border-left: 1px solid rgba(120,170,255,.1); }
+    .kpi b { display: block; margin-top: 4px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 26px; color: #fff; font-variant-numeric: tabular-nums; }
+    .ro { position: absolute; left: 24px; bottom: 24px; z-index: 4; }
+    .ro-lock { position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 4; display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #9FB0CC; }
+    .vign { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, rgba(3,8,20,0) 55%, rgba(3,8,20,.75) 100%); }
+  </style>
+</helmet>
+
+<div class="demo">
+  <header class="pub">
+    <span class="lockup"><img src="logo-mark.png" alt=""><b>Aerolytics</b></span>
+    <span class="badge b-sim">Public demo</span>
+    <div class="switch">
+      <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="3">
+        <button class="seg {{ p.cls }}" onClick="{{ p.pick }}"><i class="dia" style="background: {{ p.color }}"></i><small>{{ p.idx }}</small>{{ p.name }}</button>
+      </sc-for>
+    </div>
+    <div class="acts">
+      <a class="btn btn-ghost" href="#">Sign in</a>
+      <a class="btn btn-primary" href="#">Request a pilot</a>
+    </div>
+  </header>
+  <div class="banner"><i class="dia sev-warn"></i>Read-only demonstration · simulated telemetry and sample detections · nothing you do here is saved</div>
+
+  <div class="stage">
+    <canvas class="gl" data-gl="twin"></canvas>
+    <div class="vign"></div>
+    <div class="gl-labels" data-gl-labels="twin"></div>
+
+    <section class="glass tour">
+      <div class="kicker" style="color: {{ pc.color }}"><i></i>Guided tour · step {{ stepNo }} of {{ stepTotal }}</div>
+      <h2 class="h2">{{ step.title }}</h2>
+      <p>{{ step.body }}</p>
+      <div class="dots"><sc-for list="{{ dots }}" as="d" hint-placeholder-count="5"><i class="{{ d.cls }}"></i></sc-for></div>
+      <div class="tour-acts">
+        <button class="btn btn-ghost" onClick="{{ prev }}" disabled="{{ isFirst }}">Back</button>
+        <sc-if value="{{ notLast }}" hint-placeholder-val="{{ true }}"><button class="btn btn-primary" onClick="{{ next }}">Next</button></sc-if>
+        <sc-if value="{{ isLast }}" hint-placeholder-val="{{ false }}"><a class="btn btn-primary" href="#">Request a pilot</a></sc-if>
+      </div>
+    </section>
+
+    <sc-if value="{{ showDossier }}" hint-placeholder-val="{{ false }}">
+      <section class="glass dossier">
+        <div style="display: flex; justify-content: space-between; align-items: center"><span class="badge b-crit">{{ det.sevLabel }}</span><span class="meta">{{ det.id }}</span></div>
+        <div class="thumb {{ pc.thumb }}"><span class="bbox"></span></div>
+        <div class="kvg">
+          <div><span class="lbl">Class</span><b>{{ det.cls }}</b></div>
+          <div><span class="lbl">Confidence</span><b>{{ det.confStr }}</b></div>
+          <div><span class="lbl">Location</span><b>{{ det.loc }}</b></div>
+          <div><span class="lbl">Position</span><b class="amber">Approx. · manifest</b></div>
+        </div>
+      </section>
+    </sc-if>
+
+    <div class="glass kpis">
+      <div class="kpi"><span class="lbl">{{ kLabel }}</span><b data-hud="visible">0</b></div>
+      <div class="kpi"><span class="lbl">Critical</span><b class="crit">{{ critN }}</b></div>
+      <div class="kpi"><span class="lbl">Coverage</span><b data-hud="cov">0%</b></div>
+    </div>
+    <div class="ro readout">DRONE <b data-hud="lat">22.30000° N</b> <b data-hud="lon">70.80000° E</b> <span class="amber">±APPROX.</span></div>
+    <div class="glass ro-lock"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="11" width="14" height="10"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg>Editing, exports and dispatch need an account</div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', step: 0 };
+  }
+
+  _steps(pillar) {
+    const r = pillar === 'rescue';
+    return [
+      { title: 'A drone flies the survey', body: 'The aircraft sweeps the site in parallel lanes. In this demo its route comes from a flight manifest, so the dashed amber path is marked as simulated.', view: 'follow', play: true },
+      { title: r ? 'AI finds heat signatures' : 'AI finds the problems', body: r ? 'A thermal model flags people through darkness and debris. Each signature appears as a marker the moment its frame is processed.' : 'A pillar-specific model checks every frame. Defects appear as markers the moment the drone passes over them.', view: 'orbit', play: true },
+      { title: 'Every detection has a place', body: 'Pixel boxes are projected onto the site, so each finding sits where it was seen. Positions here are approximate, never survey-grade.', view: 'orbit', select: true },
+      { title: 'Inspect the evidence', body: 'Operators open a dossier with the frame crop, confidence and location, then assign a crew or confirm the find.', view: 'top', select: true, dossier: true },
+      { title: 'Turn it into action', body: 'Missions become PDF and JSON reports built from the session data, with the data-provenance statement included. Bring this to your own site with a pilot deployment.', view: 'orbit' },
+    ];
+  }
+
+  _applyStep(i, pillar) {
+    const tw = this._twin;
+    if (!tw) return;
+    const s = this._steps(pillar)[i];
+    const D = this._data();
+    tw.setView(s.view);
+    tw.select(s.select ? D.P[pillar].dets[0].id : null);
+    if (s.play) { tw.setPlaying(true); } else { tw.setPlaying(false); tw.setTime(1); }
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, step } = this.state;
+    const pc = D.P[pillar];
+    const steps = this._steps(pillar);
+    const s = steps[step];
+    const q = pc.dets[0];
+    const go = (i) => { this.setState({ step: i }); this._applyStep(i, pillar); };
+    return {
+      pillars: this._pillarTabs(pillar, (k) => { this.setState({ pillar: k, step: 0 }); if (this._twin) { this._twin.setPillar(k); this._applyStep(0, k); } }),
+      pc,
+      step: s,
+      stepNo: step + 1,
+      stepTotal: steps.length,
+      dots: steps.map((_, i) => ({ cls: i <= step ? 'on' : '' })),
+      isFirst: step === 0,
+      isLast: step === steps.length - 1,
+      notLast: step < steps.length - 1,
+      prev: () => go(Math.max(0, step - 1)),
+      next: () => go(Math.min(steps.length - 1, step + 1)),
+      showDossier: !!s.dossier,
+      det: { id: q.id, cls: q.cls, confStr: q.conf.toFixed(2), loc: q.loc, sevLabel: q.sevLabel },
+      kLabel: pillar === 'rescue' ? 'Signatures' : 'Detections',
+      critN: pc.dets.filter((x) => x.sev === 'crit').length,
+    };
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._boot(0);
+  }
+
+  componentWillUnmount() {
+    this._alive = false;
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._twin) this._twin.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="twin"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    const hud = {};
+    ['lat', 'lon', 'cov', 'visible'].forEach((k) => { hud[k] = document.querySelector('[data-hud="' + k + '"]'); });
+    this._twin = this._twinScene(this._engine(), canvas, {
+      pillar: this.state.pillar, mode: 'mission', labelsEl: document.querySelector('[data-gl-labels="twin"]'),
+      onPick: () => {},
+      onHud: (h) => {
+        if (hud.lat) hud.lat.textContent = h.lat;
+        if (hud.lon) hud.lon.textContent = h.lon;
+        if (hud.cov) hud.cov.textContent = Math.round(h.cov) + '%';
+        if (hud.visible) hud.visible.textContent = String(h.visible);
+        if (!h.playing && this._steps(this.state.pillar)[this.state.step].play && this._twin) this._twin.setPlaying(true);
+      },
+    });
+    this._applyStep(this.state.step, this.state.pillar);
+    this._loop([this._twin]);
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

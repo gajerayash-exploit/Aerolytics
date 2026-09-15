@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .cols { display: grid; grid-template-columns: minmax(0, 7.7fr) minmax(0, 4.3fr); gap: 14px; min-height: 0; }
+    .fmt { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .12em; color: #030814; background: #CFDAEE; }
+    .fmt.json { background: #7FB2FF; }
+    .sched { grid-template-columns: minmax(0, 1fr) 150px 110px 34px; padding: 12px 16px; cursor: default; }
+    .toggle { width: 34px; height: 18px; position: relative; border: 0; padding: 0; background: rgba(120,170,255,.18); cursor: pointer; }
+    .toggle i { position: absolute; left: 3px; top: 3px; width: 12px; height: 12px; background: #7F90AD; transition: left .2s, background .2s; }
+    .toggle.on { background: rgba(92,225,255,.3); }
+    .toggle.on i { left: 19px; background: #5CE1FF; }
+    .pv { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    .pv-stage { display: flex; justify-content: center; padding: 16px 0; background: #0A1224; border-bottom: 1px solid rgba(120,170,255,.1); }
+    .mini { width: 250px; height: 330px; padding: 16px 16px 12px; background: #F4F6FA; color: #16213A; box-shadow: 0 14px 30px rgba(0,0,0,.45); overflow: hidden; }
+    .mini-h { display: flex; align-items: center; gap: 6px; padding-bottom: 6px; border-bottom: 1.5px solid #2F6FE0; }
+    .mini-h img { width: 14px; }
+    .mini-h b { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-size: 9px; font-weight: 700; text-transform: uppercase; color: #0B1530; }
+    .mini-h span { margin-left: auto; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 6px; letter-spacing: .1em; color: #6A7892; text-transform: uppercase; }
+    .mini-t { margin-top: 10px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 116%; font-style: italic; font-weight: 700; font-size: 13px; line-height: 1.05; text-transform: uppercase; color: #0B1530; }
+    .mini-p { margin-top: 8px; padding: 5px 6px; font-size: 6.5px; line-height: 1.45; color: #4A3712; background: #FFF6E6; box-shadow: inset 2px 0 0 #D98E12; }
+    .mini-k { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 8px; border: 1px solid #D5DBE6; }
+    .mini-k div { padding: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 5.5px; color: #6A7892; text-transform: uppercase; }
+    .mini-k div + div { border-left: 1px solid #D5DBE6; }
+    .mini-k b { display: block; margin-top: 2px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-size: 11px; color: #0B1530; }
+    .mini-map { height: 88px; margin-top: 8px; border: 1px solid #D5DBE6; background: repeating-linear-gradient(0deg, transparent 0 9px, rgba(217,142,18,.7) 9px 10px), repeating-linear-gradient(90deg, #E9EDF4 0 16px, #B9C7E3 16px 30px); }
+    .mini-rows { margin-top: 8px; }
+    .mini-rows i { display: block; height: 5px; margin-bottom: 4px; background: #DDE2EB; }
+    .pv-body { flex: 1; }
+    .pv-acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px 16px 14px; border-top: 1px solid rgba(120,170,255,.1); }
+    .pv-acts .wide { grid-column: 1 / -1; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:reports-->
+  <!--TOPBAR:Command center|Reports-->
+
+  <main class="main">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <div class="kicker"><i></i>Reports archive</div>
+          <h1 class="h1" style="margin-top: 10px">Reports</h1>
+        </div>
+        <div class="meta">{{ count }} generated · {{ schedCount }} schedules · sample</div>
+        <div class="acts">
+          <div class="segs"><sc-for list="{{ formats }}" as="f" hint-placeholder-count="3"><button class="{{ f.cls }}" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for></div>
+          <button class="btn btn-primary">+ Generate report</button>
+        </div>
+      </div>
+
+      <div class="cols">
+        <section class="panel">
+          <div class="tabs"><sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2"><button class="tab {{ t.cls }}" onClick="{{ t.pick }}">{{ t.name }}<em>{{ t.n }}</em></button></sc-for></div>
+          <sc-if value="{{ isGen }}" hint-placeholder-val="{{ true }}">
+            <div class="scroll" style="flex: 1">
+              <table class="tbl">
+                <thead><tr><th>Report</th><th>Mission</th><th>Pillar</th><th>Format</th><th>Size</th><th>Telemetry</th><th>Generated (UTC)</th><th>By</th><th>Status</th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ rows }}" as="r" hint-placeholder-count="10">
+                    <tr class="{{ r.selCls }}" onClick="{{ r.pick }}">
+                      <td style="color: #fff">{{ r.id }}</td>
+                      <td>{{ r.mission }}</td>
+                      <td><span class="chip {{ r.chip }}">{{ r.pillarName }}</span></td>
+                      <td><span class="fmt {{ r.fmtCls }}">{{ r.fmt }}</span></td>
+                      <td>{{ r.size }}</td>
+                      <td><span class="badge {{ r.tcls }}">{{ r.tele }}</span></td>
+                      <td>{{ r.date }}</td>
+                      <td>{{ r.by }}</td>
+                      <td><span class="chip {{ r.stCls }}">{{ r.status }}</span></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isSched }}" hint-placeholder-val="{{ false }}">
+            <div class="scroll" style="flex: 1">
+              <sc-for list="{{ schedules }}" as="s" hint-placeholder-count="4">
+                <div class="li sched">
+                  <span style="min-width: 0"><span class="li-t">{{ s.name }}</span><span class="li-s">{{ s.scope }} · to {{ s.to }}</span></span>
+                  <span><span class="lbl">Cadence</span><span class="li-s" style="color: #CFDAEE">{{ s.cadence }}</span></span>
+                  <span><span class="lbl">Next run</span><span class="li-s" style="color: #CFDAEE">{{ s.next }}</span></span>
+                  <button class="toggle {{ s.cls }}" onClick="{{ s.toggle }}"><i></i></button>
+                </div>
+              </sc-for>
+            </div>
+            <div class="note">Scheduled delivery needs an email or webhook integration · not connected in the demo</div>
+          </sc-if>
+        </section>
+
+        <section class="panel pv">
+          <div class="ph"><span class="lbl strong">Preview · {{ cur.id }}</span><span class="fmt {{ cur.fmtCls }}">{{ cur.fmt }}</span></div>
+          <div class="pv-stage">
+            <div class="mini">
+              <div class="mini-h"><img src="logo-mark.png" alt=""><b>Aerolytics</b><span>{{ cur.pillarName }} report</span></div>
+              <div class="mini-t">{{ cur.site }}</div>
+              <div class="mini-p"><b>Data provenance.</b> Telemetry {{ cur.teleLower }}. Coordinates approximate. Demo weights, not validated field measurements.</div>
+              <div class="mini-k"><div>Frames<b>{{ cur.frames }}</b></div><div>Crit<b>{{ cur.crit }}</b></div><div>Total<b>{{ cur.total }}</b></div><div>Cov.<b>{{ cur.coverage }}%</b></div></div>
+              <div class="mini-map"></div>
+              <div class="mini-rows"><i style="width: 100%"></i><i style="width: 92%"></i><i style="width: 96%"></i><i style="width: 80%"></i></div>
+            </div>
+          </div>
+          <div class="scroll pv-body">
+            <sc-for list="{{ details }}" as="d" hint-placeholder-count="6"><div class="kvl-row"><span>{{ d.k }}</span><b>{{ d.v }}</b><i></i></div></sc-for>
+          </div>
+          <div class="pv-acts">
+            <a class="btn btn-primary wide" href="#">Open full report →</a>
+            <button class="btn btn-ghost">Download · simulated</button>
+            <button class="btn btn-ghost">Copy share link</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', fmt: 'all', tab: 'gen', sel: null, off: [] };
+  }
+
+  _reports() {
+    const D = this._data();
+    const out = [];
+    D.missionsAll.filter((m) => m.status === 'Complete').forEach((m, i) => {
+      const parts = m.det.split(' / ');
+      ['PDF', 'JSON'].forEach((fmt, j) => {
+        if (j === 1 && i % 2) return;
+        out.push({
+          id: 'RPT-' + m.id.slice(-4) + '-' + (j ? 'J' : 'P'), mission: m.id, pillar: m.pillar, fmt, site: m.site,
+          size: fmt === 'PDF' ? (0.9 + (i % 4) * 0.12).toFixed(1) + ' MB · 2 p' : (5 + (i % 5)) + ' KB',
+          tele: m.tele, tcls: m.tcls, date: m.date, by: m.operator, frames: m.frames, coverage: m.coverage,
+          crit: parts[0] || '0', total: parts[1] || '0',
+          status: i === 3 && j === 0 ? 'Superseded' : 'Ready',
+        });
+      });
+    });
+    return out;
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, fmt, tab, sel, off } = this.state;
+    const all = this._reports();
+    const rows = all.filter((r) => fmt === 'all' || r.fmt.toLowerCase() === fmt);
+    const cur0 = all.find((r) => r.id === sel) || rows[0] || all[0];
+    const deco = (r) => Object.assign({}, r, {
+      chip: D.P[r.pillar].chip, pillarName: D.P[r.pillar].name, fmtCls: r.fmt === 'JSON' ? 'json' : '',
+      stCls: r.status === 'Ready' ? 'st-resolved' : 'st-off', teleLower: r.tele.toLowerCase() === 'exif' ? 'from EXIF GPS' : r.tele.toLowerCase(),
+    });
+    const cur = deco(cur0);
+    const schedules = [
+      ['weekly-solar', 'Weekly solar summary', 'Energy · all solar sites', 'Every Mon · 09:00 IST', '21 Sep 2026 09:00'],
+      ['agri-disease', 'Disease spread digest', 'Agri · Kalawad Rd blocks', 'Every 3 days · 07:00 IST', '17 Sep 2026 07:00'],
+      ['rescue-afteraction', 'After-action report', 'Rescue · on mission close', 'On mission complete', 'Event-driven'],
+      ['monthly-exec', 'Monthly operations pack', 'All pillars · PDF', '1st of month · 10:00 IST', '01 Oct 2026 10:00'],
+    ];
+    return {
+      pillars: this._pillarTabs(pillar, (k) => { const r = all.find((x) => x.pillar === k); this.setState({ pillar: k, sel: r ? r.id : sel }); }),
+      count: all.length,
+      schedCount: schedules.length,
+      formats: [['all', 'All'], ['pdf', 'PDF'], ['json', 'JSON']].map(([k, name]) => ({ name, cls: fmt === k ? 'on' : '', pick: () => this.setState({ fmt: k }) })),
+      tabs: [['gen', 'Generated', rows.length], ['sched', 'Scheduled', schedules.length]].map(([k, name, n]) => ({ name, n, cls: tab === k ? 'on' : '', pick: () => this.setState({ tab: k }) })),
+      isGen: tab === 'gen', isSched: tab === 'sched',
+      rows: rows.map((r) => Object.assign(deco(r), { selCls: r.id === cur.id ? 'sel' : '', pick: () => this.setState({ sel: r.id }) })),
+      schedules: schedules.map(([key, name, scope, cadence, next]) => ({
+        name, scope, cadence, next, to: '[DISTRIBUTION LIST]', cls: off.indexOf(key) >= 0 ? '' : 'on',
+        toggle: () => this.setState({ off: off.indexOf(key) >= 0 ? off.filter((x) => x !== key) : off.concat(key) }),
+      })),
+      cur,
+      details: [
+        ['Mission', cur.mission], ['Site', cur.site], ['Generated', cur.date + ' UTC · ' + cur.by], ['Telemetry', cur.tele + ' · labelled in report'],
+        ['Detections', cur.crit + ' critical / ' + cur.total + ' total'], ['Checksum', 'SHA-256 computed on export'], ['Retention', '[RETENTION POLICY]'],
+      ].map(([k, v]) => ({ k, v })),
+    };
+  }
+
+  componentDidMount() { this._alive = true; this._startClock(); }
+  componentWillUnmount() { this._alive = false; this._stopClock(); }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

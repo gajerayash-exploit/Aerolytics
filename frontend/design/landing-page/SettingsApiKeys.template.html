@@ -1,0 +1,260 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+/*SETTINGS_CSS*/
+
+    .scopes { display: flex; gap: 4px; flex-wrap: wrap; }
+    .scopes .chip { color: #9FB0CC; height: 18px; font-size: 9.5px; letter-spacing: .06em; text-transform: none; }
+    .key { font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #fff; }
+    .wh { grid-template-columns: minmax(0, 1fr) auto auto; padding: 11px 18px; cursor: default; }
+    .ints { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 12px 16px 16px; }
+    .int { display: flex; flex-direction: column; gap: 6px; padding: 12px; box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); background: rgba(2,7,18,.45); }
+    .int-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .int b { font-size: 13.5px; font-weight: 500; color: #fff; }
+    .int span.d { font-size: 12px; line-height: 1.45; color: #7F90AD; }
+    .chart { position: relative; padding: 8px 14px 10px; }
+    .chart svg { display: block; overflow: visible; }
+    .ax { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; fill: #62738F; }
+    .tip { position: absolute; z-index: 5; padding: 7px 9px; pointer-events: none; transform: translate(-50%, calc(-100% - 8px)); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #E6ECF5; background: #081631; box-shadow: inset 0 0 0 1px rgba(120,170,255,.35); white-space: nowrap; }
+    .tip b { display: block; font-weight: 500; color: #fff; }
+    .code { padding: 12px 18px 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; line-height: 1.75; background: rgba(2,7,18,.7); border-top: 1px solid rgba(120,170,255,.08); }
+    .code div { white-space: pre; overflow: hidden; text-overflow: ellipsis; }
+    .k1 { color: #7FB2FF; } .k2 { color: #9BE15D; } .k3 { color: #FFB547; } .k4 { color: #7F90AD; }
+    .modal-bg { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: rgba(2,6,15,.72); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+    .modal { width: 520px; animation: rowIn .3s ease-out both; }
+    .newkey { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 10px 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; color: #fff; background: rgba(2,7,18,.8); box-shadow: inset 0 0 0 1px rgba(123,227,160,.45); }
+    .newkey span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .scope-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; margin-top: 6px; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:settings-->
+  <!--TOPBAR:Settings|API keys-->
+
+  <main class="main">
+    <div class="settings">
+      <!--SETTINGSNAV:api-keys-->
+      <div class="set-main">
+        <div class="page-head">
+          <div>
+            <div class="kicker"><i></i>Settings · developer</div>
+            <h1 class="h1" style="margin-top: 10px">API keys &amp; integrations</h1>
+          </div>
+          <div class="acts"><button class="btn btn-primary" onClick="{{ openCreate }}">+ Create API key</button></div>
+        </div>
+
+        <div class="set-cols">
+          <div class="scroll stack">
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">API keys</span><span class="badge b-sim">Sample keys · not valid</span></div>
+              <div style="margin-top: 10px">
+                <table class="tbl">
+                  <thead><tr><th>Name</th><th>Key</th><th>Scopes</th><th>Last used</th><th>Status</th><th></th></tr></thead>
+                  <tbody>
+                    <sc-for list="{{ keys }}" as="k" hint-placeholder-count="3">
+                      <tr>
+                        <td style="color: #fff">{{ k.name }}</td>
+                        <td><span class="key">{{ k.mask }}</span></td>
+                        <td><span class="scopes"><sc-for list="{{ k.scopes }}" as="s" hint-placeholder-count="2"><span class="chip">{{ s.name }}</span></sc-for></span></td>
+                        <td>{{ k.last }}</td>
+                        <td><span class="chip {{ k.stCls }}">{{ k.status }}</span></td>
+                        <td><button class="btn btn-danger btn-sm" onClick="{{ k.revoke }}" disabled="{{ k.revoked }}">Revoke</button></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div class="warnbox" style="margin: 12px 18px 16px"><i class="dia sev-warn"></i><span>The current backend (backend/main.py) does not check API keys yet. Key enforcement is planned before any public endpoint goes live.</span></div>
+            </section>
+
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Endpoint reference</span><span class="chip st-resolved">Implemented</span></div>
+              <p class="card-p" style="padding: 0 18px 10px">Runs the pillar's YOLO model on one uploaded frame and returns detections with telemetry.</p>
+              <div class="code">
+                <sc-for list="{{ codeLines }}" as="l" hint-placeholder-count="12"><div><span class="{{ l.c }}">{{ l.t }}</span></div></sc-for>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Webhooks</span><button class="btn btn-ghost btn-sm">+ Add endpoint</button></div>
+              <div style="margin-top: 10px">
+                <sc-for list="{{ hooks }}" as="h" hint-placeholder-count="2">
+                  <div class="li wh">
+                    <span style="min-width: 0"><span class="li-t" style="font-size: 13.5px; font-style: normal; font-family: 'IBM Plex Mono', monospace; text-transform: none">{{ h.url }}</span><span class="scopes" style="margin-top: 6px"><sc-for list="{{ h.events }}" as="e" hint-placeholder-count="2"><span class="chip">{{ e.name }}</span></sc-for></span></span>
+                    <span class="chip st-warn">Not verified</span>
+                    <button class="tgl {{ h.cls }}" onClick="{{ h.toggle }}"><i></i></button>
+                  </div>
+                </sc-for>
+              </div>
+            </section>
+          </div>
+
+          <div class="scroll stack">
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">API requests · last 14 days</span><span class="badge b-sim">Sample</span></div>
+              <div class="chart">
+                <svg width="470" height="150" viewBox="0 0 470 150">
+                  <sc-for list="{{ usage.grid }}" as="g" hint-placeholder-count="3">
+                    <line x1="34" x2="466" y1="{{ g.y }}" y2="{{ g.y }}" stroke="rgba(120,170,255,.1)"></line>
+                    <text class="ax" x="28" y="{{ g.ty }}" text-anchor="end">{{ g.label }}</text>
+                  </sc-for>
+                  <line x1="34" x2="466" y1="124" y2="124" stroke="rgba(120,170,255,.35)"></line>
+                  <sc-for list="{{ usage.bars }}" as="b" hint-placeholder-count="14">
+                    <g onMouseEnter="{{ b.hover }}" onMouseLeave="{{ clearTip }}">
+                      <rect x="{{ b.hx }}" y="8" width="{{ b.hw }}" height="116" fill="{{ b.hoverFill }}"></rect>
+                      <rect x="{{ b.x }}" y="{{ b.y }}" width="16" height="{{ b.h }}" fill="#3FB3E0"></rect>
+                    </g>
+                  </sc-for>
+                  <text class="ax" x="34" y="142">01 Sep</text><text class="ax" x="466" y="142" text-anchor="end">14 Sep</text>
+                </svg>
+                <sc-if value="{{ hasTip }}" hint-placeholder-val="{{ false }}"><div class="tip" style="left: {{ tip.left }}; top: {{ tip.top }}"><b>{{ tip.title }}</b>{{ tip.v }} requests</div></sc-if>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Integrations</span></div>
+              <div class="ints">
+                <sc-for list="{{ ints }}" as="i" hint-placeholder-count="6">
+                  <div class="int">
+                    <div class="int-top"><b>{{ i.name }}</b><span class="chip {{ i.cls }}">{{ i.status }}</span></div>
+                    <span class="d">{{ i.desc }}</span>
+                    <button class="btn btn-ghost btn-sm" disabled="{{ i.planned }}" style="margin-top: 4px">{{ i.action }}</button>
+                  </div>
+                </sc-for>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ showCreate }}" hint-placeholder-val="{{ false }}">
+      <div class="modal-bg">
+        <section class="panel modal">
+          <div class="ph"><span class="lbl strong">{{ modalTitle }}</span><button class="btn btn-ghost btn-sm" onClick="{{ closeCreate }}">Close</button></div>
+          <sc-if value="{{ notCreated }}" hint-placeholder-val="{{ true }}">
+            <div class="card-b">
+              <label class="field"><span class="lbl">Key name</span><span class="input"><input type="text" placeholder="e.g. Field upload station" onInput="{{ onName }}"></span></label>
+              <div class="field" style="margin-top: 12px"><span class="lbl">Scopes</span>
+                <div class="scope-grid"><sc-for list="{{ scopeOpts }}" as="s" hint-placeholder-count="4"><button class="ck {{ s.cls }}" onClick="{{ s.toggle }}"><i></i>{{ s.name }}</button></sc-for></div>
+              </div>
+              <div class="field" style="margin-top: 12px"><span class="lbl">Expires</span><div class="segs"><sc-for list="{{ expiry }}" as="x" hint-placeholder-count="3"><button class="{{ x.cls }}" onClick="{{ x.pick }}">{{ x.name }}</button></sc-for></div></div>
+              <button class="btn btn-primary" style="width: 100%; margin-top: 16px" onClick="{{ create }}">Create key</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ created }}" hint-placeholder-val="{{ false }}">
+            <div class="card-b">
+              <div class="warnbox"><i class="dia sev-warn"></i><span>Copy this key now. It will not be shown again. This preview generates a placeholder, not a working key.</span></div>
+              <div class="newkey"><span>{{ newKey }}</span><button class="btn btn-ghost btn-sm">Copy</button></div>
+              <button class="btn btn-go" style="width: 100%; margin-top: 14px" onClick="{{ closeCreate }}">Done</button>
+            </div>
+          </sc-if>
+        </section>
+      </div>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      pillar: 'energy', tip: null, showCreate: false, created: false, newName: '', newScopes: ['infer:write'], expiry: '90d',
+      revoked: [], hooksOn: ['critical'],
+      keys: [
+        { id: 'k1', name: 'Field upload station', mask: 'aero_demo_4f2a…••••', scopes: ['infer:write', 'missions:read'], last: '14 Sep 2026' },
+        { id: 'k2', name: 'Reporting dashboard', mask: 'aero_demo_9c11…••••', scopes: ['reports:read'], last: '12 Sep 2026' },
+        { id: 'k3', name: 'Telemetry bridge (test)', mask: 'aero_demo_07be…••••', scopes: ['telemetry:write'], last: 'Never' },
+      ],
+    };
+  }
+
+  renderVals() {
+    const { pillar, tip, showCreate, created, newScopes, expiry, revoked, hooksOn, keys } = this.state;
+    const counts = [120, 184, 96, 210, 260, 140, 60, 72, 310, 280, 344, 298, 356, 402];
+    const max = 450, PX = 34, PW = 432, slot = PW / counts.length, py = (v) => 124 - (v / max) * 110;
+    const SC = ['infer:write', 'missions:read', 'reports:read', 'telemetry:write'];
+    return {
+      pillars: this._pillarTabs(pillar, (k) => this.setState({ pillar: k })),
+      keys: keys.map((k) => ({
+        name: k.name, mask: k.mask, last: k.last, scopes: k.scopes.map((name) => ({ name })),
+        status: revoked.indexOf(k.id) >= 0 ? 'Revoked' : 'Active', stCls: revoked.indexOf(k.id) >= 0 ? 'st-off' : 'st-resolved',
+        revoked: revoked.indexOf(k.id) >= 0, revoke: () => this.setState({ revoked: this.state.revoked.concat(k.id) }),
+      })),
+      codeLines: [
+        ['k4', '# Request'],
+        ['k1', 'curl -X POST http://[API HOST]/api/v1/infer/energy \\'],
+        ['k1', '     -F "file=@solar_01.jpg"'],
+        ['k4', '# Response (shape from backend/main.py)'],
+        ['k4', '{'],
+        ['k2', '  "pillar": "energy",'],
+        ['k2', '  "filename": "solar_01.jpg",'],
+        ['k3', '  "telemetry": { "lat": 22.3001, "lng": 70.8001, "alt": 45.0, "heading": 90.0 },'],
+        ['k3', '  "detections": [ { "class": "crack", "confidence": 0.91, "bbox_xyxy": [412, 228, 538, 341] } ],'],
+        ['k3', '  "inference_time_ms": 38.4'],
+        ['k4', '}'],
+      ].map(([c, t]) => ({ c, t })),
+      hooks: [
+        ['critical', '[WEBHOOK URL]/aerolytics/critical', ['detection.critical']],
+        ['reports', '[WEBHOOK URL]/aerolytics/reports', ['mission.completed', 'report.ready']],
+      ].map(([key, url, events]) => ({
+        url, events: events.map((name) => ({ name })), cls: hooksOn.indexOf(key) >= 0 ? 'on' : '',
+        toggle: () => this.setState({ hooksOn: hooksOn.indexOf(key) >= 0 ? hooksOn.filter((x) => x !== key) : hooksOn.concat(key) }),
+      })),
+      usage: {
+        grid: [0, 200, 400].map((v) => ({ y: py(v).toFixed(1), ty: (py(v) + 3).toFixed(1), label: String(v) })),
+        bars: counts.map((v, i) => {
+          const x = PX + slot * i + (slot - 16) / 2, on = tip && tip.i === i;
+          return {
+            x: x.toFixed(1), y: py(v).toFixed(1), h: (124 - py(v)).toFixed(1), hx: (PX + slot * i).toFixed(1), hw: slot.toFixed(1),
+            hoverFill: on ? 'rgba(120,170,255,.1)' : 'transparent',
+            hover: () => this.setState({ tip: { i, left: (14 + x + 8) + 'px', top: (8 + py(v)) + 'px', title: String(i + 1).padStart(2, '0') + ' Sep 2026', v } }),
+          };
+        }),
+      },
+      hasTip: !!tip,
+      tip: tip || { left: '0px', top: '0px', title: '', v: '' },
+      clearTip: () => this.setState({ tip: null }),
+      ints: [
+        ['WebSocket telemetry', 'Demo stream', 'st-warn', 'Streams pose and events to Live ops. Demo stream only.', 'View stream', false],
+        ['MQTT gateway', 'Planned', 'st-off', 'Real aircraft telemetry via broker topics.', 'Configure', true],
+        ['Email / SMTP', 'Not connected', 'st-off', 'Alert and scheduled report delivery.', 'Connect', false],
+        ['PostGIS', 'Planned', 'st-off', 'Spatial store for sites, missions and detections.', 'Configure', true],
+        ['Object storage', 'Planned', 'st-off', 'Frames, crops and annotated imagery.', 'Configure', true],
+        ['Roboflow datasets', 'Linked in data.yaml', 'st-resolved', 'Training data sources for all three models.', 'View models', false],
+      ].map(([name, status, cls, desc, action, planned]) => ({ name, status, cls, desc, action, planned })),
+      showCreate, created, notCreated: !created,
+      modalTitle: created ? 'Key created' : 'Create API key',
+      openCreate: () => this.setState({ showCreate: true, created: false }),
+      closeCreate: () => this.setState({ showCreate: false, created: false }),
+      onName: (e) => this.setState({ newName: (e && e.target && e.target.value) || '' }),
+      scopeOpts: SC.map((s) => ({ name: s, cls: newScopes.indexOf(s) >= 0 ? 'on' : '', toggle: () => this.setState({ newScopes: newScopes.indexOf(s) >= 0 ? newScopes.filter((x) => x !== s) : newScopes.concat(s) }) })),
+      expiry: [['30d', '30 days'], ['90d', '90 days'], ['never', 'No expiry']].map(([k, name]) => ({ name, cls: expiry === k ? 'on' : '', pick: () => this.setState({ expiry: k }) })),
+      newKey: 'aero_demo_[GENERATED ON SERVER]',
+      create: () => this.setState({
+        created: true,
+        keys: this.state.keys.concat({ id: 'k' + (this.state.keys.length + 1), name: this.state.newName || 'Untitled key', mask: 'aero_demo_…••••', scopes: this.state.newScopes.length ? this.state.newScopes : ['missions:read'], last: 'Never' }),
+      }),
+    };
+  }
+
+  componentDidMount() { this._alive = true; this._startClock(); }
+  componentWillUnmount() { this._alive = false; this._stopClock(); }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

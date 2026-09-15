@@ -1,0 +1,5 @@
+path: C:/Users/rkgaj/OneDrive/Desktop/DaaS-Frolic/DaaS-Frolic/models/training/agri-crop-disease
+train: train/images
+val: valid/images
+test: test/images
+names: ['Blast', 'brownspots', 'leaf blight', 'leaf rust', 'others']

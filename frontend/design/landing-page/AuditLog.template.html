@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+/*SETTINGS_CSS*/
+
+    .audit { display: grid; grid-template-rows: 150px 42px minmax(0, 1fr); gap: 12px; min-height: 0; }
+    .pulse { position: relative; overflow: hidden; background: #040B1C; }
+    .pulse .ov { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7F90AD; }
+    .filters { display: flex; align-items: center; gap: 12px; }
+    .find { display: flex; align-items: center; gap: 8px; width: 260px; height: 38px; padding: 0 12px; background: rgba(2,7,18,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+    .find input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #fff; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; }
+    .body { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 12px; min-height: 0; }
+    .res { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+    .act { color: #fff; }
+    .detail { display: flex; flex-direction: column; }
+    .diff { margin: 0 16px; padding: 12px 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 1.7; background: rgba(2,7,18,.8); box-shadow: inset 0 0 0 1px rgba(120,170,255,.14); }
+    .diff div { white-space: pre; }
+    .minus { color: #FF8A63; } .plus { color: #7BE3A0; } .ctx { color: #7F90AD; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:settings-->
+  <!--TOPBAR:Settings|Audit log-->
+
+  <main class="main">
+    <div class="settings">
+      <!--SETTINGSNAV:audit-->
+      <div class="set-main">
+        <div class="page-head">
+          <div>
+            <div class="kicker"><i></i>Settings · compliance</div>
+            <h1 class="h1" style="margin-top: 10px">Audit log</h1>
+          </div>
+          <div class="meta">{{ shown }} of {{ total }} events · sample format</div>
+          <div class="acts"><span class="badge b-sim">Logging not connected</span><button class="btn btn-ghost">Export CSV</button></div>
+        </div>
+
+        <div class="audit">
+          <section class="panel pulse">
+            <canvas class="gl" data-gl="pulse"></canvas>
+            <div class="ov ov-tl">Events per hour · last 24 h · sample</div>
+            <div class="ov ov-tr" style="color: #CFDAEE">Peak {{ peak }} events · 14:00 UTC</div>
+          </section>
+
+          <div class="filters">
+            <label class="find"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#62738F" stroke-width="1.6"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="text" placeholder="Search action, actor or target" onInput="{{ onSearch }}"></label>
+            <div class="segs"><sc-for list="{{ actorF }}" as="f" hint-placeholder-count="4"><button class="{{ f.cls }}" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for></div>
+            <div class="segs"><sc-for list="{{ resultF }}" as="f" hint-placeholder-count="4"><button class="{{ f.cls }}" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for></div>
+          </div>
+
+          <div class="body">
+            <section class="panel">
+              <div class="scroll" style="flex: 1">
+                <table class="tbl">
+                  <thead><tr><th>Time (UTC)</th><th>Actor</th><th>Action</th><th>Target</th><th>Source</th><th>Result</th></tr></thead>
+                  <tbody>
+                    <sc-for list="{{ rows }}" as="r" hint-placeholder-count="10">
+                      <tr class="{{ r.selCls }}" onClick="{{ r.pick }}">
+                        <td>{{ r.time }}</td><td>{{ r.actor }}</td><td class="act">{{ r.action }}</td><td>{{ r.target }}</td><td>{{ r.source }}</td>
+                        <td><span class="res" style="color: {{ r.color }}"><i class="dia" style="background: {{ r.color }}"></i>{{ r.result }}</span></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div class="note">Retention follows organization settings · entries are append-only once logging is connected</div>
+            </section>
+
+            <section class="panel detail">
+              <div class="ph"><span class="lbl strong">Event detail</span><span class="res" style="color: {{ cur.color }}"><i class="dia" style="background: {{ cur.color }}"></i>{{ cur.result }}</span></div>
+              <div class="scroll" style="flex: 1">
+                <div class="pad"><div class="li-t">{{ cur.action }}</div><div class="li-s">{{ cur.time }} UTC · {{ cur.actor }}</div></div>
+                <sc-for list="{{ cur.kv }}" as="k" hint-placeholder-count="5"><div class="kvl-row"><span>{{ k.k }}</span><b>{{ k.v }}</b><i></i></div></sc-for>
+                <div class="pad" style="padding-bottom: 8px"><span class="lbl">Change</span></div>
+                <div class="diff"><sc-for list="{{ cur.diff }}" as="d" hint-placeholder-count="3"><div class="{{ d.cls }}">{{ d.t }}</div></sc-for></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', q: '', af: 'all', rf: 'all', sel: 0 };
+  }
+
+  _events() {
+    return [
+      ['14:32:07', 'Ops-1', 'person', 'mission.inspection.created', 'AER-EN-0143', 'Web', 'ok', ['  "status": null', '+ "status": "processing"']],
+      ['14:31:12', 'System', 'system', 'telemetry.fallback.used', 'AER-EN-0143 · manifest', 'Pipeline', 'warn', ['- "source": "exif"', '+ "source": "manifest"']],
+      ['14:05:40', 'System', 'system', 'inference.completed', 'AER-EN-0142 · 486 frames', 'Inference API', 'ok', ['+ "detections_total": 37', '+ "inference_time_ms": 38.4']],
+      ['13:58:40', 'Analyst-1', 'person', 'detection.status.updated', 'DET-EN-03', 'Web', 'ok', ['- "status": "New"', '+ "status": "Assigned"']],
+      ['13:41:02', 'aero_demo_…3f2a', 'api', 'report.exported', 'RPT-0142-J', 'API', 'ok', ['+ "format": "json"', '+ "provenance": "included"']],
+      ['12:20:55', 'Admin-1', 'person', 'member.role.changed', 'Pilot-1', 'Web', 'ok', ['- "role": "Viewer"', '+ "role": "Pilot"']],
+      ['11:48:19', 'Ops-1', 'person', 'mission.plan.exported', 'Rajkot Solar Park · 17 lanes', 'Web', 'ok', ['+ "entries": 765', '+ "altitude_m": 42']],
+      ['10:47:33', 'Ops-1', 'person', 'auth.login.failed', 'Ops-1', 'Web · [IP ADDRESS]', 'fail', ['+ "reason": "invalid_password"']],
+      ['10:47:51', 'Ops-1', 'person', 'auth.login.succeeded', 'Ops-1', 'Web · [IP ADDRESS]', 'ok', ['+ "mfa": false']],
+      ['09:15:00', 'System', 'system', 'aircraft.maintenance.due', 'QUAD-02 · motor 3', 'Fleet', 'warn', ['+ "motor_hours": 131', '  "limit": 130']],
+      ['08:02:44', 'Admin-1', 'person', 'apikey.created', 'aero_demo_…3f2a', 'Web', 'ok', ['+ "scopes": ["missions:read", "reports:read"]']],
+      ['07:30:12', 'aero_demo_…9c1d', 'api', 'inference.requested', 'agri · MS_0114.TIF', 'API', 'fail', ['+ "error": "key_revoked"']],
+    ].map(([time, actor, kind, action, target, source, result, diff], i) => ({ i, time, actor, kind, action, target, source, result, diff }));
+  }
+
+  renderVals() {
+    const { pillar, q, af, rf, sel } = this.state;
+    const all = this._events();
+    const ql = q.trim().toLowerCase();
+    const rows = all.filter((e) => (af === 'all' || e.kind === af) && (rf === 'all' || e.result === rf)
+      && (!ql || (e.action + ' ' + e.actor + ' ' + e.target).toLowerCase().indexOf(ql) >= 0));
+    const color = (r) => (r === 'ok' ? '#7BE3A0' : r === 'warn' ? '#FFB547' : '#FF6A3D');
+    const label = (r) => (r === 'ok' ? 'Success' : r === 'warn' ? 'Warning' : 'Failed');
+    const c0 = all[sel] || all[0];
+    return {
+      pillars: this._pillarTabs(pillar, (k) => this.setState({ pillar: k })),
+      total: all.length, shown: rows.length, peak: 9,
+      onSearch: (e) => this.setState({ q: (e && e.target && e.target.value) || '' }),
+      actorF: [['all', 'All'], ['person', 'People'], ['system', 'System'], ['api', 'API']].map(([k, name]) => ({ name, cls: af === k ? 'on' : '', pick: () => this.setState({ af: k }) })),
+      resultF: [['all', 'Any'], ['ok', 'OK'], ['warn', 'Warn'], ['fail', 'Failed']].map(([k, name]) => ({ name, cls: rf === k ? 'on' : '', pick: () => this.setState({ rf: k }) })),
+      rows: rows.map((e) => Object.assign({}, e, { result: label(e.result), color: color(e.result), selCls: e.i === c0.i ? 'sel' : '', pick: () => this.setState({ sel: e.i }) })),
+      cur: {
+        action: c0.action, time: c0.time, actor: c0.actor, result: label(c0.result), color: color(c0.result),
+        kv: [['Event ID', 'EVT-' + String(88210 + c0.i * 17)], ['Target', c0.target], ['Source', c0.source], ['Request ID', '[REQUEST ID]'], ['User agent', c0.kind === 'api' ? 'API client' : '[USER AGENT]']].map(([k, v]) => ({ k, v })),
+        diff: c0.diff.map((t) => ({ t, cls: t.charAt(0) === '+' ? 'plus' : t.charAt(0) === '-' ? 'minus' : 'ctx' })),
+      },
+    };
+  }
+
+  componentDidMount() { this._alive = true; this._startClock(); this._boot(0); }
+  componentWillUnmount() { this._alive = false; this._stopClock(); if (this._raf) cancelAnimationFrame(this._raf); }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="pulse"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._loop([this._pulseScene(this._engine(), canvas)]);
+  }
+
+  // 24 columns of hourly activity in a shallow perspective strip.
+  _pulseScene(K, canvas) {
+    const R = K.renderer(canvas, [0.016, 0.043, 0.11]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp } = K;
+    const counts = [1, 0, 0, 0, 1, 0, 1, 3, 4, 3, 5, 4, 3, 6, 9, 5, 4, 3, 2, 2, 1, 1, 0, 1];
+    let grow = 0;
+    return {
+      frame(t, dt) {
+        const asp = R.resize();
+        grow = Math.min(1, grow + dt * 0.8);
+        const eye = [0, 34, 92], M = K.camera(asp, eye, [0, 2, 0], 0.5);
+        R.begin(M, eye, 80, 220);
+        const ln = new Batch(), fill = new Batch();
+        const W = 100 * Math.min(1.6, asp / 4), step = W / 24;
+        for (let i = 0; i <= 24; i++) ln.line(-W / 2 + i * step, 0, -4, -W / 2 + i * step, 0, 4, [0.3, 0.55, 1, 0.12]);
+        ln.line(-W / 2, 0, 4, W / 2, 0, 4, [0.3, 0.55, 1, 0.3]);
+        counts.forEach((n, i) => {
+          const x = -W / 2 + (i + 0.5) * step, h = 0.4 + n * 2.4 * grow, s = step * 0.32;
+          const col = i === 14 ? COL.cyan : [0.25, 0.7, 0.88, 1];
+          const top = [[x - s, h, -s], [x + s, h, -s], [x + s, h, s], [x - s, h, s]];
+          fill.quad(top[0], top[1], top[2], top[3], a(col, 0.8));
+          fill.quad([x - s, 0, s], [x + s, 0, s], [x + s, h, s], [x - s, h, s], a(col, 0.3));
+          for (let k = 0; k < 4; k++) ln.line(top[k][0], 0, top[k][2], top[k][0], h, top[k][2], a(col, 0.3));
+        });
+        const scan = -W / 2 + ((t * 0.12) % 1) * W;
+        ln.line(scan, 0, 5, scan, 26, 5, a(COL.cyan, 0.35), a(COL.cyan, 0));
+        R.draw(fill, 'tris', 'alpha');
+        R.draw(ln, 'lines', 'add');
+      },
+    };
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

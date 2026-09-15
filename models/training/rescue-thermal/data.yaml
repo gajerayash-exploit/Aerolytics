@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['person']
+
+roboflow:
+  workspace: drone-thermal
+  project: drone-thermal-tm6qy
+  version: 4
+  license: Private
+  url: https://app.roboflow.com/drone-thermal/drone-thermal-tm6qy/4

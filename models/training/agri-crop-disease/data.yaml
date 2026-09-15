@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 5
+names: ['Blast', 'brownspots', 'leaf blight', 'leaf rust', 'others']
+
+roboflow:
+  workspace: unknown-ee6-s8rgp
+  project: crop-disease-srixo
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/unknown-ee6-s8rgp/crop-disease-srixo/dataset/1

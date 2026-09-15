@@ -1,0 +1,44 @@
+/* Generated from design/landing-page/SettingsApiKeys.template.html — scoped to .pg-settings-api-keys */
+.pg-settings-api-keys .scopes { display: flex; gap: 4px; flex-wrap: wrap; }
+.pg-settings-api-keys .scopes .chip { color: #9FB0CC; height: 18px; font-size: 9.5px; letter-spacing: .06em; text-transform: none; }
+.pg-settings-api-keys .key { font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #fff; }
+.pg-settings-api-keys .wh { grid-template-columns: minmax(0, 1fr) auto auto; padding: 11px 18px; cursor: default; }
+.pg-settings-api-keys .ints { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 12px 16px 16px; }
+.pg-settings-api-keys .int { display: flex; flex-direction: column; gap: 6px; padding: 12px; box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); background: rgba(2,7,18,.45); }
+.pg-settings-api-keys .int-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.pg-settings-api-keys .int b { font-size: 13.5px; font-weight: 500; color: #fff; }
+.pg-settings-api-keys .int span.d { font-size: 12px; line-height: 1.45; color: #7F90AD; }
+.pg-settings-api-keys .chart { position: relative; padding: 8px 14px 10px; }
+.pg-settings-api-keys .chart svg { display: block; overflow: visible; }
+.pg-settings-api-keys .ax { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; fill: #62738F; }
+.pg-settings-api-keys .tip { position: absolute; z-index: 5; padding: 7px 9px; pointer-events: none; transform: translate(-50%, calc(-100% - 8px)); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #E6ECF5; background: #081631; box-shadow: inset 0 0 0 1px rgba(120,170,255,.35); white-space: nowrap; }
+.pg-settings-api-keys .tip b { display: block; font-weight: 500; color: #fff; }
+.pg-settings-api-keys .code { padding: 12px 18px 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; line-height: 1.75; background: rgba(2,7,18,.7); border-top: 1px solid rgba(120,170,255,.08); }
+.pg-settings-api-keys .code div { white-space: pre; overflow: hidden; text-overflow: ellipsis; }
+.pg-settings-api-keys .k1 { color: #7FB2FF; }
+.pg-settings-api-keys .k2 { color: #9BE15D; }
+.pg-settings-api-keys .k3 { color: #FFB547; }
+.pg-settings-api-keys .k4 { color: #7F90AD; }
+.pg-settings-api-keys .modal-bg { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: rgba(2,6,15,.72); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.pg-settings-api-keys .modal { width: 520px; animation: rowIn .3s ease-out both; }
+.pg-settings-api-keys .newkey { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 10px 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; color: #fff; background: rgba(2,7,18,.8); box-shadow: inset 0 0 0 1px rgba(123,227,160,.45); }
+.pg-settings-api-keys .newkey span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pg-settings-api-keys .scope-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; margin-top: 6px; }
+
+/* Responsive adjustments for SettingsApiKeys */
+@media (max-width: 1024px) {
+  .pg-settings-api-keys .ints {
+    grid-template-columns: 1fr;
+  }
+  .pg-settings-api-keys .modal {
+    width: 92%;
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 640px) {
+  .pg-settings-api-keys .scope-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

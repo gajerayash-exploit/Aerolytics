@@ -1,0 +1,6 @@
+# Install PyTorch first for GPU: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+ultralytics>=8.3
+pillow>=10

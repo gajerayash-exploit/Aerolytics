@@ -1,0 +1,1175 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+    /* ===== Aerolytics "Night Ops" app shell (shared by all command-center screens) ===== */
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #030814; color: #E6ECF5; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #7FD4FF; text-decoration: none; }
+    a:hover { color: #C4EEFF; }
+    button { font: inherit; color: inherit; }
+    .mono { font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace; }
+    .num { font-variant-numeric: tabular-nums; }
+
+    .app { position: relative; display: grid; grid-template-columns: 76px minmax(0, 1fr); grid-template-rows: 64px minmax(0, 1fr); height: 900px; overflow: hidden; background: #030814; }
+    .app::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 20; background: repeating-linear-gradient(0deg, rgba(255,255,255,.014) 0 1px, transparent 1px 3px); }
+
+    /* rail */
+    .rail { grid-row: 1 / span 2; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 0 18px; background: #02060F; border-right: 1px solid rgba(120,170,255,.1); z-index: 6; }
+    .rail-logo { display: block; margin-bottom: 16px; }
+    .rail-logo img { width: 38px; height: auto; display: block; }
+    .rail-item { position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #62738F; }
+    .rail-item:hover { color: #CFDAEE; background: rgba(120,170,255,.06); }
+    .rail-item.on { color: #5CE1FF; background: rgba(92,225,255,.08); }
+    .rail-item.on::before { content: ''; position: absolute; left: -14px; top: 10px; bottom: 10px; width: 2px; background: #5CE1FF; box-shadow: 0 0 8px #5CE1FF; }
+    .rail-tip { position: absolute; left: 58px; top: 50%; transform: translateY(-50%); padding: 5px 9px; white-space: nowrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #E6ECF5; background: #081631; box-shadow: inset 0 0 0 1px rgba(120,170,255,.24); opacity: 0; pointer-events: none; transition: opacity .15s; z-index: 30; }
+    .rail-item:hover .rail-tip { opacity: 1; }
+    .rail-spacer { flex: 1; }
+    .avatar { width: 36px; height: 36px; margin-top: 10px; display: flex; align-items: center; justify-content: center; background: #0A1B3D; box-shadow: inset 0 0 0 1px rgba(92,225,255,.35); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #CFE0FF; }
+
+    /* logo lockup: mark and wordmark on one centred line */
+    .lockup { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+    /* zero-specificity defaults: a context rule such as .mk-foot img or .brand img still sets the size */
+    :where(.lockup) { height: 34px; }
+    :where(.lockup) img { height: 100%; width: auto; display: block; }
+    .lockup b { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 20px; line-height: 1; letter-spacing: .01em; color: #fff; white-space: nowrap; text-transform: none; }
+
+    /* top bar */
+    .top { grid-column: 2; position: relative; display: flex; align-items: center; gap: 16px; padding: 0 20px 0 24px; background: rgba(4,11,28,.92); border-bottom: 1px solid rgba(120,170,255,.1); z-index: 5; }
+    .crumbs { display: flex; align-items: center; gap: 8px; min-width: 230px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #62738F; white-space: nowrap; }
+    .crumbs b { color: #fff; font-weight: 500; }
+    .switch { position: relative; margin: 0 auto; flex-shrink: 0; display: flex; box-shadow: inset 0 0 0 1px rgba(120,170,255,.18); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); }
+    .seg { width: 136px; height: 40px; display: flex; align-items: center; gap: 9px; padding: 0 14px; border: 0; border-top: 2px solid transparent; background: transparent; cursor: pointer; color: #7F90AD; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 116%; font-style: italic; font-weight: 600; font-size: 15px; text-transform: uppercase; transition: color .2s, background .2s; }
+    .seg:hover { color: #CFDAEE; }
+    .seg small { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-style: normal; font-weight: 400; font-size: 10px; letter-spacing: .12em; color: #53637D; }
+    .seg.on { color: #fff; background: rgba(92,225,255,.1); border-top-color: #5CE1FF; }
+    .top-right { display: flex; flex-shrink: 0; align-items: center; gap: 12px; }
+    .search { display: flex; align-items: center; gap: 8px; width: 210px; height: 38px; padding: 0 10px 0 12px; background: rgba(2,7,18,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); color: #53637D; font-size: 13px; white-space: nowrap; overflow: hidden; }
+    .search span { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+    .search kbd { padding: 1px 5px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; color: #7F90AD; box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+    @media (max-width: 1680px) { .search { width: 38px; padding: 0; justify-content: center; } .search span, .search kbd { display: none; } }
+    .clock { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #CFDAEE; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .bell { position: relative; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #9FB0CC; box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); }
+    .bell b { position: absolute; top: -6px; right: -6px; min-width: 17px; height: 17px; padding: 0 4px; display: flex; align-items: center; justify-content: center; background: #FF6A3D; color: #fff; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; }
+    .main { grid-column: 2; position: relative; min-height: 0; overflow: hidden; }
+
+    /* buttons & badges */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; cursor: pointer; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); transition: background .2s, color .2s; }
+    .btn-sm { height: 32px; padding: 0 12px; font-size: 11px; }
+    .btn-primary { background: #2F6FE0; color: #fff; }
+    .btn-primary:hover { background: #4C88F5; color: #fff; }
+    .btn-ghost { background: rgba(120,170,255,.08); color: #CFE0FF; box-shadow: inset 0 0 0 1px rgba(120,170,255,.28); }
+    .btn-ghost:hover { background: rgba(120,170,255,.16); color: #fff; }
+    .btn-go { background: #1F9D62; color: #fff; }
+    .btn-go:hover { background: #28B573; color: #fff; }
+    .btn-danger { background: rgba(255,106,61,.1); color: #FF8A63; box-shadow: inset 0 0 0 1px rgba(255,106,61,.4); }
+    .btn[disabled] { opacity: .4; cursor: not-allowed; }
+    .badge { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+    .b-sim { color: #FFB547; box-shadow: inset 0 0 0 1px rgba(255,181,71,.45); background: repeating-linear-gradient(135deg, rgba(255,181,71,.18) 0 5px, rgba(255,181,71,.04) 5px 10px); }
+    .b-man { color: #7FB2FF; box-shadow: inset 0 0 0 1px rgba(127,178,255,.45); background: rgba(127,178,255,.08); }
+    .b-exif { color: #5CE1FF; box-shadow: inset 0 0 0 1px rgba(92,225,255,.45); background: rgba(92,225,255,.08); }
+    .b-live { color: #7BE3A0; box-shadow: inset 0 0 0 1px rgba(123,227,160,.45); background: rgba(123,227,160,.08); }
+    .b-crit { color: #FF6A3D; box-shadow: inset 0 0 0 1px rgba(255,106,61,.5); background: rgba(255,106,61,.1); }
+    .chip { display: inline-flex; align-items: center; gap: 6px; height: 20px; padding: 0 7px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 45%, transparent); }
+    .c-energy { color: #5CE1FF; } .c-agri { color: #9BE15D; } .c-rescue { color: #FF7A4D; }
+    .st-new { color: #5CE1FF; } .st-assigned { color: #7FB2FF; } .st-resolved { color: #7BE3A0; }
+    .dia { display: inline-block; width: 8px; height: 8px; transform: rotate(45deg); flex: none; }
+    .sev-crit { background: #FF6A3D; } .sev-warn { background: #FFB547; } .sev-ok { background: #7BE3A0; } .sev-info { background: #5CE1FF; }
+
+    /* panels */
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; min-width: 0; background: linear-gradient(180deg, #07142F 0%, #050D20 100%); box-shadow: inset 0 0 0 1px rgba(120,170,255,.14); clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px)); }
+    .glass { background: rgba(5,14,34,.7); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(120,170,255,.18); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); }
+    .ph { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 46px; padding: 0 16px; border-bottom: 1px solid rgba(120,170,255,.1); flex: none; }
+    .ph-l { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .lbl { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: #7F90AD; white-space: nowrap; }
+    .lbl.strong { color: #D8E3F5; }
+    .kicker { display: flex; align-items: center; gap: 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: #5CE1FF; }
+    .kicker i { width: 7px; height: 7px; background: currentColor; transform: rotate(45deg); box-shadow: 0 0 10px currentColor; animation: blink 1.6s steps(2) infinite; }
+    .h1 { margin: 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 120%; font-style: italic; font-weight: 700; font-size: 32px; line-height: 1; text-transform: uppercase; color: #fff; }
+    .h2 { margin: 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 116%; font-style: italic; font-weight: 700; font-size: 22px; line-height: 1.05; text-transform: uppercase; color: #fff; }
+    .meta { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #62738F; }
+    .big { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 40px; line-height: 1; color: #fff; font-variant-numeric: tabular-nums; }
+    .muted { color: #7F90AD; }
+    .scroll { overflow: auto; min-height: 0; scrollbar-width: thin; scrollbar-color: rgba(120,170,255,.25) transparent; }
+    /* stacked panels keep their height and the column scrolls, instead of panels squashing and overlapping */
+    .scroll > * { flex-shrink: 0; }
+    .scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .scroll::-webkit-scrollbar-thumb { background: rgba(120,170,255,.25); }
+
+    /* tabs, toggles, tables */
+    .tabs { display: flex; gap: 18px; padding: 0 16px; border-bottom: 1px solid rgba(120,170,255,.1); flex: none; }
+    .tab { padding: 11px 0 9px; border: 0; border-bottom: 2px solid transparent; background: none; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #62738F; }
+    .tab em { font-style: normal; margin-left: 6px; color: #7F90AD; }
+    .tab.on { color: #fff; border-bottom-color: #5CE1FF; }
+    .segs { display: flex; box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+    .segs button { height: 30px; padding: 0 11px; border: 0; background: transparent; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: #7F90AD; }
+    .segs button.on { background: rgba(92,225,255,.12); color: #fff; box-shadow: inset 0 -2px 0 #5CE1FF; }
+    .ck { display: flex; align-items: center; gap: 10px; padding: 5px 0; border: 0; background: none; cursor: pointer; font-size: 13px; color: #CFDAEE; text-align: left; }
+    .ck i { width: 14px; height: 14px; flex: none; box-shadow: inset 0 0 0 1px rgba(160,190,240,.4); }
+    .ck.on i { background: #5CE1FF; box-shadow: inset 0 0 0 3px #04101F, inset 0 0 0 4px #5CE1FF; }
+    .tbl { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-variant-numeric: tabular-nums; }
+    .tbl th { position: sticky; top: 0; z-index: 1; padding: 9px 12px; text-align: left; font-size: 10px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: #62738F; background: #06112A; border-bottom: 1px solid rgba(120,170,255,.1); white-space: nowrap; }
+    .tbl td { height: 40px; padding: 0 12px; color: #CFDAEE; border-bottom: 1px solid rgba(120,170,255,.07); white-space: nowrap; }
+    .tbl tbody tr { cursor: pointer; }
+    .tbl tbody tr:hover td { background: rgba(120,170,255,.05); }
+    .tbl tr.sel td { background: rgba(92,225,255,.07); }
+    .tbl tr.sel td:first-child { box-shadow: inset 2px 0 0 #5CE1FF; }
+    .bar3 { height: 3px; background: rgba(120,170,255,.14); }
+    .bar3 b { display: block; height: 100%; background: #5CE1FF; box-shadow: 0 0 8px #5CE1FF; }
+
+    /* frame thumbnails: stylised placeholders for detection crops */
+    .thumb { position: relative; overflow: hidden; flex: none; background-color: #0A0F1E; }
+    .th-energy { background: radial-gradient(circle at 57% 45%, rgba(255,106,61,.95) 0, rgba(255,106,61,.55) 9%, rgba(255,181,71,0) 24%), repeating-linear-gradient(90deg, transparent 0 23%, rgba(3,8,20,.92) 23% 25%), repeating-linear-gradient(0deg, transparent 0 31%, rgba(3,8,20,.92) 31% 34%), linear-gradient(160deg, #22407F, #0C1A3E); }
+    .th-agri { background: radial-gradient(circle at 46% 54%, rgba(140,74,28,.95) 0, rgba(176,118,40,.65) 13%, rgba(0,0,0,0) 28%), radial-gradient(circle at 72% 30%, rgba(160,110,40,.75) 0, rgba(0,0,0,0) 12%), repeating-linear-gradient(115deg, #2C6628 0 6%, #3B8733 6% 12%); }
+    .th-rescue { background: radial-gradient(ellipse 11% 21% at 50% 50%, #FFF6E8 0, #FFB547 40%, rgba(255,106,61,.65) 66%, rgba(40,20,60,0) 100%), radial-gradient(circle at 28% 72%, rgba(96,64,128,.6), rgba(0,0,0,0) 40%), linear-gradient(180deg, #1B1432, #0B0A18); }
+    .bbox { position: absolute; left: 33%; top: 25%; width: 36%; height: 42%; box-shadow: inset 0 0 0 1px #5CE1FF; }
+
+    .gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .gl-labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .gl-tag { position: absolute; left: 0; top: 0; padding: 3px 7px; white-space: nowrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; background: rgba(3,8,20,.82); box-shadow: inset 0 0 0 1px currentColor; opacity: 0; will-change: transform; transition: opacity .25s; }
+    .gl-tag i { font-style: normal; color: #E6ECF5; margin-left: 7px; }
+    .gl-tag.sel { background: currentColor; }
+    .gl-tag.sel, .gl-tag.sel i { color: #030814; }
+
+    @keyframes blink { 50% { opacity: .25; } }
+    @keyframes rowIn { from { opacity: 0; transform: translateY(6px); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(24px); } }
+    @keyframes pulse { 50% { box-shadow: 0 0 0 6px rgba(92,225,255,0); } 0%, 100% { box-shadow: 0 0 0 0 rgba(92,225,255,.5); } }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    @keyframes busy { to { background-position: -56px 0; } }
+
+    /* ===== page kit (screens 10+) ===== */
+    .page { display: grid; grid-template-rows: 58px minmax(0, 1fr); gap: 14px; height: 100%; padding: 18px 24px 20px; }
+    .page-head { display: flex; align-items: flex-end; gap: 20px; min-width: 0; }
+    .page-head .meta { padding-bottom: 6px; white-space: nowrap; }
+    .acts { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .view3d { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #040B1C; }
+    .pad { padding: 14px 16px; }
+    .kvg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
+    .kvg.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .kvg b { display: block; margin-top: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .kvl-row { display: grid; grid-template-columns: 128px minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 34px; padding: 0 16px; border-bottom: 1px solid rgba(120,170,255,.07); }
+    .kvl-row span { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #62738F; }
+    .kvl-row b { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 400; color: #E6ECF5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .li { width: 100%; display: grid; gap: 12px; align-items: center; padding: 12px 16px; border: 0; border-bottom: 1px solid rgba(120,170,255,.07); background: transparent; text-align: left; cursor: pointer; }
+    .li:hover { background: rgba(120,170,255,.05); }
+    .li.sel { background: rgba(92,225,255,.08); box-shadow: inset 2px 0 0 #5CE1FF; }
+    .li-t { display: block; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 112%; font-style: italic; font-weight: 600; font-size: 15px; text-transform: uppercase; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .li-s { display: block; margin-top: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #62738F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .note { padding: 10px 16px; border-top: 1px solid rgba(120,170,255,.08); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #53637D; }
+    .amber { color: #FFB547; } .ok { color: #7BE3A0; } .crit { color: #FF6A3D; } .cyan { color: #5CE1FF; }
+    .st-warn { color: #FFB547; } .st-off { color: #7F90AD; }
+    .warnbox { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; font-size: 12.5px; line-height: 1.5; color: #E8CFA5; background: rgba(255,181,71,.06); box-shadow: inset 0 0 0 1px rgba(255,181,71,.25); }
+    .warnbox .dia { margin-top: 5px; }
+    .ov { position: absolute; z-index: 3; }
+    .ov-tl { left: 12px; top: 12px; } .ov-tr { right: 12px; top: 12px; } .ov-bl { left: 12px; bottom: 12px; } .ov-br { right: 12px; bottom: 12px; }
+    .hbar { height: 6px; background: rgba(120,170,255,.1); }
+    .hbar b { display: block; height: 100%; background: #3FB3E0; }
+    .readout { padding: 6px 9px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .06em; color: #7F90AD; background: rgba(3,8,20,.8); box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); white-space: nowrap; }
+    .readout b { color: #E9F1FF; font-weight: 500; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .input { display: flex; align-items: center; height: 38px; padding: 0 12px; background: rgba(2,7,18,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; color: #fff; }
+    .input input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; color: #fff; font: inherit; }
+
+    .cols { display: grid; grid-template-columns: minmax(0, 7.3fr) minmax(0, 4.7fr); gap: 14px; min-height: 0; }
+    .stack { display: flex; flex-direction: column; gap: 12px; padding-right: 2px; min-height: 0; overflow-y: auto; }
+    .stack > .panel { flex-shrink: 0; }
+    .stats { width: 250px; padding: 12px 14px; }
+    .stats .kvg b { font-size: 14px; }
+    .legend { display: flex; gap: 12px; padding: 6px 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9FB0CC; }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .sched { grid-template-columns: 64px minmax(0, 1fr) auto; padding: 10px 16px; cursor: default; }
+    .date { text-align: center; padding: 4px 0; box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+    .date b { display: block; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 20px; line-height: 1; color: #fff; }
+    .date span { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: #7F90AD; }
+    .hist { grid-template-columns: minmax(0, 1fr) 70px 64px; padding: 10px 16px; }
+    .hist .hbar { height: 4px; }
+    .hist em { font-style: normal; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #CFDAEE; text-align: right; }
+    .sev { padding: 12px 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+    .sev-row { display: grid; grid-template-columns: 90px minmax(0, 1fr) 30px; gap: 10px; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #CFDAEE; }
+    .sev-row b { font-weight: 500; text-align: right; }
+    .sev-row span { display: flex; align-items: center; gap: 8px; }
+  </style>
+</helmet>
+
+<div class="app">
+  <nav class="rail">
+      <a class="rail-logo" href="#"><img src="logo-mark.png" alt="Aerolytics"></a>
+      <a class="rail-item" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg><span class="rail-tip">Dashboard</span></a>
+      <a class="rail-item" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"></path><path d="M9 4v14M15 6v14"></path></svg><span class="rail-tip">Missions</span></a>
+      <a class="rail-item" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="2"></circle><path d="M16.2 7.8a6 6 0 010 8.4M7.8 16.2a6 6 0 010-8.4M19 5a10 10 0 010 14M5 19A10 10 0 015 5"></path></svg><span class="rail-tip">Live ops</span></a>
+      <a class="rail-item" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"></path><path d="M7 15l4-5 3 3 5-7"></path></svg><span class="rail-tip">Analytics</span></a>
+      <a class="rail-item" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H6v18h12V7l-4-4z"></path><path d="M14 3v4h4M9 13h6M9 17h6"></path></svg><span class="rail-tip">Reports</span></a>
+      <a class="rail-item on" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.5"></circle></svg><span class="rail-tip">Sites</span></a>
+      <a class="rail-item" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 9l6 6M15 9l-6 6"></path><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="18" r="3"></circle></svg><span class="rail-tip">Fleet</span></a>
+      <div class="rail-spacer"></div>
+      <a class="rail-item" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg><span class="rail-tip">Settings</span></a>
+      <div class="avatar">RK</div>
+    </nav>
+  <header class="top">
+      <div class="crumbs"><span>Sites</span><span>/</span><b>Site detail</b></div>
+      <div class="switch">
+        <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="3">
+          <button class="seg {{ p.cls }}" onClick="{{ p.pick }}"><i class="dia" style="background: {{ p.color }}"></i><small>{{ p.idx }}</small>{{ p.name }}</button>
+        </sc-for>
+      </div>
+      <div class="top-right">
+        <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#62738F" stroke-width="1.6"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><span>Search missions, detections…</span><kbd>⌘K</kbd></div>
+        <span class="badge b-sim">Simulated · Golden demo</span>
+        <span class="clock" data-clock="utc">--:--:-- UTC</span>
+        <a class="bell" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 16V11a6 6 0 0112 0v5l1.5 2h-15L6 16z"></path><path d="M10 20.5a2 2 0 004 0"></path></svg><b>6</b></a>
+      </div>
+    </header>
+
+  <main class="main">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <div class="kicker" style="color: {{ pc.color }}"><i></i>Site · {{ pc.name }}</div>
+          <h1 class="h1" style="margin-top: 10px">{{ site.name }}</h1>
+        </div>
+        <div class="meta">{{ site.lat }} · {{ site.lon }} · approx. centroid</div>
+        <div class="acts">
+          <a class="btn btn-ghost" href="#">Plan mission</a>
+          <a class="btn btn-primary" href="#">+ New inspection</a>
+        </div>
+      </div>
+
+      <div class="cols">
+        <section class="panel">
+          <div class="ph">
+            <div class="ph-l"><span class="lbl strong">Site twin · latest mission {{ site.lastMission }}</span><span class="badge b-sim">Simulated telemetry</span></div>
+            <div class="segs"><sc-for list="{{ views }}" as="v" hint-placeholder-count="3"><button class="{{ v.cls }}" onClick="{{ v.pick }}">{{ v.name }}</button></sc-for></div>
+          </div>
+          <div class="view3d">
+            <canvas class="gl" data-gl="twin"></canvas>
+            <div class="gl-labels" data-gl-labels="twin"></div>
+            <div class="ov ov-tl glass stats">
+              <div class="kvg">
+                <div><span class="lbl">Area</span><b>{{ site.area }}</b></div>
+                <div><span class="lbl">Health</span><b>{{ site.health }}%</b></div>
+                <div style="grid-column: 1 / -1"><span class="lbl">Assets</span><b>{{ site.assets }}</b></div>
+              </div>
+            </div>
+            <div class="ov ov-bl readout">DRONE <b data-hud="lat">22.30000° N</b> <b data-hud="lon">70.80000° E</b> <span class="amber">±APPROX.</span></div>
+            <div class="ov ov-br glass legend">
+              <span><i class="dia sev-crit"></i>Critical</span>
+              <span><i class="dia sev-warn"></i>Warning</span>
+              <span><svg width="22" height="4"><line x1="0" y1="2" x2="22" y2="2" stroke="#FFB547" stroke-width="2" stroke-dasharray="4 3"></line></svg>Simulated path</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="scroll stack">
+          <section class="panel">
+            <div class="ph"><span class="lbl strong">Open issues</span><span class="badge b-crit">{{ critN }} critical</span></div>
+            <div class="sev">
+              <sc-for list="{{ sevRows }}" as="r" hint-placeholder-count="2">
+                <div class="sev-row"><span><i class="dia {{ r.cls }}"></i>{{ r.name }}</span><div class="hbar"><b style="width: {{ r.w }}; background: {{ r.color }}"></b></div><b>{{ r.n }}</b></div>
+              </sc-for>
+              <div class="meta">Oldest open item · 9 days · sample</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="ph"><span class="lbl strong">Inspection schedule</span><button class="btn btn-ghost btn-sm">+ Schedule</button></div>
+            <sc-for list="{{ schedule }}" as="s" hint-placeholder-count="3">
+              <div class="li sched">
+                <div class="date"><b>{{ s.day }}</b><span>{{ s.mon }}</span></div>
+                <div style="min-width: 0"><span class="li-t" style="font-size: 14px">{{ s.title }}</span><span class="li-s">{{ s.detail }}</span></div>
+                <span class="chip {{ s.cls }}">{{ s.status }}</span>
+              </div>
+            </sc-for>
+          </section>
+
+          <section class="panel">
+            <div class="ph"><span class="lbl strong">Mission history</span><a class="btn btn-ghost btn-sm" href="#">All →</a></div>
+            <sc-for list="{{ history }}" as="h" hint-placeholder-count="4">
+              <button class="li hist {{ h.selCls }}" onClick="{{ h.pick }}">
+                <span style="min-width: 0"><span class="li-t" style="font-size: 14px">{{ h.id }}</span><span class="li-s">{{ h.date }} · {{ h.tele }}</span></span>
+                <span class="hbar"><b style="width: {{ h.covStr }}"></b></span>
+                <em>{{ h.det }}</em>
+              </button>
+            </sc-for>
+          </section>
+
+          <section class="panel">
+            <div class="ph"><span class="lbl strong">Site details</span></div>
+            <sc-for list="{{ details }}" as="d" hint-placeholder-count="6">
+              <div class="kvl-row"><span>{{ d.k }}</span><b>{{ d.v }}</b><i></i></div>
+            </sc-for>
+            <div class="note">Bracketed values are placeholders to fill in</div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', view: 'orbit', selMission: null };
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, view, selMission } = this.state;
+    const pc = D.P[pillar];
+    const siteKey = { energy: 'rsp', agri: 'kfb', rescue: 'ads' }[pillar];
+    const site = D.sites.find((s) => s.key === siteKey);
+    const crit = pc.dets.filter((q) => q.sev === 'crit').length, warn = pc.dets.length - crit;
+    const max = Math.max(1, crit, warn);
+    const history = D.missionsAll.filter((m) => m.siteKey === siteKey);
+    const aircraft = { energy: 'QUAD-01', agri: 'QUAD-02', rescue: 'THERM-01' }[pillar];
+    return {
+      pillars: this._pillarTabs(pillar, (k) => { this.setState({ pillar: k, selMission: null }); if (this._twin) this._twin.setPillar(k); }),
+      pc, site,
+      critN: crit,
+      views: [['orbit', '3D'], ['top', 'Top'], ['follow', 'Follow']].map(([k, name]) => ({ name, cls: view === k ? 'on' : '', pick: () => { this.setState({ view: k }); if (this._twin) this._twin.setView(k); } })),
+      sevRows: [['Critical', crit, 'sev-crit', '#FF6A3D'], ['Warning', warn, 'sev-warn', '#FFB547']].map(([name, n, cls, color]) => ({ name, n, cls, color, w: (n / max) * 100 + '%' })),
+      schedule: [
+        [site.next === 'On call' ? '—' : site.next.slice(0, 2), site.next === 'On call' ? 'On call' : 'Sep', pillar === 'rescue' ? 'Standby sweep' : 'Routine inspection', aircraft + ' · 7 lanes · 42 m AGL', 'Planned', 'st-new'],
+        ['05', 'Oct', pillar === 'agri' ? 'Disease follow-up · cells C-07, H-11' : pillar === 'rescue' ? 'Night thermal drill' : 'Re-inspect critical panels', aircraft + ' · targeted', 'Needs aircraft', 'st-warn'],
+        ['19', 'Oct', 'Full-site survey', 'Aircraft TBD · full coverage', 'Draft', 'st-off'],
+      ].map(([day, mon, title, detail, status, cls]) => ({ day, mon, title, detail, status, cls })),
+      history: history.map((m) => ({
+        id: m.id, date: m.date, tele: m.tele, det: m.det, covStr: m.coverage + '%',
+        selCls: m.id === selMission ? 'sel' : '', pick: () => this.setState({ selMission: m.id }),
+      })),
+      details: [
+        ['Owner', '[ORGANIZATION NAME]'], ['Boundary', 'Polygon · 6 vertices · approx.'], ['Centroid', site.lat + ', ' + site.lon],
+        ['Elevation', '≈ 140 m · sample'], ['Airspace', '[AIRSPACE ZONE / PERMISSION]'], ['Access', '[SITE ACCESS NOTES]'],
+      ].map(([k, v]) => ({ k, v })),
+    };
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._startClock();
+    this._boot(0);
+  }
+
+  componentWillUnmount() {
+    this._alive = false;
+    this._stopClock();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._twin) this._twin.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="twin"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    const hud = { lat: document.querySelector('[data-hud="lat"]'), lon: document.querySelector('[data-hud="lon"]') };
+    this._twin = this._twinScene(this._engine(), canvas, {
+      pillar: this.state.pillar, mode: 'overview', labelsEl: document.querySelector('[data-gl-labels="twin"]'),
+      onPick: (id) => { if (this._twin) this._twin.select(id); },
+      onHud: (h) => { if (hud.lat) hud.lat.textContent = h.lat; if (hud.lon) hud.lon.textContent = h.lon; },
+    });
+    this._loop([this._twin]);
+  }
+
+  // ------------------------------------------------------------------
+  // Minimal WebGL engine: line / triangle / point batches with distance fog.
+  // (The production app uses React Three Fiber; this sandbox cannot load libraries.)
+  // ------------------------------------------------------------------
+  _engine() {
+    const self = this;
+
+    function perspective(fov, asp, n, f) {
+      const t = 1 / Math.tan(fov / 2);
+      return [t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) / (n - f), -1, 0, 0, (2 * f * n) / (n - f), 0];
+    }
+    function lookAt(e, c) {
+      let zx = e[0] - c[0], zy = e[1] - c[1], zz = e[2] - c[2];
+      let l = Math.hypot(zx, zy, zz); zx /= l; zy /= l; zz /= l;
+      let xx = zz, xy = 0, xz = -zx; // up = (0,1,0)
+      l = Math.hypot(xx, xy, xz); xx /= l; xz /= l;
+      const yx = zy * xz - zz * xy, yy = zz * xx - zx * xz, yz = zx * xy - zy * xx;
+      return [xx, yx, zx, 0, xy, yy, zy, 0, xz, yz, zz, 0,
+        -(xx * e[0] + xy * e[1] + xz * e[2]), -(yx * e[0] + yy * e[1] + yz * e[2]), -(zx * e[0] + zy * e[1] + zz * e[2]), 1];
+    }
+    function mul(a, b) {
+      const o = new Array(16);
+      for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) {
+        let s = 0;
+        for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k];
+        o[c * 4 + r] = s;
+      }
+      return o;
+    }
+    function project(m, x, y, z, w, h) {
+      const cx = m[0] * x + m[4] * y + m[8] * z + m[12];
+      const cy = m[1] * x + m[5] * y + m[9] * z + m[13];
+      const cw = m[3] * x + m[7] * y + m[11] * z + m[15];
+      if (cw <= 0.1) return null;
+      return [(cx / cw * 0.5 + 0.5) * w, (1 - (cy / cw * 0.5 + 0.5)) * h];
+    }
+
+    function Batch() { this.a = []; }
+    Batch.prototype.v = function (x, y, z, c) { this.a.push(x, y, z, c[0], c[1], c[2], c[3]); };
+    Batch.prototype.line = function (x1, y1, z1, x2, y2, z2, c, c2) { this.v(x1, y1, z1, c); this.v(x2, y2, z2, c2 || c); };
+    Batch.prototype.tri = function (p, q, r, c) { this.v(p[0], p[1], p[2], c); this.v(q[0], q[1], q[2], c); this.v(r[0], r[1], r[2], c); };
+    Batch.prototype.quad = function (p, q, r, s, c) { this.tri(p, q, r, c); this.tri(p, r, s, c); };
+    Batch.prototype.ring = function (x, y, z, rad, seg, c, dash) {
+      for (let i = 0; i < seg; i++) {
+        if (dash && i % 2) continue;
+        const a1 = (i / seg) * Math.PI * 2, a2 = ((i + 1) / seg) * Math.PI * 2;
+        this.line(x + Math.cos(a1) * rad, y, z + Math.sin(a1) * rad, x + Math.cos(a2) * rad, y, z + Math.sin(a2) * rad, c);
+      }
+    };
+
+    function renderer(canvas, bg) {
+      const gl = canvas.getContext('webgl', { antialias: true, alpha: false });
+      if (!gl) return null;
+      const vs = 'attribute vec3 p;attribute vec4 c;uniform mat4 m;uniform vec3 eye;uniform vec2 fog;uniform float ps;varying vec4 v;' +
+        'void main(){gl_Position=m*vec4(p,1.);float d=distance(p,eye);v=vec4(c.rgb,c.a*(1.-smoothstep(fog.x,fog.y,d)));gl_PointSize=ps*120./max(d,1.);}';
+      const fs = 'precision mediump float;varying vec4 v;uniform float pt;' +
+        'void main(){float a=1.;if(pt>.5){a=smoothstep(.5,0.,length(gl_PointCoord-.5));}gl_FragColor=vec4(v.rgb,v.a*a);}';
+      const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+      const pr = gl.createProgram();
+      gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs));
+      gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
+      gl.linkProgram(pr);
+      if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return null;
+      gl.useProgram(pr);
+      const L = {
+        p: gl.getAttribLocation(pr, 'p'), c: gl.getAttribLocation(pr, 'c'),
+        m: gl.getUniformLocation(pr, 'm'), eye: gl.getUniformLocation(pr, 'eye'),
+        fog: gl.getUniformLocation(pr, 'fog'), ps: gl.getUniformLocation(pr, 'ps'), pt: gl.getUniformLocation(pr, 'pt'),
+      };
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.enableVertexAttribArray(L.p); gl.enableVertexAttribArray(L.c);
+      gl.vertexAttribPointer(L.p, 3, gl.FLOAT, false, 28, 0);
+      gl.vertexAttribPointer(L.c, 4, gl.FLOAT, false, 28, 12);
+      gl.enable(gl.BLEND);
+      gl.disable(gl.DEPTH_TEST);
+      const R = {
+        gl, w: 1, h: 1,
+        resize() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+          const w = Math.max(1, Math.round(canvas.clientWidth * dpr)), h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+          if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+          gl.viewport(0, 0, w, h);
+          R.w = canvas.clientWidth; R.h = canvas.clientHeight;
+          return R.w / Math.max(1, R.h);
+        },
+        begin(m, eye, fogN, fogF) {
+          gl.clearColor(bg[0], bg[1], bg[2], 1);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+          gl.uniformMatrix4fv(L.m, false, new Float32Array(m));
+          gl.uniform3f(L.eye, eye[0], eye[1], eye[2]);
+          gl.uniform2f(L.fog, fogN, fogF);
+        },
+        // mode: 'lines' | 'tris' | 'points'; blend: 'add' | 'alpha'
+        draw(batch, mode, blend, size) {
+          const arr = batch instanceof Float32Array ? batch : new Float32Array(batch.a);
+          if (!arr.length) return;
+          if (blend === 'alpha') gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); else gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+          gl.uniform1f(L.pt, mode === 'points' ? 1 : 0);
+          gl.uniform1f(L.ps, size || 1);
+          gl.bufferData(gl.ARRAY_BUFFER, arr, gl.DYNAMIC_DRAW);
+          gl.drawArrays(mode === 'lines' ? gl.LINES : mode === 'points' ? gl.POINTS : gl.TRIANGLES, 0, arr.length / 7);
+        },
+      };
+      return R;
+    }
+
+    function camera(asp, eye, target, fov) {
+      const m = mul(perspective(fov, asp, 1, 900), lookAt(eye, target));
+      return m;
+    }
+
+    const COL = {
+      cyan: [0.36, 0.88, 1, 1], blue: [0.3, 0.55, 1, 1], white: [0.9, 0.95, 1, 1],
+      crit: [1, 0.38, 0.22, 1], warn: [1, 0.71, 0.28, 1], green: [0.48, 0.89, 0.63, 1],
+    };
+    const a = (c, al) => [c[0], c[1], c[2], al];
+    const lerp = (x, y, t) => x + (y - x) * t;
+    const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+    const smooth = (e0, e1, x) => { const t = clamp((x - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
+
+    const K = { perspective, lookAt, mul, project, Batch, renderer, camera, COL, a, lerp, clamp, smooth, self };
+    return K;
+  }
+
+  // ==================================================================
+  // SHARED — sample mission data (golden demo), pillar tabs, UTC clock,
+  // and the reusable 3D site twin used by /dashboard and /missions/[id].
+  // All values here are SAMPLE DATA and are labelled as such on screen.
+  // ==================================================================
+  _data() {
+    if (Component._D) return Component._D;
+    const latN = (z) => 22.3 - (z * 1.5) / 111320;
+    const lonE = (x) => 70.8 + (x * 1.5) / 102990;
+    const finish = (list, prefix, statuses, frames) => list.map((q, i) => {
+      const n = String(i + 1).padStart(2, '0');
+      const st = statuses.indexOf(q.status);
+      return Object.assign(q, {
+        id: 'DET-' + prefix + '-' + n,
+        lat: latN(q.z).toFixed(5) + '° N',
+        lon: lonE(q.x).toFixed(5) + '° E',
+        offX: (q.x * 1.5).toFixed(1),
+        offZ: (-q.z * 1.5).toFixed(1),
+        frame: 'FRM-' + String(frames[i]).padStart(4, '0'),
+        alt: '42.0 m',
+        hdg: i % 2 ? '270°' : '090°',
+        bbox: [412 + i * 37, 228 + i * 21, 538 + i * 37, 341 + i * 21],
+        sevLabel: q.sev === 'crit' ? 'Critical' : 'Warning',
+        sevCls: q.sev === 'crit' ? 'sev-crit' : 'sev-warn',
+        statusCls: ['st-new', 'st-assigned', 'st-resolved'][Math.max(0, st)],
+        confPct: Math.round(q.conf * 100),
+      });
+    });
+    const energy = finish([
+      [2, 4, 'Crack', 0.91, 'crit', 'New', '2 min ago'],
+      [4, 13, 'Hotspot', 0.87, 'crit', 'New', '4 min ago'],
+      [10, 17, 'Crack', 0.83, 'crit', 'Assigned', '9 min ago'],
+      [6, 20, 'Dust', 0.78, 'warn', 'New', '6 min ago'],
+      [8, 7, 'Cover', 0.72, 'warn', 'Resolved', '11 min ago'],
+      [13, 2, 'Dust', 0.66, 'warn', 'Assigned', '14 min ago'],
+    ].map(([r, c, cls, conf, sev, status, ago]) => ({
+      x: -57.5 + c * 5.2, z: -38.5 + r * 5.5, cls, conf, sev, status, ago,
+      loc: 'Row ' + String(r + 1).padStart(2, '0') + ' · Panel ' + String(c + 1).padStart(2, '0'),
+    })), 'EN', ['New', 'Assigned', 'Resolved'], [231, 118, 402, 176, 297, 455]);
+    const agri = finish([
+      [-34, -20, 'Leaf rust', 0.88, 'crit', 'New', '3 min ago', 'Cell C-07 · 0.42 ha'],
+      [18, -8, 'Leaf blight', 0.81, 'crit', 'New', '5 min ago', 'Cell H-11 · 0.36 ha'],
+      [-12, 22, 'Blast', 0.79, 'crit', 'Assigned', '8 min ago', 'Cell E-17 · 0.51 ha'],
+      [42, 14, 'Brown spots', 0.74, 'warn', 'New', '10 min ago', 'Cell M-15 · 0.21 ha'],
+      [-48, 6, 'Leaf rust', 0.69, 'warn', 'Resolved', '16 min ago', 'Cell A-12 · 0.18 ha'],
+    ].map(([x, z, cls, conf, sev, status, ago, loc]) => ({ x, z, cls, conf, sev, status, ago, loc })),
+    'AG', ['New', 'Assigned', 'Resolved'], [64, 139, 251, 188, 297]);
+    const rescue = finish([
+      [-40, -30, 'Person', 0.93, 'crit', 'New', '1 min ago', 'Target T-01 · open ground'],
+      [-6, -14, 'Person', 0.88, 'crit', 'Dispatched', '3 min ago', 'Target T-02 · near debris'],
+      [-2.5, -10.5, 'Person', 0.81, 'crit', 'Dispatched', '3 min ago', 'Target T-03 · near debris'],
+      [48, 26, 'Person', 0.84, 'crit', 'New', '6 min ago', 'Target T-05 · embankment'],
+      [30, 4, 'Person', 0.76, 'warn', 'Confirmed', '9 min ago', 'Target T-04 · structure'],
+      [-30, 31, 'Person', 0.71, 'warn', 'New', '12 min ago', 'Target T-06 · tree line'],
+    ].map(([x, z, cls, conf, sev, status, ago, loc]) => ({ x, z, cls, conf, sev, status, ago, loc })),
+    'RS', ['New', 'Dispatched', 'Confirmed'], [22, 71, 72, 166, 121, 190]);
+
+    const P = {
+      energy: {
+        key: 'energy', idx: '01', name: 'Energy', long: 'Solar intelligence', color: '#5CE1FF', chip: 'c-energy', thumb: 'th-energy',
+        site: 'Rajkot Solar Park', mission: 'AER-EN-0142', date: '14 Sep 2026 14:05', model: 'solar_best.pt', frames: 486, overlay: 'Thermal overlay',
+        classesLbl: 'Detections by class', unit: 'Panel',
+        kpis: [
+          { k: 'Panels inspected', v: '2,184', of: '/ 2,400', note: '+312 since last mission', viz: 'bar', pct: 91, badge: 'Manifest', bcls: 'b-man' },
+          { k: 'Total detections', v: '37', of: '', note: '6 priority shown on twin', viz: 'hist', badge: 'Simulated', bcls: 'b-sim' },
+          { k: 'Critical alerts', v: '6', of: '', note: '3 unassigned', viz: 'dia', n: 6, crit: true, badge: 'Simulated', bcls: 'b-sim' },
+          { k: 'Inspection coverage', v: '91%', of: '', note: 'Lane 7 / 7 complete', viz: 'ring', pct: 91, badge: 'Manifest', bcls: 'b-man' },
+        ],
+        classes: [['Crack', 12, 'crit'], ['Dust', 14, 'warn'], ['Hotspot', 6, 'crit'], ['Cover', 5, 'warn']],
+        dets: energy,
+      },
+      agri: {
+        key: 'agri', idx: '02', name: 'Agri', long: 'Crop health', color: '#9BE15D', chip: 'c-agri', thumb: 'th-agri',
+        site: 'Kalawad Rd Farm Block B', mission: 'AER-AG-0057', date: '11 Sep 2026 07:15', model: 'agri_best.pt', frames: 340, overlay: 'NDVI-style overlay',
+        classesLbl: 'Detections by class', unit: 'Cell',
+        kpis: [
+          { k: 'Field area scanned', v: '42.6', of: 'ha / 48 ha', note: 'Block B, 7 lanes', viz: 'bar', pct: 89, badge: 'EXIF', bcls: 'b-exif' },
+          { k: 'Affected area', v: '3.8', of: 'ha · est.', note: 'NDVI-style estimate', viz: 'ndvi', badge: 'Simulated', bcls: 'b-sim' },
+          { k: 'Disease zones', v: '5', of: '', note: '2 spreading east', viz: 'dia', n: 5, crit: true, badge: 'Simulated', bcls: 'b-sim' },
+          { k: 'Mean health index', v: '0.62', of: '', note: 'NDVI-inspired, not calibrated', viz: 'ring', pct: 62, badge: 'Simulated', bcls: 'b-sim' },
+        ],
+        classes: [['Leaf rust', 9, 'crit'], ['Leaf blight', 6, 'crit'], ['Blast', 4, 'crit'], ['Brown spots', 7, 'warn']],
+        dets: agri,
+      },
+      rescue: {
+        key: 'rescue', idx: '03', name: 'Rescue', long: 'Thermal search', color: '#FF7A4D', chip: 'c-rescue', thumb: 'th-rescue',
+        site: 'Aji Dam Sector 3', mission: 'AER-RS-0019', date: '09 Sep 2026 22:48', model: 'thermal_best.pt', frames: 208, overlay: 'LWIR overlay',
+        classesLbl: 'Detections by type', unit: 'Target',
+        kpis: [
+          { k: 'Persons detected', v: '6', of: '', note: '4 priority targets', viz: 'dia', n: 6, crit: true, badge: 'Simulated', bcls: 'b-sim' },
+          { k: 'Teams dispatched', v: '2', of: '/ 3', note: 'Exercise · simulated', viz: 'hist', badge: 'Simulated', bcls: 'b-sim' },
+          { k: 'Search area covered', v: '1.9', of: 'km² / 2.4', note: 'Thermal sweep, 7 lanes', viz: 'bar', pct: 79, badge: 'Manifest', bcls: 'b-man' },
+          { k: 'Since last sighting', v: '04:12', of: 'min', note: 'T-01 · 22.30040° N', viz: 'ring', pct: 35, badge: 'Simulated', bcls: 'b-sim' },
+        ],
+        classes: [['Person', 6, 'crit'], ['Vehicle · planned', 0, 'warn']],
+        dets: rescue,
+      },
+    };
+    const missions = [
+      { id: 'AER-EN-0143', site: 'Rajkot Solar Park', pillar: 'energy', date: '14 Sep 2026 15:10', frames: 212, det: '—', tele: 'Simulated', tcls: 'b-sim', status: 'Processing', pct: 64 },
+      { id: 'AER-EN-0142', site: 'Rajkot Solar Park', pillar: 'energy', date: '14 Sep 2026 14:05', frames: 486, det: '6 / 37', tele: 'Simulated', tcls: 'b-sim', status: 'Complete', pct: 100 },
+      { id: 'AER-AG-0057', site: 'Kalawad Rd Farm Block B', pillar: 'agri', date: '11 Sep 2026 07:15', frames: 340, det: '5 / 26', tele: 'EXIF', tcls: 'b-exif', status: 'Complete', pct: 100 },
+      { id: 'AER-RS-0019', site: 'Aji Dam Sector 3', pillar: 'rescue', date: '09 Sep 2026 22:48', frames: 208, det: '4 / 6', tele: 'Manifest', tcls: 'b-man', status: 'Complete', pct: 100 },
+      { id: 'AER-EN-0139', site: 'Rajkot Solar Park', pillar: 'energy', date: '07 Sep 2026 10:02', frames: 498, det: '—', tele: 'EXIF', tcls: 'b-exif', status: 'Failed', pct: 0 },
+      { id: 'AER-AG-0055', site: 'Kalawad Rd Farm Block A', pillar: 'agri', date: '05 Sep 2026 06:50', frames: 362, det: '1 / 11', tele: 'EXIF', tcls: 'b-exif', status: 'Complete', pct: 100 },
+    ];
+    // Sites in area-of-operations map units (≈ 150 m per unit around Rajkot) — sample
+    const sites = [
+      { key: 'rsp', name: 'Rajkot Solar Park', short: 'Solar Park', pillar: 'energy', x: 0, z: 0 },
+      { key: 'gsc', name: 'Gondal Rd Solar Canopy', short: 'Gondal Rd Canopy', pillar: 'energy', x: 42, z: 48 },
+      { key: 'kfb', name: 'Kalawad Rd Farm Block B', short: 'Farm Block B', pillar: 'agri', x: -58, z: -26 },
+      { key: 'kfa', name: 'Kalawad Rd Farm Block A', short: 'Farm Block A', pillar: 'agri', x: -72, z: -4 },
+      { key: 'lfc', name: 'Lodhika Farm Cluster', short: 'Lodhika Cluster', pillar: 'agri', x: -44, z: 58 },
+      { key: 'ads', name: 'Aji Dam Sector 3', short: 'Aji Dam S3', pillar: 'rescue', x: 58, z: -46 },
+    ];
+    const older = [
+      ['AER-EN-0138', 'Gondal Rd Solar Canopy', 'energy', '03 Sep 2026 16:20', 356, '2 / 14', 'EXIF', 'Complete'],
+      ['AER-RS-0018', 'Aji Dam Sector 3', 'rescue', '01 Sep 2026 23:05', 190, '1 / 2', 'Simulated', 'Complete'],
+      ['AER-AG-0054', 'Lodhika Farm Cluster', 'agri', '30 Aug 2026 07:40', 402, '3 / 21', 'EXIF', 'Complete'],
+      ['AER-EN-0137', 'Rajkot Solar Park', 'energy', '28 Aug 2026 11:15', 505, '5 / 33', 'Manifest', 'Complete'],
+      ['AER-AG-0053', 'Kalawad Rd Farm Block B', 'agri', '25 Aug 2026 06:55', 338, '0 / 9', 'EXIF', 'Complete'],
+      ['AER-EN-0136', 'Gondal Rd Solar Canopy', 'energy', '22 Aug 2026 15:30', 349, '—', 'Manifest', 'Failed'],
+      ['AER-RS-0017', 'Aji Dam Sector 3', 'rescue', '19 Aug 2026 21:10', 176, '2 / 3', 'Simulated', 'Complete'],
+      ['AER-EN-0135', 'Rajkot Solar Park', 'energy', '16 Aug 2026 10:45', 498, '3 / 27', 'EXIF', 'Complete'],
+    ].map(([id, site, pillar, date, frames, det, tele, status]) => ({
+      id, site, pillar, date, frames, det, tele, status,
+      tcls: tele === 'EXIF' ? 'b-exif' : tele === 'Manifest' ? 'b-man' : 'b-sim', pct: status === 'Complete' ? 100 : 0,
+    }));
+    const missionsAll = missions.concat(older).map((m, i) => {
+      const site = sites.find((s) => s.name === m.site) || sites[0];
+      const secs = Math.round(m.frames * 1.77);
+      return Object.assign({}, m, {
+        siteKey: site.key,
+        duration: String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0'),
+        coverage: m.status === 'Complete' ? 86 + ((i * 7) % 14) : m.status === 'Processing' ? m.pct : 41,
+        operator: 'Ops-' + ((i % 3) + 1),
+        aircraft: m.tele === 'Simulated' ? 'DEMO-01 · simulated' : 'Quad-' + String((i % 2) + 1).padStart(2, '0'),
+      });
+    });
+    const siteExtra = {
+      rsp: ['48.2 ha', '2,400 panels', 'AER-EN-0142', 6, '21 Sep 2026', 82],
+      gsc: ['6.4 ha', '610 panels', 'AER-EN-0138', 2, '28 Sep 2026', 91],
+      kfb: ['48 ha', 'Wheat · rabi season', 'AER-AG-0057', 5, '18 Sep 2026', 71],
+      kfa: ['36 ha', 'Groundnut', 'AER-AG-0055', 1, '25 Sep 2026', 88],
+      lfc: ['112 ha', 'Mixed crops', 'AER-AG-0054', 3, '02 Oct 2026', 79],
+      ads: ['2.4 km²', 'Flood-risk response zone', 'AER-RS-0019', 4, 'On call', 64],
+    };
+    sites.forEach((s) => { const e = siteExtra[s.key]; Object.assign(s, { area: e[0], assets: e[1], lastMission: e[2], open: e[3], next: e[4], health: e[5], lat: (22.3 - s.z * 0.00135).toFixed(4) + '° N', lon: (70.8 + s.x * 0.00146).toFixed(4) + '° E' }); });
+    // Sample fleet — airframe models and firmware are placeholders until real aircraft are registered
+    const fleet = [
+      { id: 'DEMO-01', name: 'Golden demo quad', model: 'Simulated airframe', status: 'In flight', scls: 'st-new', payload: 'RGB 4K · simulated', pillar: 'energy', hours: '—', cycles: '—', firmware: 'sim-1.0', maint: '—', batt: 78, link: 'Simulated', sim: true, motors: [0, 0, 0, 0] },
+      { id: 'QUAD-01', name: 'Survey quad', model: '[AIRFRAME MODEL]', status: 'Ready', scls: 'st-resolved', payload: 'RGB 20 MP', pillar: 'energy', hours: '142.6 h', cycles: '212', firmware: '[FIRMWARE]', maint: '02 Sep 2026', batt: 100, link: 'Not linked', sim: false, motors: [142, 141, 143, 142] },
+      { id: 'QUAD-02', name: 'Multispectral quad', model: '[AIRFRAME MODEL]', status: 'Maintenance', scls: 'st-warn', payload: 'Multispectral 5-band', pillar: 'agri', hours: '96.1 h', cycles: '148', firmware: '[FIRMWARE]', maint: 'Due now', batt: 0, link: 'Not linked', sim: false, motors: [96, 97, 131, 95] },
+      { id: 'THERM-01', name: 'Thermal quad', model: '[AIRFRAME MODEL]', status: 'Offline', scls: 'st-off', payload: 'LWIR 640×512 + RGB', pillar: 'rescue', hours: '61.4 h', cycles: '90', firmware: '[FIRMWARE]', maint: '18 Aug 2026', batt: 34, link: 'Not linked', sim: false, motors: [61, 62, 61, 60] },
+    ];
+    Component._D = { P, missions, missionsAll, sites, fleet };
+    return Component._D;
+  }
+
+  _pillarTabs(active, pick) {
+    const D = this._data();
+    return ['energy', 'agri', 'rescue'].map((k) => ({
+      key: k, idx: D.P[k].idx, name: D.P[k].name, color: D.P[k].color, cls: k === active ? 'on' : '', pick: () => pick(k),
+    }));
+  }
+
+  _startClock() {
+    const tick = () => document.querySelectorAll('[data-clock]').forEach((el) => { el.textContent = new Date().toISOString().slice(11, 19) + ' UTC'; });
+    tick();
+    this._clockId = setInterval(tick, 1000);
+  }
+
+  _stopClock() { if (this._clockId) clearInterval(this._clockId); }
+
+  _loop(scenes) {
+    let last = performance.now();
+    const t0 = last;
+    // Offscreen canvases don't render: scenes get .canvas from the constructor wrapper.
+    const hidden = new Set();
+    if (typeof IntersectionObserver !== 'undefined') {
+      this._io = new IntersectionObserver((entries) => entries.forEach((e) => (e.isIntersecting ? hidden.delete(e.target) : hidden.add(e.target))), { rootMargin: '100px' });
+      scenes.forEach((s) => s && s.canvas && this._io.observe(s.canvas));
+    }
+    const step = (now) => {
+      if (!this._alive) { if (this._io) this._io.disconnect(); return; }
+      // rAF timestamps can precede the performance.now() taken at start; never pass negative time
+      const dt = Math.max(0, Math.min(0.05, (now - last) / 1000));
+      last = now;
+      if (!document.hidden) scenes.forEach((s) => s && !hidden.has(s.canvas) && s.frame(Math.max(0, now - t0) / 1000, dt));
+      this._raf = requestAnimationFrame(step);
+    };
+    this._raf = requestAnimationFrame(step);
+  }
+
+  // ------------------------------------------------------------------
+  // Site twin. o = { pillar, mode: 'overview'|'mission', labelsEl, onPick(id|null), onHud(h) }
+  // ------------------------------------------------------------------
+  _twinScene(K, canvas, o) {
+    const R = K.renderer(canvas, [0.016, 0.043, 0.11]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp, clamp, smooth } = K;
+    const D = this._data();
+
+    const ground = (x, z) => {
+      const base = 9 * Math.sin(x * 0.028 + 1.3) * Math.cos(z * 0.024) + 4.5 * Math.sin(x * 0.07 + z * 0.05) + 2.2 * Math.cos(z * 0.11 - x * 0.045);
+      const m = smooth(58, 125, Math.hypot(x / 1.25, z));
+      return base * (0.08 + 0.92 * m) + m * m * 18;
+    };
+    const LANES = 7, X0 = -56, X1 = 56, Z0 = -36, DZ = 12, ALT = 28, SPEED = 19;
+    const wps = [];
+    for (let i = 0; i < LANES; i++) {
+      const z = Z0 + i * DZ;
+      if (i % 2 === 0) wps.push([X0, z, i], [X1, z, i]); else wps.push([X1, z, i], [X0, z, i]);
+    }
+    wps.push([X1 + 18, Z0 + (LANES - 1) * DZ, -1], [X1 + 18, Z0 - 18, -1], [X0, Z0 - 18, -1], [X0, Z0, -1]);
+    const segs = [];
+    let total = 0, laneEnd = 0;
+    for (let i = 0; i < wps.length - 1; i++) {
+      const p = wps[i], q = wps[i + 1], len = Math.hypot(q[0] - p[0], q[1] - p[1]);
+      const lane = p[2] >= 0 && p[2] === q[2] ? p[2] : -1;
+      segs.push({ x1: p[0], z1: p[1], x2: q[0], z2: q[1], len, cum: total, lane });
+      total += len;
+      if (lane === LANES - 1) laneEnd = total;
+    }
+    const pos = (d) => {
+      d = clamp(d, 0, total - 0.001);
+      for (const s of segs) if (d <= s.cum + s.len) {
+        const t = (d - s.cum) / s.len;
+        return { x: lerp(s.x1, s.x2, t), z: lerp(s.z1, s.z2, t), dx: (s.x2 - s.x1) / s.len, dz: (s.z2 - s.z1) / s.len, lane: s.lane };
+      }
+      return { x: X0, z: Z0, dx: 1, dz: 0, lane: 0 };
+    };
+    const pathD = (px, pz) => {
+      let best = 1e9, bd = 0;
+      for (const s of segs) {
+        if (s.lane < 0) continue;
+        const t = clamp(((px - s.x1) * (s.x2 - s.x1) + (pz - s.z1) * (s.z2 - s.z1)) / (s.len * s.len), 0, 1);
+        const dd = Math.hypot(px - lerp(s.x1, s.x2, t), pz - lerp(s.z1, s.z2, t));
+        if (dd < best) { best = dd; bd = s.cum + t * s.len; }
+      }
+      return bd;
+    };
+    const TINT = {
+      energy: { lo: [0.13, 0.3, 0.72], hi: [0.42, 0.68, 1] },
+      agri: { lo: [0.1, 0.34, 0.44], hi: [0.42, 0.82, 0.62] },
+      rescue: { lo: [0.24, 0.24, 0.4], hi: [0.66, 0.56, 0.72] },
+    };
+    const ndvi = (x, z, list) => {
+      let n = 0.6 + 0.3 * Math.sin(x * 0.06 + 1) * Math.cos(z * 0.08) + 0.1 * Math.sin(x * 0.2 + z * 0.13);
+      list.forEach((q) => { n -= 0.75 * Math.exp(-((x - q.x) ** 2 + (z - q.z) ** 2) / 120); });
+      return clamp(n, 0, 1);
+    };
+    const ndviColor = (n) => n < 0.45 ? [1, lerp(0.25, 0.78, n / 0.45), 0.2] : [lerp(1, 0.35, (n - 0.45) / 0.55), lerp(0.78, 0.92, (n - 0.45) / 0.55), lerp(0.2, 0.38, (n - 0.45) / 0.55)];
+
+    let pillar = o.pillar, terrainArr, staticArr, cells = [], dets = [];
+    let d = o.mode === 'mission' ? laneEnd : 0, hy = 0, playing = o.mode !== 'mission', speedMul = 1;
+    let layers = { terrain: true, path: true, dets: true, overlay: true };
+    let view = 'orbit', zoomK = 1, selected = null;
+    let yaw = 0.7, pitchV = 0.62, drag = null, mx = 0, my = 0;
+    let cT = [0, 2, 0], cR = 150, cP = 0.62, hudT = 0;
+
+    function build() {
+      const T = TINT[pillar];
+      const tb = new Batch();
+      const S = 176, STEP = 8, SUB = 4;
+      const tc = (h) => { const k = smooth(-4, 30, h); return [lerp(T.lo[0], T.hi[0], k), lerp(T.lo[1], T.hi[1], k), lerp(T.lo[2], T.hi[2], k), 0.2 + 0.32 * k]; };
+      for (let g = -S; g <= S; g += STEP) for (let u = -S; u < S; u += SUB) {
+        const h1 = ground(u, g), h2 = ground(u + SUB, g);
+        tb.line(u, h1, g, u + SUB, h2, g, tc(h1), tc(h2));
+        const k1 = ground(g, u), k2 = ground(g, u + SUB);
+        tb.line(g, k1, u, g, k2, u + SUB, tc(k1), tc(k2));
+      }
+      terrainArr = new Float32Array(tb.a);
+      const sb = new Batch(), bc = a(COL.cyan, 0.7);
+      [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sz]) => {
+        const x = sx * 64, z = sz * 44, y = ground(x, z) + 0.4;
+        sb.line(x, y, z, x - sx * 10, y, z, bc);
+        sb.line(x, y, z, x, y, z - sz * 10, bc);
+      });
+      if (pillar === 'rescue') {
+        let seed = 11;
+        const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+        for (let i = 0; i < 30; i++) {
+          const x = -60 + rnd() * 120, z = -40 + rnd() * 80, w = 3 + rnd() * 6, dd = 3 + rnd() * 5, h = 1 + rnd() * 5, r = rnd() * 1.2;
+          const g = ground(x, z), c = Math.cos(r), s = Math.sin(r), col = a([0.62, 0.56, 0.78], 0.32);
+          const Q = [[-w, -dd], [w, -dd], [w, dd], [-w, dd]].map(([lx, lz]) => [x + (lx * c - lz * s) * 0.5, z + (lx * s + lz * c) * 0.5]);
+          for (let k = 0; k < 4; k++) {
+            const p = Q[k], q = Q[(k + 1) % 4];
+            sb.line(p[0], g, p[1], q[0], g, q[1], col);
+            sb.line(p[0], g + h * (k % 2 ? 1 : 0.55), p[1], q[0], g + h * ((k + 1) % 2 ? 1 : 0.55), q[1], col);
+            sb.line(p[0], g, p[1], p[0], g + h * (k % 2 ? 1 : 0.55), p[1], col);
+          }
+        }
+      }
+      staticArr = new Float32Array(sb.a);
+
+      const src = D.P[pillar].dets;
+      cells = [];
+      if (pillar === 'energy') {
+        for (let r = 0; r < 14; r++) for (let c = 0; c < 23; c++) {
+          const x = -57.5 + c * 5.2, z = -38.5 + r * 5.5;
+          const hot = src.some((q) => Math.abs(q.x - x) < 0.1 && Math.abs(q.z - z) < 0.1);
+          cells.push({ x, z, trig: pathD(x, z), hot });
+        }
+      } else {
+        for (let r = 0; r < 14; r++) for (let c = 0; c < 20; c++) {
+          const x = -57 + c * 6, z = -39 + r * 6;
+          cells.push({ x, z, trig: pathD(x, z), n: pillar === 'agri' ? ndvi(x, z, src) : 0.2 + 0.5 * Math.max(0, Math.sin(x * 0.09) * Math.cos(z * 0.12)) });
+        }
+      }
+      dets = src.map((q, i) => ({ id: q.id, x: q.x, z: q.z, cls: q.cls, conf: q.conf, sev: q.sev, i, trig: pathD(q.x, q.z), sx: -1, sy: -1, vis: false }));
+      if (o.labelsEl) {
+        o.labelsEl.innerHTML = '';
+        dets.forEach((q) => {
+          const el = document.createElement('div');
+          el.className = 'gl-tag';
+          el.style.color = q.sev === 'crit' ? '#FF6A3D' : '#FFB547';
+          el.innerHTML = q.cls.toUpperCase() + '<i>' + q.conf.toFixed(2) + '</i>';
+          o.labelsEl.appendChild(el);
+          q.el = el;
+        });
+      }
+    }
+
+    const toLocal = (e) => {
+      const r = canvas.getBoundingClientRect();
+      const sx = canvas.clientWidth / Math.max(1, r.width), sy = canvas.clientHeight / Math.max(1, r.height);
+      return [(e.clientX - r.left) * sx, (e.clientY - r.top) * sy, r];
+    };
+    const onDown = (e) => { drag = { x: e.clientX, y: e.clientY, yaw, pitch: pitchV, moved: false }; };
+    const onMove = (e) => {
+      const [px, py] = toLocal(e);
+      mx = clamp((px / Math.max(1, canvas.clientWidth)) * 2 - 1, -1, 1);
+      my = clamp((py / Math.max(1, canvas.clientHeight)) * 2 - 1, -1, 1);
+      if (!drag) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+      yaw = drag.yaw - dx * 0.006;
+      pitchV = clamp(drag.pitch + dy * 0.004, 0.22, 1.35);
+    };
+    const onUp = (e) => {
+      if (drag && !drag.moved) {
+        const [px, py] = toLocal(e);
+        let best = null, bd = 30;
+        dets.forEach((q) => { if (!q.vis) return; const dd = Math.hypot(q.sx - px, q.sy - py); if (dd < bd) { bd = dd; best = q; } });
+        if (o.onPick) o.onPick(best ? best.id : null);
+      }
+      drag = null;
+    };
+    canvas.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+
+    build();
+
+    return {
+      canvas,
+      total, laneEnd,
+      markers: () => dets.map((q) => ({ id: q.id, sev: q.sev, frac: q.trig / total })),
+      // Live pose + world geometry so other views (e.g. the FPV feed on /live) stay in sync
+      pose: () => { const P = pos(d); return { x: P.x, z: P.z, hy, d, total, laneEnd, alt: ALT, lane: P.lane, playing }; },
+      world: () => ({ terrainArr, staticArr, cells, dets, ground, layers, selected, pillar }),
+      setPillar(k) { if (k !== pillar) { pillar = k; selected = null; build(); } },
+      setLayers(l) { layers = Object.assign({}, layers, l); },
+      select(id) { selected = id; },
+      setView(v) { view = v; },
+      zoom(f) { zoomK = clamp(zoomK * f, 0.45, 1.8); },
+      resetView() { zoomK = 1; yaw = 0.7; pitchV = 0.62; view = 'orbit'; selected = null; },
+      setTime(f) { d = clamp(f, 0, 1) * total; },
+      getTime() { return d / total; },
+      setPlaying(p) { playing = p; if (p && (o.mode !== 'mission' || d >= laneEnd - 0.01)) { if (o.mode === 'mission') d = 0; } },
+      isPlaying() { return playing; },
+      setSpeed(s) { speedMul = s; },
+      destroy() {
+        canvas.removeEventListener('pointerdown', onDown);
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+      },
+      frame(t, dt) {
+        const asp = R.resize();
+        if (playing) {
+          d += dt * SPEED * speedMul;
+          if (d >= total) { if (o.mode === 'mission') { d = total - 0.001; playing = false; } else d = 0; }
+        }
+        const P = pos(d);
+        let dyaw = Math.atan2(P.dz, P.dx) - hy;
+        while (dyaw > Math.PI) dyaw -= Math.PI * 2;
+        while (dyaw < -Math.PI) dyaw += Math.PI * 2;
+        hy += dyaw * Math.min(1, dt * 3.5);
+
+        // camera
+        let targ = [0, 2, 0], rad = o.mode === 'mission' ? 135 : 150;
+        if (view === 'follow') { targ = [P.x, 12, P.z]; rad = 72; }
+        const selDet = selected ? dets.find((q) => q.id === selected) : null;
+        if (selDet) { targ = [selDet.x, 4, selDet.z]; rad = 62; }
+        rad *= zoomK * Math.max(1, 1.25 / asp);
+        const k = Math.min(1, dt * 2.6);
+        cT = [lerp(cT[0], targ[0], k), lerp(cT[1], targ[1], k), lerp(cT[2], targ[2], k)];
+        cR = lerp(cR, rad, k);
+        cP = lerp(cP, view === 'top' ? 1.42 : pitchV, Math.min(1, dt * 3));
+        const cy = yaw + (o.mode === 'overview' && !drag ? t * 0.03 + mx * 0.12 : 0);
+        const eye = [cT[0] + cR * Math.cos(cP) * Math.sin(cy), cT[1] + cR * Math.sin(cP), cT[2] + cR * Math.cos(cP) * Math.cos(cy)];
+        const M = K.camera(asp, eye, cT, 0.72);
+        R.begin(M, eye, 150, 400);
+        if (layers.terrain) R.draw(terrainArr, 'lines', 'add');
+        R.draw(staticArr, 'lines', 'add');
+
+        const fill = new Batch(), edge = new Batch();
+        if (pillar === 'energy') {
+          cells.forEach((c) => {
+            const g = ground(c.x, c.z), done = d > c.trig, hot = c.hot && done && layers.overlay;
+            const p1 = [c.x - 2.3, g + 0.5, c.z + 1.25], p2 = [c.x + 2.3, g + 0.5, c.z + 1.25], p3 = [c.x + 2.3, g + 2.1, c.z - 1.25], p4 = [c.x - 2.3, g + 2.1, c.z - 1.25];
+            fill.quad(p1, p2, p3, p4, hot ? a(COL.crit, 0.6) : done ? [0.12, 0.32, 0.78, 0.34] : [0.2, 0.35, 0.7, 0.1]);
+            const ec = hot ? a(COL.crit, 1) : done ? a(COL.cyan, 0.5) : a(COL.blue, 0.22);
+            edge.line(...p1, ...p2, ec); edge.line(...p2, ...p3, ec); edge.line(...p3, ...p4, ec); edge.line(...p4, ...p1, ec);
+          });
+        } else {
+          cells.forEach((c) => {
+            const done = d > c.trig, g = ground(c.x, c.z) + 0.2, h = 2.7;
+            const p1 = [c.x - h, g, c.z - h], p2 = [c.x + h, g, c.z - h], p3 = [c.x + h, g, c.z + h], p4 = [c.x - h, g, c.z + h];
+            if (pillar === 'agri') {
+              const col = ndviColor(c.n), on = done && layers.overlay;
+              if (on) fill.quad(p1, p2, p3, p4, [col[0], col[1], col[2], 0.36]);
+              const ec = on ? [col[0], col[1], col[2], 0.35] : [0.4, 0.8, 0.6, done ? 0.2 : 0.1];
+              edge.line(...p1, ...p2, ec); edge.line(...p2, ...p3, ec);
+            } else if (done && layers.overlay) {
+              fill.quad(p1, p2, p3, p4, [lerp(0.25, 1, c.n), lerp(0.1, 0.55, c.n * c.n), lerp(0.45, 0.15, c.n), 0.1 + 0.12 * c.n]);
+            }
+          });
+        }
+        R.draw(fill, 'tris', 'alpha');
+        R.draw(edge, 'lines', 'add');
+
+        if (layers.path) {
+          const path = new Batch();
+          segs.forEach((s) => {
+            for (let u = 0; u < s.len; u += 3) {
+              const u2 = Math.min(s.len, u + 1.6), c = s.cum + u < d ? a(COL.warn, 0.8) : a(COL.white, 0.16);
+              path.line(lerp(s.x1, s.x2, u / s.len), ALT, lerp(s.z1, s.z2, u / s.len), lerp(s.x1, s.x2, u2 / s.len), ALT, lerp(s.z1, s.z2, u2 / s.len), c);
+            }
+          });
+          R.draw(path, 'lines', 'add');
+        }
+
+        // scan footprint + drone
+        const fx = Math.cos(hy), fz = Math.sin(hy);
+        const loc = (lx, lz) => [P.x + lx * fx - lz * fz, P.z + lx * fz + lz * fx];
+        const corners = [[-7, -11], [7, -11], [7, 11], [-7, 11]].map(([lx, lz]) => { const q = loc(lx, lz); return [q[0], ground(q[0], q[1]) + 0.5, q[1]]; });
+        const scan = new Batch(), scanFill = new Batch(), dr = new Batch(), glow = new Batch();
+        scanFill.quad(corners[0], corners[1], corners[2], corners[3], a(COL.cyan, 0.08));
+        for (let q = 0; q < 4; q++) {
+          const p = corners[q], n = corners[(q + 1) % 4];
+          scan.line(p[0], p[1], p[2], n[0], n[1], n[2], a(COL.cyan, 0.9));
+          scan.line(P.x, ALT - 1.2, P.z, p[0], p[1], p[2], a(COL.cyan, 0.45), a(COL.cyan, 0.08));
+        }
+        const sw = -7 + 14 * ((t * 1.4) % 1), s1 = loc(sw, -11), s2 = loc(sw, 11);
+        scan.line(s1[0], ground(s1[0], s1[1]) + 0.6, s1[1], s2[0], ground(s2[0], s2[1]) + 0.6, s2[1], a(COL.cyan, 0.75));
+        R.draw(scanFill, 'tris', 'alpha');
+        R.draw(scan, 'lines', 'add');
+        const SC = 1.7, y = ALT, Dp = (lx, lz) => loc(lx * SC, lz * SC), c0 = Dp(0, 0);
+        [[2.3, 2.3], [2.3, -2.3], [-2.3, -2.3], [-2.3, 2.3]].forEach(([lx, lz], i) => {
+          const e = Dp(lx, lz);
+          dr.line(c0[0], y, c0[1], e[0], y + 0.3, e[1], a(COL.white, 0.95));
+          dr.ring(e[0], y + 0.6, e[1], 1.5 * SC, 14, a(COL.blue, 0.8));
+          const b = t * 38 + i;
+          dr.line(e[0] - Math.cos(b) * 1.4 * SC, y + 0.65, e[1] - Math.sin(b) * 1.4 * SC, e[0] + Math.cos(b) * 1.4 * SC, y + 0.65, e[1] + Math.sin(b) * 1.4 * SC, a(COL.cyan, 0.6));
+        });
+        const bx = [Dp(1.1, 0.8), Dp(1.1, -0.8), Dp(-1.1, -0.8), Dp(-1.1, 0.8)];
+        for (let q = 0; q < 4; q++) dr.line(bx[q][0], y + 0.2, bx[q][1], bx[(q + 1) % 4][0], y + 0.2, bx[(q + 1) % 4][1], a(COL.white, 1));
+        R.draw(dr, 'lines', 'add');
+        glow.v(c0[0], y, c0[1], a(COL.blue, 0.4));
+        R.draw(glow, 'points', 'add', 80);
+
+        // detections
+        const mk = new Batch(), mg = new Batch(), W = R.w, H = R.h;
+        dets.forEach((q) => {
+          const age = d - q.trig;
+          q.vis = layers.dets && age > 0;
+          if (!q.vis) { q.sx = -1; if (q.el) q.el.style.opacity = '0'; return; }
+          const s = smooth(0, 12, age), col = q.sev === 'crit' ? COL.crit : COL.warn, isSel = q.id === selected;
+          const gy = ground(q.x, q.z) + (pillar === 'energy' ? 2.2 : 0.4), top = gy + 5 + 11 * s;
+          mk.line(q.x, gy, q.z, q.x, top, q.z, a(col, 0.9), a(col, 0.15));
+          mk.ring(q.x, gy, q.z, 2.4, 20, a(col, 0.95));
+          mk.ring(q.x, gy, q.z, 4.2, 24, a(col, 0.5), true);
+          const ph = (t * 0.55 + q.i * 0.31) % 1;
+          mk.ring(q.x, gy, q.z, 2.4 + ph * 10, 28, a(col, 0.7 * (1 - ph)));
+          [[1.3, 0], [-1.3, 0], [0, 1.3], [0, -1.3]].forEach(([ox, oz]) => {
+            mk.line(q.x + ox, top, q.z + oz, q.x, top + 1.8, q.z, a(col, 1));
+            mk.line(q.x + ox, top, q.z + oz, q.x, top - 1.8, q.z, a(col, 1));
+          });
+          if (isSel) {
+            const rot = t * 1.2;
+            for (let k2 = 0; k2 < 4; k2++) {
+              const a1 = rot + (k2 * Math.PI) / 2, a2 = a1 + 0.8;
+              for (let j = 0; j < 6; j++) {
+                const b1 = lerp(a1, a2, j / 6), b2 = lerp(a1, a2, (j + 1) / 6);
+                mk.line(q.x + Math.cos(b1) * 7, gy, q.z + Math.sin(b1) * 7, q.x + Math.cos(b2) * 7, gy, q.z + Math.sin(b2) * 7, a(COL.cyan, 1));
+              }
+            }
+            mk.line(q.x, gy, q.z, q.x, ALT + 6, q.z, a(COL.cyan, 0.35), a(COL.cyan, 0));
+            mg.v(q.x, top, q.z, a(COL.cyan, 0.7));
+          }
+          mg.v(q.x, gy, q.z, a(col, 0.8 * s));
+          if (pillar === 'rescue') mg.v(q.x, gy + 0.5, q.z, [1, 0.92, 0.8, 0.9 * (0.75 + 0.25 * Math.sin(t * 5 + q.i))]);
+          const sp = K.project(M, q.x, top + 2.4, q.z, W, H);
+          const hit = K.project(M, q.x, (gy + top) / 2, q.z, W, H);
+          if (hit) { q.sx = hit[0]; q.sy = hit[1]; } else q.vis = false;
+          if (q.el) {
+            if (sp) {
+              q.el.style.transform = 'translate(' + sp[0].toFixed(1) + 'px,' + sp[1].toFixed(1) + 'px) translate(-50%,-100%)';
+              q.el.style.opacity = String(s);
+              q.el.className = isSel ? 'gl-tag sel' : 'gl-tag';
+            } else q.el.style.opacity = '0';
+          }
+        });
+        R.draw(mk, 'lines', 'add');
+        R.draw(mg, 'points', 'add', 60);
+
+        hudT += dt;
+        if (o.onHud && hudT > 0.15) {
+          hudT = 0;
+          o.onHud({
+            lat: (22.3 - (P.z * 1.5) / 111320).toFixed(5) + '° N',
+            lon: (70.8 + (P.x * 1.5) / 102990).toFixed(5) + '° E',
+            hdg: String(Math.round((Math.atan2(Math.cos(hy), -Math.sin(hy)) * 180 / Math.PI + 360) % 360)).padStart(3, '0') + '°',
+            lane: P.lane >= 0 ? (P.lane + 1) + ' / ' + LANES : 'Transit',
+            cov: Math.min(100, (d / laneEnd) * 100),
+            frac: d / total,
+            playing,
+            visible: dets.filter((q) => d > q.trig).length,
+          });
+        }
+      },
+    };
+  }
+
+  // Area-of-operations map: terrain around Rajkot, river, site pins coloured by pillar.
+  _aoScene(K, canvas, labelsEl) {
+    const R = K.renderer(canvas, [0.016, 0.043, 0.11]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp, smooth, clamp } = K;
+    const D = this._data();
+    const self = this;
+    const ground = (x, z) => 6 * Math.sin(x * 0.03 + 0.7) * Math.cos(z * 0.028) + 3 * Math.sin(x * 0.08 + z * 0.06) + 10 * smooth(70, 140, Math.hypot(x, z));
+    const tb = new Batch();
+    for (let g = -140; g <= 140; g += 7) for (let u = -140; u < 140; u += 3.5) {
+      const col = (h) => [lerp(0.13, 0.42, smooth(-6, 16, h)), lerp(0.3, 0.68, smooth(-6, 16, h)), lerp(0.72, 1, smooth(-6, 16, h)), 0.14 + 0.22 * smooth(-6, 16, h)];
+      const h1 = ground(u, g), h2 = ground(u + 3.5, g), k1 = ground(g, u), k2 = ground(g, u + 3.5);
+      tb.line(u, h1, g, u + 3.5, h2, g, col(h1), col(h2));
+      tb.line(g, k1, u, g, k2, u + 3.5, col(k1), col(k2));
+    }
+    // Aji river (stylised) and ring roads
+    let prev = null;
+    for (let z = -140; z <= 140; z += 4) {
+      const x = 18 * Math.sin(z * 0.025) + 30 + z * 0.12, p = [x, ground(x, z) + 0.4, z];
+      if (prev) tb.line(...prev, ...p, [0.36, 0.88, 1, 0.55]);
+      prev = p;
+    }
+    tb.ring(0, 0.6, 0, 34, 64, [0.62, 0.7, 0.85, 0.28], true);
+    tb.ring(0, 0.6, 0, 78, 96, [0.62, 0.7, 0.85, 0.18], true);
+    const terrain = new Float32Array(tb.a);
+    const hex = (h) => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255, 1];
+    const pins = D.sites.map((s) => {
+      const el = labelsEl ? document.createElement('div') : null;
+      if (el) { el.className = 'gl-tag'; el.style.color = D.P[s.pillar].color; el.textContent = s.short; labelsEl.appendChild(el); }
+      return Object.assign({}, s, { col: hex(D.P[s.pillar].color), el, sx: -1, sy: -1 });
+    });
+
+    let drag = null, yaw = 0.5, pitch = 0.95;
+    const local = (e) => { const r = canvas.getBoundingClientRect(); return [(e.clientX - r.left) * canvas.clientWidth / Math.max(1, r.width), (e.clientY - r.top) * canvas.clientHeight / Math.max(1, r.height)]; };
+    const onDown = (e) => { drag = { x: e.clientX, y: e.clientY, yaw, pitch, moved: false }; };
+    const onMove = (e) => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true; yaw = drag.yaw - dx * 0.006; pitch = clamp(drag.pitch + dy * 0.004, 0.35, 1.4); };
+    const onUp = (e) => {
+      if (drag && !drag.moved) {
+        const [px, py] = local(e);
+        let best = null, bd = 34;
+        pins.forEach((p) => { const dd = Math.hypot(p.sx - px, p.sy - py); if (dd < bd) { bd = dd; best = p; } });
+        if (best) {
+          const m = D.missionsAll.find((x) => x.siteKey === best.key);
+          if (self._onAoPick) self._onAoPick(best.key, m); else if (m) self.setState({ sel: m.id });
+        }
+      }
+      drag = null;
+    };
+    canvas.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    let cT = [0, 0, 0];
+
+    return {
+      destroy() { canvas.removeEventListener('pointerdown', onDown); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); },
+      frame(t, dt) {
+        const asp = R.resize();
+        const cur = pins.find((p) => p.key === self._selSite) || pins[0];
+        const k = Math.min(1, dt * 2);
+        cT = [lerp(cT[0], cur.x * 0.45, k), 0, lerp(cT[2], cur.z * 0.45, k)];
+        const cy = yaw + (drag ? 0 : t * 0.04), rad = 190 * Math.max(1, 1.0 / asp);
+        const eye = [cT[0] + rad * Math.cos(pitch) * Math.sin(cy), rad * Math.sin(pitch), cT[2] + rad * Math.cos(pitch) * Math.cos(cy)];
+        const M = K.camera(asp, eye, cT, 0.66);
+        R.begin(M, eye, 160, 420);
+        R.draw(terrain, 'lines', 'add');
+        const ln = new Batch(), pt = new Batch(), fl = new Batch();
+        // Rajkot city marker
+        ln.line(-5, 0.8, 0, 5, 0.8, 0, a(COL.white, 0.5)); ln.line(0, 0.8, -5, 0, 0.8, 5, a(COL.white, 0.5));
+        pins.forEach((p) => {
+          const g = ground(p.x, p.z) + 0.5, on = p.key === cur.key, h = on ? 24 : 14;
+          ln.line(p.x, g, p.z, p.x, g + h, p.z, a(p.col, 0.9), a(p.col, 0.2));
+          ln.ring(p.x, g, p.z, on ? 4 : 2.6, 24, a(p.col, on ? 1 : 0.7));
+          [[1.6, 0], [-1.6, 0], [0, 1.6], [0, -1.6]].forEach(([ox, oz]) => { ln.line(p.x + ox, g + h, p.z + oz, p.x, g + h + 2.2, p.z, a(p.col, 1)); ln.line(p.x + ox, g + h, p.z + oz, p.x, g + h - 2.2, p.z, a(p.col, 1)); });
+          pt.v(p.x, g + h, p.z, a(p.col, on ? 1 : 0.6));
+          if (on) {
+            const ph = (t * 0.6) % 1;
+            ln.ring(p.x, g, p.z, 4 + ph * 16, 36, a(p.col, 0.8 * (1 - ph)));
+            // survey footprint: 7 short lanes
+            for (let i = 0; i < 7; i++) {
+              const z = p.z - 9 + i * 3;
+              for (let u = -12; u < 12; u += 2) ln.line(p.x + u, g + 0.2, z, p.x + u + 1.1, g + 0.2, z, a(COL.warn, 0.7));
+            }
+            fl.quad([p.x - 13, g + 0.1, p.z - 10.5], [p.x + 13, g + 0.1, p.z - 10.5], [p.x + 13, g + 0.1, p.z + 10.5], [p.x - 13, g + 0.1, p.z + 10.5], a(p.col, 0.08));
+          }
+          const sp = K.project(M, p.x, g + h + 4, p.z, R.w, R.h), hit = K.project(M, p.x, g + h * 0.6, p.z, R.w, R.h);
+          if (hit) { p.sx = hit[0]; p.sy = hit[1]; }
+          if (p.el) {
+            if (sp) { p.el.style.opacity = on ? '1' : '0.75'; p.el.className = on ? 'gl-tag sel' : 'gl-tag'; p.el.style.transform = 'translate(' + sp[0].toFixed(1) + 'px,' + sp[1].toFixed(1) + 'px) translate(-50%,-100%)'; }
+            else p.el.style.opacity = '0';
+          }
+        });
+        R.draw(fl, 'tris', 'alpha');
+        R.draw(ln, 'lines', 'add');
+        R.draw(pt, 'points', 'add', 40);
+      },
+    };
+  }
+
+  // Wireframe quadcopter into a Batch. opt: { explode 0..1, color, rotor, legs }
+  _drawDrone(K, b, x, y, z, yaw, sc, t, opt) {
+    const { a, COL } = K;
+    opt = opt || {};
+    const ex = opt.explode || 0, col = opt.color || COL.white, rc = opt.rotor || COL.blue;
+    const c = Math.cos(yaw), s = Math.sin(yaw);
+    const P = (lx, ly, lz) => [x + (lx * c - lz * s) * sc, y + ly * sc, z + (lx * s + lz * c) * sc];
+    const L = (p, q, cc) => b.line(p[0], p[1], p[2], q[0], q[1], q[2], cc);
+    const box = (cx, cy, cz, hx, hy, hz, cc) => {
+      const v = [[-1, -1, -1], [1, -1, -1], [1, -1, 1], [-1, -1, 1], [-1, 1, -1], [1, 1, -1], [1, 1, 1], [-1, 1, 1]].map(([i, j, k]) => P(cx + i * hx, cy + j * hy, cz + k * hz));
+      [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]].forEach(([i, j]) => L(v[i], v[j], cc));
+    };
+    box(0, 0, 0, 1.5, 0.28, 1.0, a(col, 0.95));
+    box(0, 0.5 + ex * 1.6, 0, 0.9, 0.18, 0.55, a(COL.green, 0.8));
+    box(1.1 + ex * 0.8, -0.55 - ex * 1.4, 0, 0.35, 0.35, 0.35, a(COL.cyan, 0.9));
+    [[1, 1], [1, -1], [-1, -1], [-1, 1]].forEach(([sx, sz], i) => {
+      const o = ex * 1.3;
+      const rx = sx * (2.6 + o), rz = sz * (2.6 + o), ry = 0.62 + ex * 1.2;
+      L(P(sx * 1.0, 0, sz * 0.7), P(rx, 0.1, rz), a(col, 0.95));
+      L(P(rx, 0.1, rz), P(rx, 0.5 + ex * 0.6, rz), a(col, 0.9));
+      for (let k = 0; k < 18; k++) {
+        const a1 = (k / 18) * Math.PI * 2, a2 = ((k + 1) / 18) * Math.PI * 2;
+        L(P(rx + Math.cos(a1) * 1.55, ry, rz + Math.sin(a1) * 1.55), P(rx + Math.cos(a2) * 1.55, ry, rz + Math.sin(a2) * 1.55), a(rc, 0.85));
+      }
+      const bl = t * 30 + i * 0.8;
+      L(P(rx - Math.cos(bl) * 1.45, ry + 0.03, rz - Math.sin(bl) * 1.45), P(rx + Math.cos(bl) * 1.45, ry + 0.03, rz + Math.sin(bl) * 1.45), a(COL.cyan, 0.65));
+    });
+    if (opt.legs !== false) {
+      [[1, 1], [1, -1], [-1, -1], [-1, 1]].forEach(([sx, sz]) => L(P(sx * 0.9, -0.28, sz * 0.6), P(sx * 1.2, -1.1 - ex * 0.5, sz * 0.9), a(col, 0.6)));
+    }
+  }
+}
+</script>
+</body>
+</html>

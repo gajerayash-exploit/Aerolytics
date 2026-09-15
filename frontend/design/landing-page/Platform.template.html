@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+/*MARKETING_CSS*/
+
+    .hero { position: relative; height: 780px; overflow: hidden; background: #040B1C; }
+    .hero-copy { position: absolute; left: 48px; top: 150px; width: 520px; z-index: 3; }
+    .stage-card { position: absolute; right: 48px; top: 150px; width: 360px; z-index: 3; padding: 20px 22px; animation: slideIn .35s ease-out both; }
+    .stage-card .h2 { margin-top: 10px; font-size: 26px; }
+    .stage-card p { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #A9B8D0; }
+    .stage-card .kvl-row { padding: 0; }
+    .stage-nav { position: absolute; left: 48px; right: 48px; bottom: 36px; z-index: 3; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+    .sn { padding: 12px 0 0; border: 0; border-top: 2px solid rgba(160,190,240,.18); background: none; text-align: left; cursor: pointer; color: #7F90AD; }
+    .sn:hover { color: #CFDAEE; }
+    .sn.on { border-top-color: #5CE1FF; color: #fff; }
+    .sn small { display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; color: #5CE1FF; }
+    .sn span { display: block; margin-top: 4px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 114%; font-style: italic; font-weight: 600; font-size: 17px; text-transform: uppercase; }
+    .schema { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px; margin-top: 48px; }
+    .code { padding: 18px 20px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; line-height: 1.75; background: rgba(2,7,18,.8); box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); }
+    .code div { white-space: pre; }
+    .k { color: #7FB2FF; } .s { color: #9BE15D; } .n { color: #FFB547; } .p { color: #7F90AD; }
+    .fields { display: flex; flex-direction: column; }
+    .fld { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-top: 1px solid rgba(120,170,255,.1); }
+    .fld b { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #fff; }
+    .fld span { font-size: 14px; line-height: 1.55; color: #A9B8D0; }
+    .ladder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+    .rung { padding: 20px; }
+    .rung p { margin: 12px 0 0; font-size: 14px; line-height: 1.55; color: #A9B8D0; }
+    .rung .meta { margin-top: 14px; }
+    .stack { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+    .tech { padding: 20px 22px; }
+    .tech h3 { margin: 8px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 114%; font-weight: 600; font-size: 20px; color: #fff; }
+    .tech p { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: #A9B8D0; }
+    .road { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+    .col h3 { margin: 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 24px; text-transform: uppercase; color: #fff; }
+    .col ul { list-style: none; margin: 16px 0 0; padding: 0; }
+    .col li { display: flex; gap: 12px; align-items: baseline; padding: 11px 0; border-top: 1px solid rgba(120,170,255,.1); font-size: 14.5px; color: #CFDAEE; }
+    .col li .dia { transform: rotate(45deg) translateY(-1px); }
+  </style>
+</helmet>
+
+<div class="mk">
+  <!--MKNAV:platform-->
+
+  <section class="hero">
+    <canvas class="gl" data-gl="pipe"></canvas>
+    <div class="gl-labels" data-gl-labels="pipe"></div>
+    <div class="mk-shade"></div>
+    <div class="hero-copy">
+      <div class="kicker"><i></i>Platform</div>
+      <h1 class="mk-h1">One engine,<br><span>seven stages.</span></h1>
+      <p class="mk-lede">Every Aerolytics mission moves through the same pipeline, from the first frame to the final report. Pick a stage to see what it does and what runs it today.</p>
+      <div class="mk-cta"><a class="btn btn-primary" href="#">Request a pilot</a><a class="btn btn-ghost" href="#">Open the demo</a></div>
+    </div>
+    <aside class="glass stage-card">
+      <div class="kicker"><i></i>Stage {{ cur.idx }} of 7</div>
+      <h2 class="h2">{{ cur.name }}</h2>
+      <p>{{ cur.body }}</p>
+      <div style="margin-top: 14px">
+        <sc-for list="{{ cur.facts }}" as="f" hint-placeholder-count="3"><div class="kvl-row"><span>{{ f.k }}</span><b>{{ f.v }}</b><i></i></div></sc-for>
+      </div>
+      <div style="margin-top: 14px"><span class="badge {{ cur.bcls }}">{{ cur.badge }}</span></div>
+    </aside>
+    <div class="stage-nav">
+      <sc-for list="{{ stages }}" as="s" hint-placeholder-count="7"><button class="sn {{ s.cls }}" onClick="{{ s.pick }}"><small>{{ s.idx }}</small><span>{{ s.name }}</span></button></sc-for>
+    </div>
+  </section>
+
+  <section class="mk-sec">
+    <div class="kicker"><i></i>01 / One response schema</div>
+    <h2 class="mk-h2">Every pillar answers in the same shape.</h2>
+    <div class="schema">
+      <div class="code">
+        <div><span class="p">{</span></div>
+        <div>  <span class="k">"pillar"</span><span class="p">: </span><span class="s">"energy"</span><span class="p">,</span></div>
+        <div>  <span class="k">"filename"</span><span class="p">: </span><span class="s">"solar_01.jpg"</span><span class="p">,</span></div>
+        <div>  <span class="k">"telemetry"</span><span class="p">: { </span><span class="k">"lat"</span><span class="p">: </span><span class="n">22.3001</span><span class="p">, </span><span class="k">"lng"</span><span class="p">: </span><span class="n">70.8001</span><span class="p">,</span></div>
+        <div>                 <span class="k">"alt"</span><span class="p">: </span><span class="n">45.0</span><span class="p">, </span><span class="k">"heading"</span><span class="p">: </span><span class="n">90.0</span><span class="p"> },</span></div>
+        <div>  <span class="k">"detections"</span><span class="p">: [</span></div>
+        <div>    <span class="p">{ </span><span class="k">"class"</span><span class="p">: </span><span class="s">"crack"</span><span class="p">, </span><span class="k">"confidence"</span><span class="p">: </span><span class="n">0.91</span><span class="p">,</span></div>
+        <div>      <span class="k">"bbox_xyxy"</span><span class="p">: [</span><span class="n">412.0, 228.0, 538.0, 341.0</span><span class="p">] }</span></div>
+        <div>  <span class="p">],</span></div>
+        <div>  <span class="k">"inference_time_ms"</span><span class="p">: </span><span class="n">38.4</span></div>
+        <div><span class="p">}</span></div>
+      </div>
+      <div class="fields">
+        <sc-for list="{{ fields }}" as="f" hint-placeholder-count="5"><div class="fld"><b>{{ f.k }}</b><span>{{ f.v }}</span></div></sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-sec">
+    <div class="kicker"><i></i>02 / Provenance</div>
+    <h2 class="mk-h2">Where every coordinate comes from.</h2>
+    <div class="ladder">
+      <sc-for list="{{ ladder }}" as="r" hint-placeholder-count="4">
+        <div class="panel rung"><span class="badge {{ r.bcls }}">{{ r.badge }}</span><p>{{ r.body }}</p><div class="meta">{{ r.state }}</div></div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section class="mk-sec">
+    <div class="kicker"><i></i>03 / Built on</div>
+    <h2 class="mk-h2">Open, proven components.</h2>
+    <div class="stack">
+      <sc-for list="{{ tech }}" as="t" hint-placeholder-count="6"><div class="panel tech"><div class="lbl">{{ t.role }}</div><h3>{{ t.name }}</h3><p>{{ t.body }}</p></div></sc-for>
+    </div>
+  </section>
+
+  <section class="mk-sec">
+    <div class="kicker"><i></i>04 / Roadmap</div>
+    <h2 class="mk-h2">From golden demo to live fleet.</h2>
+    <div class="road">
+      <sc-for list="{{ road }}" as="c" hint-placeholder-count="3">
+        <div class="col"><h3 style="color: {{ c.color }}">{{ c.name }}</h3><ul><sc-for list="{{ c.items }}" as="i" hint-placeholder-count="4"><li><i class="dia" style="background: {{ c.color }}"></i>{{ i.t }}</li></sc-for></ul></div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!--MKFOOT-->
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":2900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { stage: 2 };
+    this._stage = 2;
+  }
+
+  _stages() {
+    return [
+      ['Capture', 'RGB, thermal and multispectral frames are recorded by the drone and uploaded as images or video.', [['Inputs', 'JPG · TIF · MP4'], ['Sources', 'RGB · LWIR · multispectral']], 'Upload flow built', 'b-live'],
+      ['Telemetry', 'Each frame gets a position. EXIF GPS is used first, then a flight manifest, then a simulated lawnmower path, and the source is recorded.', [['Order', 'EXIF → manifest → simulated'], ['Code', 'backend/telemetry.py']], 'Manifest fallback', 'b-man'],
+      ['Inference', 'A pillar-specific YOLO model finds defects, disease or people and returns boxes with confidence scores.', [['Endpoint', 'POST /api/v1/infer/{pillar}'], ['Models', 'YOLOv8n fine-tuned · 640 px'], ['Threshold', 'confidence ≥ 0.50']], 'Running in FastAPI', 'b-live'],
+      ['Normalize', 'Every model answers in the same schema, so energy, agri and rescue detections can share one map and one report.', [['Fields', 'class · confidence · bbox_xyxy'], ['Timing', 'inference_time_ms']], 'Schema defined', 'b-live'],
+      ['Geo-map', 'Pixel boxes are projected to site coordinates using the frame position, altitude and heading. Precision follows the telemetry source.', [['Output', 'lat · lng · world offset'], ['Accuracy', 'approximate without RTK']], 'Approximate positions', 'b-sim'],
+      ['Digital twin', 'Detections become markers on a 3D model of the site, with the flight path, coverage and inspection dossiers.', [['Views', '3D · top · follow drone'], ['Renderer', 'Three.js / WebGL']], 'In the command center', 'b-live'],
+      ['Action', 'Operators assign crews, dispatch teams and export PDF or JSON reports built from the session data.', [['Exports', 'PDF · JSON'], ['Rule', 'provenance statement always included']], 'Demo mode', 'b-sim'],
+    ].map(([name, body, facts, badge, bcls], i) => ({ idx: String(i + 1).padStart(2, '0'), name, body, facts: facts.map(([k, v]) => ({ k, v })), badge, bcls }));
+  }
+
+  renderVals() {
+    const S = this._stages();
+    const { stage } = this.state;
+    this._stage = stage;
+    return {
+      cur: S[stage],
+      stages: S.map((s, i) => ({ idx: s.idx, name: s.name, cls: i === stage ? 'on' : '', pick: () => this.setState({ stage: i }) })),
+      fields: [
+        ['pillar', 'energy, agri or rescue: picks the model and the vocabulary.'],
+        ['telemetry', 'Position and attitude of the aircraft when the frame was taken, tagged with its source.'],
+        ['detections[]', 'One entry per object: class, confidence and a pixel bounding box.'],
+        ['bbox_xyxy', 'Box corners in image pixels, used for crops and for projection to the ground.'],
+        ['inference_time_ms', 'Measured model time for the frame, surfaced in analytics.'],
+      ].map(([k, v]) => ({ k, v })),
+      ladder: [
+        ['Live GPS', 'b-live', 'Streamed from the aircraft during flight. RTK-grade when the hardware has it.', 'Roadmap'],
+        ['EXIF', 'b-exif', 'Read from the image file. As accurate as the drone’s own GPS.', 'Supported'],
+        ['Manifest', 'b-man', 'Matched to a planned flight path by filename. Positions are approximate.', 'Supported'],
+        ['Simulated', 'b-sim', 'Generated for demonstrations. Never shown as a field measurement.', 'Golden demo'],
+      ].map(([badge, bcls, body, state]) => ({ badge, bcls, body, state })),
+      tech: [
+        ['Detection', 'Ultralytics YOLOv8', 'Three fine-tuned nano models, one per pillar, trained at 640 px for 15 epochs.'],
+        ['API', 'FastAPI', 'Accepts uploads per pillar and returns the normalized detection schema.'],
+        ['Frontend', 'Next.js + TypeScript', 'The command center, reports and marketing site in one app.'],
+        ['3D', 'Three.js', 'Digital twins, flight playback, live feeds and the hangar.'],
+        ['Data (planned)', 'PostGIS', 'Sites, missions and detections as geospatial records.'],
+        ['Telemetry (planned)', 'WebSocket · MQTT', 'Live aircraft streams replacing manifest positions.'],
+      ].map(([role, name, body]) => ({ role, name, body })),
+      road: [
+        ['Now', '#5CE1FF', ['Three fine-tuned pillar models', 'Manifest and simulated telemetry', '3D command center and reports', 'Golden demo over Rajkot']],
+        ['Next', '#FFB547', ['Live telemetry over WebSocket', 'Validation sets and accuracy tracking', 'Multi-tenant organizations and roles', 'Audit logging']],
+        ['Later', '#9BE15D', ['RTK GPS and survey-grade positions', 'MQTT fleet gateway', 'Orthomosaics, DEM/DSM and satellite layers', 'Mission planning sent to aircraft']],
+      ].map(([name, color, items]) => ({ name, color, items: items.map((t) => ({ t })) })),
+    };
+  }
+
+  componentDidMount() { this._alive = true; this._boot(0); }
+  componentWillUnmount() { this._alive = false; if (this._raf) cancelAnimationFrame(this._raf); if (this._pipe) this._pipe.destroy(); }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="pipe"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._pipe = this._pipeScene(this._engine(), canvas, document.querySelector('[data-gl-labels="pipe"]'));
+    this._loop([this._pipe]);
+  }
+
+  // Seven stage nodes on an S-curve; packets flow between them; the selected node lifts and glows.
+  _pipeScene(K, canvas, labelsEl) {
+    const R = K.renderer(canvas, [0.016, 0.043, 0.11]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp, clamp } = K;
+    const self = this;
+    const names = this._stages().map((s) => s.name);
+    const nodes = names.map((n, i) => {
+      const u = i / (names.length - 1);
+      const el = labelsEl ? document.createElement('div') : null;
+      if (el) { el.className = 'gl-tag'; el.style.color = '#5CE1FF'; el.textContent = n.toUpperCase(); labelsEl.appendChild(el); }
+      return { x: lerp(-66, 66, u), z: Math.sin(u * Math.PI * 2) * 16, lift: 0, el, sx: -1, sy: -1 };
+    });
+    const grid = new Batch();
+    for (let g = -120; g <= 120; g += 8) { grid.line(g, -8, -60, g, -8, 60, [0.3, 0.55, 1, 0.07]); grid.line(-120, -8, g * 0.5, 120, -8, g * 0.5, [0.3, 0.55, 1, 0.07]); }
+    const gridArr = new Float32Array(grid.a);
+    const onUp = (e) => {
+      const r = canvas.getBoundingClientRect();
+      const px = (e.clientX - r.left) * canvas.clientWidth / Math.max(1, r.width), py = (e.clientY - r.top) * canvas.clientHeight / Math.max(1, r.height);
+      let best = -1, bd = 40;
+      nodes.forEach((n, i) => { const d = Math.hypot(n.sx - px, n.sy - py); if (d < bd) { bd = d; best = i; } });
+      if (best >= 0) self.setState({ stage: best });
+    };
+    canvas.addEventListener('pointerup', onUp);
+
+    return {
+      destroy() { canvas.removeEventListener('pointerup', onUp); },
+      frame(t, dt) {
+        const asp = R.resize();
+        const sel = nodes[self._stage] || nodes[0];
+        const cy = 0.15 + Math.sin(t * 0.1) * 0.12, rad = 150 * Math.max(1, 1.5 / asp);
+        const T = [sel.x * 0.25, 4, 0];
+        const eye = [T[0] + rad * Math.cos(0.42) * Math.sin(cy), T[1] + rad * Math.sin(0.42), T[2] + rad * Math.cos(0.42) * Math.cos(cy)];
+        const M = K.camera(asp, eye, T, 0.62);
+        R.begin(M, eye, 100, 300);
+        R.draw(gridArr, 'lines', 'add');
+        const ln = new Batch(), fill = new Batch(), pts = new Batch();
+        for (let i = 0; i < nodes.length - 1; i++) {
+          const A = nodes[i], B = nodes[i + 1];
+          for (let k = 0; k < 20; k++) {
+            const u1 = k / 20, u2 = (k + 1) / 20;
+            ln.line(lerp(A.x, B.x, u1), lerp(A.lift, B.lift, u1), lerp(A.z, B.z, u1), lerp(A.x, B.x, u2), lerp(A.lift, B.lift, u2), lerp(A.z, B.z, u2), a(COL.blue, 0.35));
+          }
+          for (let p = 0; p < 3; p++) {
+            const u = (t * 0.5 + p / 3 + i * 0.11) % 1;
+            pts.v(lerp(A.x, B.x, u), lerp(A.lift, B.lift, u) + 0.2, lerp(A.z, B.z, u), a(COL.cyan, 1));
+          }
+        }
+        nodes.forEach((n, i) => {
+          const on = i === self._stage;
+          n.lift = lerp(n.lift, on ? 6 : 0, Math.min(1, dt * 3));
+          const c = on ? COL.cyan : COL.blue, r = on ? 7 : 5.5, spin = t * (on ? 0.6 : 0.15) + i;
+          const top = n.lift + 2, bot = n.lift - 2;
+          const hx = Array.from({ length: 6 }, (_, k) => { const an = (k / 6) * Math.PI * 2 + spin; return [n.x + Math.cos(an) * r, n.z + Math.sin(an) * r]; });
+          for (let k = 0; k < 6; k++) {
+            const p = hx[k], q = hx[(k + 1) % 6];
+            ln.line(p[0], top, p[1], q[0], top, q[1], a(c, 0.95));
+            ln.line(p[0], bot, p[1], q[0], bot, q[1], a(c, 0.4));
+            ln.line(p[0], bot, p[1], p[0], top, p[1], a(c, 0.35));
+            fill.tri([n.x, top, n.z], [p[0], top, p[1]], [q[0], top, q[1]], a(c, on ? 0.22 : 0.07));
+          }
+          ln.line(n.x, bot, n.z, n.x, -8, n.z, a(c, 0.15));
+          if (on) { const ph = (t * 0.7) % 1; ln.ring(n.x, top, n.z, r + ph * 10, 30, a(COL.cyan, 0.7 * (1 - ph))); }
+          const sp = K.project(M, n.x, top + 5, n.z, R.w, R.h), hit = K.project(M, n.x, n.lift, n.z, R.w, R.h);
+          if (hit) { n.sx = hit[0]; n.sy = hit[1]; }
+          if (n.el) {
+            if (sp) { n.el.style.opacity = '1'; n.el.className = on ? 'gl-tag sel' : 'gl-tag'; n.el.style.transform = 'translate(' + sp[0].toFixed(1) + 'px,' + sp[1].toFixed(1) + 'px) translate(-50%,-100%)'; }
+            else n.el.style.opacity = '0';
+          }
+        });
+        self._drawDrone(K, ln, nodes[0].x - 4, 16 + Math.sin(t * 1.3), nodes[0].z, t * 0.4, 1.4, t, { legs: false });
+        const last = nodes[nodes.length - 1];
+        [[-3, -4], [3, -4], [3, 4], [-3, 4]].forEach(([dx, dz], k, arr) => { const q = arr[(k + 1) % 4]; ln.line(last.x + 10 + dx, 10, last.z + dz, last.x + 10 + q[0], 10, last.z + q[1], a(COL.white, 0.6)); });
+        R.draw(fill, 'tris', 'alpha');
+        R.draw(ln, 'lines', 'add');
+        R.draw(pts, 'points', 'add', 26);
+      },
+    };
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

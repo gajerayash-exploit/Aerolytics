@@ -1,0 +1,87 @@
+/* Generated from design/landing-page/Platform.template.html — scoped to .pg-platform */
+.pg-platform .hero { position: relative; height: 780px; overflow: hidden; background: #040B1C; }
+.pg-platform .hero-copy { position: absolute; left: 48px; top: 150px; width: 520px; z-index: 3; }
+.pg-platform .stage-card { position: absolute; right: 48px; top: 150px; width: 360px; z-index: 3; padding: 20px 22px; animation: slideIn .35s ease-out both; }
+.pg-platform .stage-card .h2 { margin-top: 10px; font-size: 26px; }
+.pg-platform .stage-card p { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #A9B8D0; }
+.pg-platform .stage-card .kvl-row { padding: 0; }
+.pg-platform .stage-nav { position: absolute; left: 48px; right: 48px; bottom: 36px; z-index: 3; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.pg-platform .sn { padding: 12px 0 0; border: 0; border-top: 2px solid rgba(160,190,240,.18); background: none; text-align: left; cursor: pointer; color: #7F90AD; }
+.pg-platform .sn:hover { color: #CFDAEE; }
+.pg-platform .sn.on { border-top-color: #5CE1FF; color: #fff; }
+.pg-platform .sn small { display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; color: #5CE1FF; }
+.pg-platform .sn span { display: block; margin-top: 4px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 114%; font-style: italic; font-weight: 600; font-size: 17px; text-transform: uppercase; }
+.pg-platform .schema { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px; margin-top: 48px; }
+.pg-platform .code { padding: 18px 20px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; line-height: 1.75; background: rgba(2,7,18,.8); box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); }
+.pg-platform .code div { white-space: pre; }
+.pg-platform .k { color: #7FB2FF; }
+.pg-platform .s { color: #9BE15D; }
+.pg-platform .n { color: #FFB547; }
+.pg-platform .p { color: #7F90AD; }
+.pg-platform .fields { display: flex; flex-direction: column; }
+.pg-platform .fld { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-top: 1px solid rgba(120,170,255,.1); }
+.pg-platform .fld b { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #fff; }
+.pg-platform .fld span { font-size: 14px; line-height: 1.55; color: #A9B8D0; }
+.pg-platform .ladder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+.pg-platform .rung { padding: 20px; }
+.pg-platform .rung p { margin: 12px 0 0; font-size: 14px; line-height: 1.55; color: #A9B8D0; }
+.pg-platform .rung .meta { margin-top: 14px; }
+.pg-platform .stack { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+.pg-platform .tech { padding: 20px 22px; }
+.pg-platform .tech h3 { margin: 8px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 114%; font-weight: 600; font-size: 20px; color: #fff; }
+.pg-platform .tech p { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: #A9B8D0; }
+.pg-platform .road { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+.pg-platform .col h3 { margin: 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 24px; text-transform: uppercase; color: #fff; }
+.pg-platform .col ul { list-style: none; margin: 16px 0 0; padding: 0; }
+.pg-platform .col li { display: flex; gap: 12px; align-items: baseline; padding: 11px 0; border-top: 1px solid rgba(120,170,255,.1); font-size: 14.5px; color: #CFDAEE; }
+.pg-platform .col li .dia { transform: rotate(45deg) translateY(-1px); }
+
+/* Responsive adjustments for Platform */
+@media (max-width: 1024px) {
+  .pg-platform .hero {
+    height: auto;
+    min-height: 560px;
+    padding-bottom: 120px;
+  }
+  .pg-platform .hero-copy {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    padding: 110px 24px 20px;
+  }
+  .pg-platform .stage-card {
+    position: relative;
+    right: auto;
+    top: auto;
+    width: auto;
+    margin: 12px 24px;
+  }
+  .pg-platform .stage-nav {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 12px 24px;
+  }
+  .pg-platform .schema {
+    grid-template-columns: 1fr;
+  }
+  .pg-platform .ladder {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pg-platform .stack, .pg-platform .road {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .pg-platform .ladder {
+    grid-template-columns: 1fr;
+  }
+  .pg-platform .stage-nav {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,0 +1,26 @@
+/* Generated from design/landing-page/MissionPlanner.template.html — scoped to .pg-mission-planner */
+.pg-mission-planner .cols { display: grid; grid-template-columns: 316px minmax(0, 1fr) 300px; gap: 14px; min-height: 0; }
+.pg-mission-planner .params { flex: 1; }
+.pg-mission-planner .prm { padding: 12px 16px; border-bottom: 1px solid rgba(120,170,255,.08); }
+.pg-mission-planner .prm .lbl { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.pg-mission-planner .prm .lbl em { font-style: normal; color: #CFDAEE; letter-spacing: .04em; text-transform: none; }
+.pg-mission-planner .prm .segs { width: 100%; }
+.pg-mission-planner .prm .segs button { flex: 1; }
+.pg-mission-planner .hint { padding: 6px 10px; }
+.pg-mission-planner .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-mission-planner .st { padding: 11px 16px; border-bottom: 1px solid rgba(120,170,255,.07); }
+.pg-mission-planner .st:nth-child(odd) { border-right: 1px solid rgba(120,170,255,.07); }
+.pg-mission-planner .st b { display: block; margin-top: 4px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 22px; color: #fff; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pg-mission-planner .st b small { margin-left: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; font-weight: 400; color: #7F90AD; }
+.pg-mission-planner .checks { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; }
+.pg-mission-planner .chk { display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 10px; align-items: center; font-size: 12.5px; color: #CFDAEE; }
+.pg-mission-planner .sum-acts { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px 14px; margin-top: auto; border-top: 1px solid rgba(120,170,255,.1); }
+.pg-mission-planner .sum-acts .btn { width: 100%; }
+.pg-mission-planner .modal-bg { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: rgba(2,6,15,.72); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.pg-mission-planner .modal { width: 640px; animation: rowIn .3s ease-out both; }
+.pg-mission-planner .code { max-height: 300px; padding: 14px 16px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 1.7; background: rgba(2,7,18,.8); }
+.pg-mission-planner .code div { white-space: pre; }
+.pg-mission-planner .j-key { color: #7FB2FF; }
+.pg-mission-planner .j-num { color: #FFB547; }
+.pg-mission-planner .j-pun { color: #7F90AD; }
+.pg-mission-planner .modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid rgba(120,170,255,.1); }

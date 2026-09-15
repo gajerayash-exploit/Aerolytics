@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+/*SETTINGS_CSS*/
+
+    .aomap { position: relative; height: 300px; overflow: hidden; background: #040B1C; border-top: 1px solid rgba(120,170,255,.1); border-bottom: 1px solid rgba(120,170,255,.1); }
+    .pill-t { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 18px; border-top: 1px solid rgba(120,170,255,.07); }
+    .brand { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .brand-tile { height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); }
+    .brand-tile.dark { background: #040B1C; }
+    .brand-tile.light { background: #F4F6FA; }
+    .brand-tile img { width: 44px; height: auto; }
+    .brand-tile span { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: #7F90AD; }
+    .brand-tile.light b { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 13px; color: #0B1530; text-transform: uppercase; }
+    .ret { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 18px; border-top: 1px solid rgba(120,170,255,.07); }
+    .meter { display: flex; align-items: center; gap: 10px; }
+    .meter .hbar { width: 110px; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:settings-->
+  <!--TOPBAR:Settings|Organization-->
+
+  <main class="main">
+    <div class="settings">
+      <!--SETTINGSNAV:organization-->
+      <div class="set-main">
+        <div class="page-head">
+          <div>
+            <div class="kicker"><i></i>Settings · organization</div>
+            <h1 class="h1" style="margin-top: 10px">Organization</h1>
+          </div>
+          <div class="meta">Admin access required to change these settings</div>
+          <div class="acts">
+            <sc-if value="{{ dirty }}" hint-placeholder-val="{{ false }}"><span class="dirty"><i class="dia sev-warn"></i>Unsaved changes</span></sc-if>
+            <button class="btn btn-primary" onClick="{{ save }}" disabled="{{ clean }}">{{ saveLabel }}</button>
+          </div>
+        </div>
+
+        <div class="set-cols">
+          <div class="scroll stack">
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Organization details</span><span class="chip st-new">Pilot · golden demo</span></div>
+              <div class="card-b"><div class="fgrid">
+                <label class="field full"><span class="lbl">Legal name</span><span class="input"><input type="text" placeholder="[ORGANIZATION NAME]" onInput="{{ touch }}"></span></label>
+                <label class="field"><span class="lbl">Short name</span><span class="input"><input type="text" placeholder="[SHORT NAME]" onInput="{{ touch }}"></span></label>
+                <label class="field"><span class="lbl">Operations contact</span><span class="input"><input type="email" placeholder="[CONTACT EMAIL]" onInput="{{ touch }}"></span></label>
+                <label class="field full"><span class="lbl">Registered address</span><span class="input"><input type="text" placeholder="[ADDRESS]" onInput="{{ touch }}"></span></label>
+              </div></div>
+            </section>
+
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Operating area</span><span class="badge b-sim">Approx. positions</span></div>
+              <p class="card-p" style="padding: 0 18px">Sites and the area of operations define where missions can be planned.</p>
+              <div class="aomap" style="margin-top: 12px">
+                <canvas class="gl" data-gl="ao"></canvas>
+                <div class="gl-labels" data-gl-labels="ao"></div>
+              </div>
+              <div class="card-b"><div class="kvg c3">
+                <div><span class="lbl">Region</span><b>Rajkot district, Gujarat</b></div>
+                <div><span class="lbl">Sites</span><b>6 · 3 pillars</b></div>
+                <div><span class="lbl">Boundary file</span><b>[AO BOUNDARY · GeoJSON]</b></div>
+              </div></div>
+            </section>
+
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Mission pillars</span><span class="lbl">Enabled for this organization</span></div>
+              <sc-for list="{{ pillarRows }}" as="p" hint-placeholder-count="3">
+                <div class="pill-t"><i class="dia" style="background: {{ p.color }}"></i><div><div class="srow-t">{{ p.name }} · {{ p.long }}</div><div class="srow-s">{{ p.model }} · {{ p.sites }} sites</div></div><button class="tgl {{ p.cls }}" onClick="{{ p.toggle }}"><i></i></button></div>
+              </sc-for>
+            </section>
+          </div>
+
+          <div class="scroll stack">
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Data residency &amp; retention</span></div>
+              <div class="srow" style="border-top: 0; margin-top: 4px"><div><div class="srow-t">Storage region</div><div class="srow-s">Where frames, detections and reports are stored</div></div><span class="ro">[REGION]</span></div>
+              <sc-for list="{{ retention }}" as="r" hint-placeholder-count="3">
+                <div class="ret"><div><div class="srow-t">{{ r.name }}</div><div class="srow-s">{{ r.hint }}</div></div><div class="segs"><sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="3"><button class="{{ o.cls }}" onClick="{{ o.pick }}">{{ o.name }}</button></sc-for></div></div>
+              </sc-for>
+              <div class="srow"><div><div class="srow-t">Keep provenance labels on export</div><div class="srow-s">Simulated / manifest / EXIF labels are always included</div></div><button class="tgl on" disabled="{{ true }}"><i></i></button></div>
+            </section>
+
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Report branding</span><button class="btn btn-ghost btn-sm">Upload logo</button></div>
+              <div class="card-b">
+                <div class="brand">
+                  <div class="brand-tile dark"><img src="logo-mark.png" alt=""><span>App · dark</span></div>
+                  <div class="brand-tile light"><img src="logo-mark.png" alt=""><b>Aerolytics</b></div>
+                </div>
+                <label class="field" style="margin-top: 12px"><span class="lbl">Report footer</span><span class="input"><input type="text" placeholder="[REPORT FOOTER TEXT]" onInput="{{ touch }}"></span></label>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Regulatory</span><span class="badge b-sim">Placeholders</span></div>
+              <sc-for list="{{ reg }}" as="r" hint-placeholder-count="3"><div class="kvl-row"><span>{{ r.k }}</span><b>{{ r.v }}</b><i></i></div></sc-for>
+              <div class="note">Confirm current requirements with the aviation regulator before live operations</div>
+            </section>
+
+            <section class="panel">
+              <div class="card-h"><span class="lbl strong">Plan &amp; usage</span></div>
+              <div class="card-b">
+                <div class="srow" style="padding: 8px 0; border-top: 0"><div class="srow-t">Seats</div><div class="meter"><span class="hbar"><b style="width: 40%"></b></span><span class="mono" style="font-size: 12px">4 / 10</span></div></div>
+                <div class="srow" style="padding: 8px 0"><div class="srow-t">Storage</div><span class="mono muted" style="font-size: 12px">Not metered in demo</span></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', dirty: false, saved: false, enabled: { energy: true, agri: true, rescue: true }, ret: { frames: '1y', dets: '3y', reports: '3y' } };
+    this._selSite = 'rsp';
+    this._onAoPick = (key) => { this._selSite = key; this.setState({ sel: key }); };
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, dirty, saved, enabled, ret } = this.state;
+    const mark = () => ({ dirty: true, saved: false });
+    return {
+      pillars: this._pillarTabs(pillar, (k) => { const s = D.sites.find((x) => x.pillar === k); if (s) this._selSite = s.key; this.setState({ pillar: k }); }),
+      dirty, clean: !dirty, saveLabel: saved ? 'Saved' : 'Save changes',
+      touch: () => { if (!this.state.dirty) this.setState(mark()); },
+      save: () => this.setState({ dirty: false, saved: true }),
+      pillarRows: ['energy', 'agri', 'rescue'].map((k) => ({
+        name: D.P[k].name, long: D.P[k].long, color: D.P[k].color, model: D.P[k].model,
+        sites: D.sites.filter((s) => s.pillar === k).length,
+        cls: enabled[k] ? 'on' : '',
+        toggle: () => this.setState(Object.assign({ enabled: Object.assign({}, this.state.enabled, { [k]: !this.state.enabled[k] }) }, mark())),
+      })),
+      retention: [
+        ['frames', 'Raw frames', 'Original imagery and video', [['90d', '90 d'], ['1y', '1 yr'], ['3y', '3 yr']]],
+        ['dets', 'Detections & telemetry', 'Normalized results and positions', [['1y', '1 yr'], ['3y', '3 yr'], ['forever', 'Keep']]],
+        ['reports', 'Reports', 'Generated PDF and JSON', [['1y', '1 yr'], ['3y', '3 yr'], ['forever', 'Keep']]],
+      ].map(([k, name, hint, opts]) => ({
+        name, hint,
+        opts: opts.map(([v, label]) => ({ name: label, cls: ret[k] === v ? 'on' : '', pick: () => this.setState(Object.assign({ ret: Object.assign({}, this.state.ret, { [k]: v }) }, mark())) })),
+      })),
+      reg: [['Operator permit', '[OPERATOR PERMIT NUMBER]'], ['Aircraft UINs', '[UIN LIST] · 3 registered aircraft'], ['Remote pilots', '[REMOTE PILOT CERTIFICATES]'], ['Airspace approvals', '[APPROVAL REFERENCES]']].map(([k, v]) => ({ k, v })),
+    };
+  }
+
+  componentDidMount() { this._alive = true; this._startClock(); this._boot(0); }
+
+  componentWillUnmount() {
+    this._alive = false;
+    this._stopClock();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._ao) this._ao.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="ao"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._ao = this._aoScene(this._engine(), canvas, document.querySelector('[data-gl-labels="ao"]'));
+    this._loop([this._ao]);
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

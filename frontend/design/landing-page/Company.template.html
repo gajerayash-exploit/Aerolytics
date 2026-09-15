@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+/*MARKETING_CSS*/
+
+    .hero { position: relative; height: 620px; overflow: hidden; background: #040B1C; }
+    .hero-copy { position: absolute; left: 48px; top: 150px; width: 560px; z-index: 3; }
+    .variant { position: absolute; left: 48px; bottom: 40px; z-index: 3; display: flex; align-items: center; gap: 12px; }
+    .principles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+    .pr { padding: 22px; }
+    .pr h3 { margin: 12px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 116%; font-style: italic; font-weight: 700; font-size: 21px; text-transform: uppercase; color: #fff; }
+    .pr p { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #A9B8D0; }
+    .timeline { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 56px; }
+    .timeline::before { content: ''; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: rgba(120,170,255,.25); }
+    .ms { position: relative; padding-right: 24px; }
+    .ms .dia { width: 14px; height: 14px; }
+    .ms .meta { margin-top: 18px; }
+    .ms h3 { margin: 6px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 112%; font-weight: 600; font-size: 19px; color: #fff; }
+    .ms p { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: #A9B8D0; }
+    .team { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+    .tm { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; align-items: center; padding: 20px; }
+    .tm-av { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #62738F; box-shadow: inset 0 0 0 1px rgba(120,170,255,.25); background: repeating-linear-gradient(135deg, rgba(120,170,255,.08) 0 4px, transparent 4px 8px); }
+    .contact { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; margin-top: 8px; }
+    .form { padding: 24px; }
+    .form .fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+    .form .full { grid-column: 1 / -1; }
+    .ta { height: 110px; padding: 10px 12px; background: rgba(2,7,18,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+    .ta textarea { width: 100%; height: 100%; border: 0; outline: 0; resize: none; background: transparent; color: #fff; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; }
+    .err { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #FF8A63; }
+    .sent { padding: 40px 28px; text-align: center; }
+    .sent .h2 { margin-top: 16px; }
+    .sent p { margin: 12px auto 0; max-width: 420px; font-size: 15px; line-height: 1.6; color: #A9B8D0; }
+    .side { display: flex; flex-direction: column; gap: 16px; }
+    .faq { border-top: 1px solid rgba(120,170,255,.1); }
+    .q { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border: 0; background: none; cursor: pointer; text-align: left; font-size: 14.5px; color: #E6ECF5; }
+    .q em { font-style: normal; font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #5CE1FF; }
+    .a { padding: 0 18px 14px; font-size: 14px; line-height: 1.6; color: #A9B8D0; }
+  </style>
+</helmet>
+
+<div class="mk">
+  <!--MKNAV:about-->
+
+  <section class="hero">
+    <canvas class="gl" data-gl="ao"></canvas>
+    <div class="gl-labels" data-gl-labels="ao"></div>
+    <div class="mk-shade"></div>
+    <div class="hero-copy">
+      <div class="kicker"><i></i>{{ v.kicker }}</div>
+      <h1 class="mk-h1">{{ v.h1a }}<br><span>{{ v.h1b }}</span></h1>
+      <p class="mk-lede">{{ v.lede }}</p>
+    </div>
+    <div class="variant"><span class="lbl">Page</span><div class="segs"><sc-for list="{{ variants }}" as="o" hint-placeholder-count="2"><button class="{{ o.cls }}" onClick="{{ o.pick }}">{{ o.name }}</button></sc-for></div></div>
+  </section>
+
+  <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ true }}">
+    <div>
+      <section class="mk-sec">
+        <div class="kicker"><i></i>01 / Principles</div>
+        <h2 class="mk-h2">How we build.</h2>
+        <div class="principles">
+          <sc-for list="{{ principles }}" as="p" hint-placeholder-count="4"><div class="panel pr"><i class="dia" style="background: {{ p.color }}"></i><h3>{{ p.t }}</h3><p>{{ p.b }}</p></div></sc-for>
+        </div>
+      </section>
+      <section class="mk-sec">
+        <div class="kicker"><i></i>02 / Milestones</div>
+        <h2 class="mk-h2">Where we are, and what is next.</h2>
+        <div class="timeline">
+          <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="4"><div class="ms"><i class="dia" style="background: {{ m.color }}"></i><div class="meta">{{ m.when }}</div><h3>{{ m.t }}</h3><p>{{ m.b }}</p></div></sc-for>
+        </div>
+      </section>
+      <section class="mk-sec">
+        <div class="kicker"><i></i>03 / Team</div>
+        <h2 class="mk-h2">The people behind the engine.</h2>
+        <div class="team">
+          <sc-for list="{{ team }}" as="t" hint-placeholder-count="3"><div class="panel tm"><div class="tm-av">[PHOTO]</div><div><div class="li-t">{{ t.name }}</div><div class="li-s">{{ t.role }}</div></div></div></sc-for>
+        </div>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isContact }}" hint-placeholder-val="{{ false }}">
+    <section class="mk-sec">
+      <div class="contact">
+        <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+          <div class="panel form">
+            <div class="lbl strong">Tell us about your site</div>
+            <div class="fgrid" style="margin-top: 16px">
+              <label class="field"><span class="lbl">Name</span><span class="input"><input type="text" placeholder="Your name" onInput="{{ setName }}"></span></label>
+              <label class="field"><span class="lbl">Work email</span><span class="input"><input type="email" placeholder="you@organization.com" onInput="{{ setEmail }}"></span></label>
+              <label class="field full"><span class="lbl">Organization</span><span class="input"><input type="text" placeholder="Organization name"></span></label>
+              <div class="field"><span class="lbl">Interested in</span><div class="segs"><sc-for list="{{ pillarOpts }}" as="o" hint-placeholder-count="3"><button class="{{ o.cls }}" onClick="{{ o.pick }}">{{ o.name }}</button></sc-for></div></div>
+              <div class="field"><span class="lbl">Site size</span><div class="segs"><sc-for list="{{ sizeOpts }}" as="o" hint-placeholder-count="3"><button class="{{ o.cls }}" onClick="{{ o.pick }}">{{ o.name }}</button></sc-for></div></div>
+              <label class="field full"><span class="lbl">Message</span><span class="ta"><textarea placeholder="What would you like to inspect, and when?"></textarea></span></label>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px; margin-top: 18px">
+              <button class="btn btn-primary" onClick="{{ send }}">Send request</button>
+              <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><span class="err">{{ error }}</span></sc-if>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isSent }}" hint-placeholder-val="{{ false }}">
+          <div class="panel sent">
+            <i class="dia sev-ok" style="width: 18px; height: 18px"></i>
+            <h2 class="h2">Request received</h2>
+            <p>Thanks{{ nameSuffix }}. We will reply to {{ email }} about a {{ pillarName }} pilot. Reference {{ ref }}.</p>
+            <button class="btn btn-ghost" style="margin-top: 20px" onClick="{{ reset }}">Send another</button>
+          </div>
+        </sc-if>
+        <div class="side">
+          <section class="panel">
+            <div class="ph"><span class="lbl strong">Contact</span></div>
+            <div class="kvl-row"><span>Email</span><b>[CONTACT EMAIL]</b><i></i></div>
+            <div class="kvl-row"><span>Office</span><b>[OFFICE ADDRESS] · Rajkot, Gujarat</b><i></i></div>
+            <div class="kvl-row"><span>Response time</span><b>[RESPONSE TIME]</b><i></i></div>
+          </section>
+          <section class="panel faq">
+            <sc-for list="{{ faq }}" as="f" hint-placeholder-count="3">
+              <div><button class="q" onClick="{{ f.toggle }}">{{ f.q }}<em>{{ f.sign }}</em></button><sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}"><div class="a">{{ f.a }}</div></sc-if></div>
+            </sc-for>
+          </section>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <!--MKFOOT-->
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":2400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { page: 'about', sent: false, name: '', email: '', interest: 'energy', size: 'm', error: '', open: 0 };
+    this._selSite = 'rsp';
+    this._onAoPick = (key) => { this._selSite = key; };
+  }
+
+  renderVals() {
+    const D = this._data();
+    const s = this.state;
+    const about = s.page === 'about';
+    const seg = (key, opts) => opts.map(([v, name]) => ({ name, cls: s[key] === v ? 'on' : '', pick: () => this.setState({ [key]: v }) }));
+    return {
+      navKey: s.page,
+      isAbout: about, isContact: !about,
+      v: about
+        ? { kicker: 'About', h1a: 'Drone intelligence,', h1b: 'honestly labelled.', lede: 'Aerolytics turns drone imagery into geolocated findings for energy, agriculture and emergency response, starting from Rajkot, Gujarat.' }
+        : { kicker: 'Contact', h1a: 'Plan a pilot', h1b: 'over your site.', lede: 'Tell us what you need to inspect. We will come back with a flight plan, a timeline and what the pilot will measure.' },
+      variants: [['about', 'About'], ['contact', 'Contact']].map(([k, name]) => ({ name, cls: s.page === k ? 'on' : '', pick: () => this.setState({ page: k }) })),
+      principles: [
+        ['Label every number', 'Simulated, manifest and EXIF data carry their source on screen and in every export.', '#FFB547'],
+        ['Show uncertainty', 'Positions are marked approximate until RTK is fitted; model scores come with their validation split.', '#5CE1FF'],
+        ['Keep people in charge', 'Detections are leads. Crews and responders confirm, assign and close them.', '#7BE3A0'],
+        ['Build for the field', 'Works from a manifest when GPS is missing, and from a laptop when the network is thin.', '#9BE15D'],
+      ].map(([t, b, color]) => ({ t, b, color })),
+      milestones: [
+        ['Sep 2026', 'Golden demo', 'Command center, twins and reports over a simulated Rajkot mission.', '#5CE1FF'],
+        ['Q4 2026', 'Validation sets', 'Labelled field data to measure accuracy beyond the training splits.', '#FFB547'],
+        ['2027', 'Live telemetry', 'WebSocket and MQTT streams from registered aircraft.', '#9BE15D'],
+        ['Later', 'Fleet & mapping', 'RTK positions, orthomosaics and mission plans sent to aircraft.', '#7F90AD'],
+      ].map(([when, t, b, color]) => ({ when, t, b, color })),
+      team: [['[FOUNDER NAME]', '[ROLE] · product & operations'], ['[ENGINEER NAME]', '[ROLE] · computer vision'], ['[ENGINEER NAME]', '[ROLE] · platform & 3D']].map(([name, role]) => ({ name, role })),
+      notSent: !s.sent, isSent: s.sent,
+      setName: (e) => this.setState({ name: (e && e.target && e.target.value) || '' }),
+      setEmail: (e) => this.setState({ email: (e && e.target && e.target.value) || '', error: '' }),
+      pillarOpts: seg('interest', [['energy', 'Energy'], ['agri', 'Agri'], ['rescue', 'Rescue']]),
+      sizeOpts: seg('size', [['s', '< 10 ha'], ['m', '10–100 ha'], ['l', '100 ha +']]),
+      hasError: !!s.error, error: s.error,
+      send: () => {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.state.email)) { this.setState({ error: 'Enter a valid work email' }); return; }
+        this.setState({ sent: true, error: '' });
+      },
+      nameSuffix: s.name ? ', ' + s.name : '',
+      email: s.email || 'your email', pillarName: D.P[s.interest].name, ref: 'REQ-' + String(4000 + s.email.length * 37).slice(-4),
+      reset: () => this.setState({ sent: false }),
+      faq: [
+        ['What does a pilot include?', 'One site, one pillar, planned flights, processed detections in the command center, and a report built from the mission data.'],
+        ['Do we need our own drones?', 'Not at first. The platform accepts imagery from most survey drones; we can also plan flights with your operator.'],
+        ['How accurate are the positions?', 'As accurate as the telemetry source. Manifest positions are approximate; RTK-equipped aircraft give survey-grade results.'],
+      ].map(([q, a], i) => ({ q, a, open: s.open === i, sign: s.open === i ? '−' : '+', toggle: () => this.setState({ open: this.state.open === i ? -1 : i }) })),
+    };
+  }
+
+  componentDidMount() { this._alive = true; this._boot(0); }
+  componentWillUnmount() { this._alive = false; if (this._raf) cancelAnimationFrame(this._raf); if (this._ao) this._ao.destroy(); }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="ao"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._ao = this._aoScene(this._engine(), canvas, document.querySelector('[data-gl-labels="ao"]'));
+    this._loop([this._ao]);
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

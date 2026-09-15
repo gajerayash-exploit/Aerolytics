@@ -1,0 +1,5 @@
+path: C:/Users/rkgaj/OneDrive/Desktop/DaaS-Frolic/DaaS-Frolic/models/training/energy-solar
+train: train/images
+val: valid/images
+test: test/images
+names: ['cover', 'crack', 'dust', 'normal']

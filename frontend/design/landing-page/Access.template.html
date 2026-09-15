@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .stage { position: relative; height: 900px; overflow: hidden; background: #040B1C; }
+    .shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(270deg, rgba(3,8,20,.94) 0%, rgba(3,8,20,.6) 32%, rgba(3,8,20,0) 58%); }
+    .nav { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 26px 48px; z-index: 3; }
+    .nav img { height: 40px; width: auto; display: block; }
+    /* logo lockup: mark and wordmark on one centred line */
+    .lockup { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+    :where(.lockup) { height: 34px; }
+    :where(.lockup) img { height: 100%; width: auto; display: block; }
+    .lockup b { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 20px; line-height: 1; letter-spacing: .01em; color: #fff; white-space: nowrap; text-transform: none; }
+    .panel-a { position: absolute; right: 72px; top: 50%; transform: translateY(-50%); width: 480px; z-index: 3; padding: 32px 34px 28px; }
+    .panel-a .h1 { margin-top: 14px; font-size: 40px; }
+    .panel-a p.lead { margin: 12px 0 0; font-size: 15px; line-height: 1.55; color: #A9B8D0; }
+    .fg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; margin-top: 22px; }
+    .fg .full { grid-column: 1 / -1; }
+    .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill { height: 32px; padding: 0 12px; border: 0; background: rgba(120,170,255,.06); color: #9FB0CC; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+    .pill.on { color: #fff; background: rgba(92,225,255,.12); box-shadow: inset 0 0 0 1px #5CE1FF; }
+    .go { width: 100%; height: 48px; margin-top: 20px; font-size: 13px; }
+    .err { margin-top: 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #FF8A63; }
+    .done { text-align: left; }
+    .done .steps { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; padding: 14px 16px; background: rgba(2,7,18,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.14); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #CFDAEE; }
+    .foot { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(120,170,255,.1); font-size: 13px; color: #7F90AD; }
+    .variant { position: absolute; left: 48px; bottom: 44px; z-index: 3; display: flex; align-items: center; gap: 12px; }
+  </style>
+</helmet>
+
+<div class="stage">
+  <canvas class="gl" data-gl="access"></canvas>
+  <div class="shade"></div>
+  <header class="nav"><span class="lockup"><img src="logo-mark.png" alt=""><b>Aerolytics</b></span><a class="btn btn-ghost btn-sm" href="#">Back to sign in</a></header>
+
+  <section class="glass panel-a">
+    <sc-if value="{{ isRequest }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <sc-if value="{{ reqForm }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div class="kicker"><i></i>Request access</div>
+            <h1 class="h1">Join the command center</h1>
+            <p class="lead">Admins of your organization approve new members. Tell us who you are and what you need.</p>
+            <div class="fg">
+              <label class="field"><span class="lbl">Full name</span><span class="input"><input type="text" placeholder="Your name"></span></label>
+              <label class="field"><span class="lbl">Work email</span><span class="input"><input type="email" placeholder="you@organization.com" onInput="{{ setEmail }}"></span></label>
+              <label class="field full"><span class="lbl">Organization</span><span class="input"><input type="text" placeholder="Organization or workspace"></span></label>
+              <div class="field full"><span class="lbl">Role</span><div class="pills"><sc-for list="{{ roles }}" as="r" hint-placeholder-count="4"><button class="pill {{ r.cls }}" onClick="{{ r.pick }}">{{ r.name }}</button></sc-for></div></div>
+              <div class="field full"><span class="lbl">Pillars</span><div class="pills"><sc-for list="{{ pillarPills }}" as="r" hint-placeholder-count="3"><button class="pill {{ r.cls }}" onClick="{{ r.pick }}">{{ r.name }}</button></sc-for></div></div>
+            </div>
+            <button class="btn btn-primary go" onClick="{{ submitReq }}">Send request</button>
+            <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}"><div class="err">{{ err }}</div></sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ reqDone }}" hint-placeholder-val="{{ false }}">
+          <div class="done">
+            <div class="kicker" style="color: #7BE3A0"><i></i>Request sent</div>
+            <h1 class="h1">Waiting for approval</h1>
+            <p class="lead">We sent your request to the admins of your organization. You will get an email at {{ email }} when it is approved.</p>
+            <div class="steps"><span>› Request {{ ref }} created</span><span>› Admins notified</span><span style="color: #FFB547">› Awaiting approval</span></div>
+            <button class="btn btn-ghost go" onClick="{{ resetAll }}">Start over</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isForgot }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <sc-if value="{{ fForm }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div class="kicker"><i></i>Reset password</div>
+            <h1 class="h1">Forgot your password?</h1>
+            <p class="lead">Enter the work email you sign in with. If it has an account, we will send a reset link.</p>
+            <div class="fg"><label class="field full"><span class="lbl">Work email</span><span class="input"><input type="email" placeholder="you@organization.com" onInput="{{ setEmail }}"></span></label></div>
+            <button class="btn btn-primary go" onClick="{{ submitForgot }}">Send reset link</button>
+            <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}"><div class="err">{{ err }}</div></sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ fDone }}" hint-placeholder-val="{{ false }}">
+          <div class="done">
+            <div class="kicker" style="color: #7BE3A0"><i></i>Check your inbox</div>
+            <h1 class="h1">Link sent</h1>
+            <p class="lead">If {{ email }} has an account, a reset link is on its way. The link expires in 30 minutes.</p>
+            <button class="btn btn-ghost go" onClick="{{ resend }}" disabled="{{ cooling }}">{{ resendLabel }}</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <div class="foot"><span>Demo environment</span><span class="badge b-sim">No email is actually sent</span></div>
+  </section>
+
+  <div class="variant"><span class="lbl">Page</span><div class="segs"><sc-for list="{{ variants }}" as="o" hint-placeholder-count="2"><button class="{{ o.cls }}" onClick="{{ o.pick }}">{{ o.name }}</button></sc-for></div></div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { page: 'request', email: '', role: 'Operator', pillars: ['energy'], done: false, err: '', cool: 0 };
+    this._done = false;
+  }
+
+  renderVals() {
+    const s = this.state;
+    this._done = s.done;
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email);
+    const need = () => { if (!valid) { this.setState({ err: 'Enter a valid work email' }); return false; } return true; };
+    return {
+      variants: [['request', '/request-access'], ['forgot', '/forgot-password']].map(([k, name]) => ({ name, cls: s.page === k ? 'on' : '', pick: () => this.setState({ page: k, done: false, err: '' }) })),
+      isRequest: s.page === 'request', isForgot: s.page === 'forgot',
+      reqForm: !s.done, reqDone: s.done, fForm: !s.done, fDone: s.done,
+      setEmail: (e) => this.setState({ email: (e && e.target && e.target.value) || '', err: '' }),
+      roles: ['Operator', 'Pilot', 'Analyst', 'Viewer'].map((r) => ({ name: r, cls: s.role === r ? 'on' : '', pick: () => this.setState({ role: r }) })),
+      pillarPills: [['energy', 'Energy'], ['agri', 'Agri'], ['rescue', 'Rescue']].map(([k, name]) => ({
+        name, cls: s.pillars.indexOf(k) >= 0 ? 'on' : '',
+        pick: () => this.setState({ pillars: s.pillars.indexOf(k) >= 0 ? s.pillars.filter((x) => x !== k) : s.pillars.concat(k) }),
+      })),
+      hasErr: !!s.err, err: s.err,
+      submitReq: () => { if (need()) this.setState({ done: true }); },
+      submitForgot: () => { if (need()) { this.setState({ done: true }); this._cooldown(); } },
+      email: s.email, ref: 'ACC-' + String(1000 + s.email.length * 53).slice(-4),
+      resetAll: () => this.setState({ done: false, email: '' }),
+      cooling: s.cool > 0,
+      resendLabel: s.cool > 0 ? 'Resend in ' + s.cool + ' s' : 'Resend link',
+      resend: () => this._cooldown(),
+    };
+  }
+
+  _cooldown() {
+    clearInterval(this._coolId);
+    this.setState({ cool: 30 });
+    this._coolId = setInterval(() => {
+      if (!this._alive) return clearInterval(this._coolId);
+      const n = this.state.cool - 1;
+      this.setState({ cool: Math.max(0, n) });
+      if (n <= 0) clearInterval(this._coolId);
+    }, 1000);
+  }
+
+  componentDidMount() { this._alive = true; this._boot(0); }
+  componentWillUnmount() { this._alive = false; clearInterval(this._coolId); if (this._raf) cancelAnimationFrame(this._raf); }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="access"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._loop([this._accessScene(this._engine(), canvas)]);
+  }
+
+  // A drone holding over a pad while a signal beam scans; turns green when a request is sent.
+  _accessScene(K, canvas) {
+    const R = K.renderer(canvas, [0.016, 0.043, 0.11]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp, smooth } = K;
+    const self = this;
+    const ground = (x, z) => { const m = smooth(40, 140, Math.hypot(x, z)); return m * (9 * Math.sin(x * 0.03 + 1) * Math.cos(z * 0.028) + 14 * m); };
+    const tb = new Batch();
+    for (let g = -180; g <= 180; g += 10) for (let u = -180; u < 180; u += 5) {
+      const c = (x, z, h) => [lerp(0.13, 0.42, smooth(0, 24, h)), lerp(0.3, 0.68, smooth(0, 24, h)), lerp(0.72, 1, smooth(0, 24, h)), (0.16 + 0.28 * smooth(0, 24, h)) * smooth(18, 50, Math.hypot(x, z))];
+      const h1 = ground(u, g), h2 = ground(u + 5, g), k1 = ground(g, u), k2 = ground(g, u + 5);
+      tb.line(u, h1, g, u + 5, h2, g, c(u, g, h1), c(u + 5, g, h2));
+      tb.line(g, k1, u, g, k2, u + 5, c(g, u, k1), c(g, u + 5, k2));
+    }
+    const terrain = new Float32Array(tb.a);
+    let gmix = 0;
+    return {
+      frame(t, dt) {
+        const asp = R.resize();
+        gmix = lerp(gmix, self._done ? 1 : 0, Math.min(1, dt * 2));
+        const tone = [lerp(0.36, 0.48, gmix), lerp(0.88, 0.89, gmix), lerp(1, 0.63, gmix), 1];
+        const cy = 0.5 + t * 0.04, rad = 80 * Math.max(1, 1.35 / asp), shift = asp > 1.25 ? 24 : 0;
+        const T = [Math.cos(cy) * shift, 10, -Math.sin(cy) * shift];
+        const eye = [T[0] + rad * Math.cos(0.3) * Math.sin(cy), T[1] + rad * Math.sin(0.3), T[2] + rad * Math.cos(0.3) * Math.cos(cy)];
+        const M = K.camera(asp, eye, T, 0.74);
+        R.begin(M, eye, 90, 300);
+        R.draw(terrain, 'lines', 'add');
+        const ln = new Batch(), pts = new Batch();
+        for (let k = 0; k < 6; k++) {
+          const a1 = (k / 6) * Math.PI * 2 + Math.PI / 6, a2 = ((k + 1) / 6) * Math.PI * 2 + Math.PI / 6;
+          ln.line(Math.cos(a1) * 11, 0.3, Math.sin(a1) * 11, Math.cos(a2) * 11, 0.3, Math.sin(a2) * 11, a(tone, 0.9));
+        }
+        const dy = 13 + Math.sin(t * 1.2) * 0.7 + gmix * 6;
+        self._drawDrone(K, ln, 0, dy, 0, t * 0.2, 2.2, t, { rotor: gmix > 0.5 ? COL.green : COL.blue });
+        for (let i = 0; i < 4; i++) {
+          const ph = (t * 0.45 + i / 4) % 1;
+          ln.ring(0, 0.4 + ph * (dy - 2), 0, lerp(10, 3, ph), 36, a(tone, 0.7 * (1 - ph) * Math.min(1, ph * 5)));
+        }
+        const sweep = t * 0.8;
+        for (let k = 0; k < 14; k++) {
+          const an = sweep - k * 0.05;
+          ln.line(0, 0.4, 0, Math.cos(an) * 60, ground(Math.cos(an) * 60, Math.sin(an) * 60) + 0.4, Math.sin(an) * 60, a(tone, 0.35 * (1 - k / 14)), a(tone, 0));
+        }
+        pts.v(0, dy, 0, a(tone, 0.4));
+        R.draw(ln, 'lines', 'add');
+        R.draw(pts, 'points', 'add', 120);
+      },
+    };
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

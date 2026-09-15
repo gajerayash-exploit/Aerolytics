@@ -1,0 +1,38 @@
+/* Generated from design/landing-page/SettingsTeam.template.html — scoped to .pg-settings-team */
+.pg-settings-team .set-cols { grid-template-columns: minmax(0, 7.6fr) minmax(0, 4.4fr); }
+.pg-settings-team .toolbar { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-settings-team .toolbar .input { width: 230px; }
+.pg-settings-team .who { display: flex; align-items: center; gap: 10px; }
+.pg-settings-team .ini { width: 30px; height: 30px; flex: none; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #CFE0FF; background: #0A1B3D; box-shadow: inset 0 0 0 1px rgba(92,225,255,.3); }
+.pg-settings-team .who b { display: block; font-weight: 500; color: #fff; font-size: 12px; }
+.pg-settings-team .who em { display: block; font-style: normal; font-size: 10.5px; color: #62738F; }
+.pg-settings-team .pa { display: flex; gap: 5px; }
+.pg-settings-team .pa i { width: 8px; height: 8px; transform: rotate(45deg); box-shadow: inset 0 0 0 1px rgba(160,190,240,.35); }
+.pg-settings-team .perm { width: 100%; border-collapse: collapse; }
+.pg-settings-team .perm th { padding: 8px 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: #62738F; text-align: center; border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-settings-team .perm th:first-child, .pg-settings-team .perm td:first-child { text-align: left; padding-left: 18px; }
+.pg-settings-team .perm th.on { color: #5CE1FF; }
+.pg-settings-team .perm td { height: 32px; padding: 0 6px; text-align: center; font-size: 13px; color: #E6ECF5; border-bottom: 1px solid rgba(120,170,255,.06); }
+.pg-settings-team .perm td.on { background: rgba(92,225,255,.05); }
+.pg-settings-team .perm .dia { width: 9px; height: 9px; }
+.pg-settings-team .big-ini { width: 56px; height: 56px; font-size: 18px; }
+.pg-settings-team .ptog { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 9px 18px; border-top: 1px solid rgba(120,170,255,.07); }
+
+/* Responsive adjustments for SettingsTeam */
+@media (max-width: 1024px) {
+  .pg-settings-team .set-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .pg-settings-team .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .pg-settings-team .toolbar .input {
+    width: 100%;
+  }
+}
+

@@ -1,0 +1,141 @@
+/* Generated from design/landing-page/MissionTwin.template.html — scoped to .pg-mission-twin */
+.pg-mission-twin .stage { position: absolute; inset: 0; background: #040B1C; }
+.pg-mission-twin .vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, rgba(3,8,20,0) 55%, rgba(3,8,20,.75) 100%); }
+/* mission panel */
+.pg-mission-twin .mis { position: absolute; left: 16px; top: 16px; bottom: 108px; width: 318px; display: flex; flex-direction: column; z-index: 3; animation: rowIn .6s ease-out both; }
+.pg-mission-twin .mis-head { padding: 16px 18px 14px; border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-mission-twin .mis-id { margin-top: 10px; }
+.pg-mission-twin .mis-site { margin-top: 6px; font-size: 13.5px; color: #CFDAEE; }
+.pg-mission-twin .mis-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.pg-mission-twin .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-mission-twin .stat { padding: 10px 18px; }
+.pg-mission-twin .stat:nth-child(odd) { border-right: 1px solid rgba(120,170,255,.08); }
+.pg-mission-twin .stat:nth-child(-n+2) { border-bottom: 1px solid rgba(120,170,255,.08); }
+.pg-mission-twin .stat b { display: block; margin-top: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 14px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pg-mission-twin .stat b.crit { color: #FF6A3D; }
+.pg-mission-twin .sect { padding: 10px 18px; border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-mission-twin .sect-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pg-mission-twin .layer-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 10px; margin-top: 4px; }
+.pg-mission-twin .layer-grid .ck { font-size: 12.5px; }
+.pg-mission-twin .dl { flex: 1; }
+.pg-mission-twin .drow { width: 100%; display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 18px; border: 0; border-bottom: 1px solid rgba(120,170,255,.06); background: transparent; cursor: pointer; text-align: left; }
+.pg-mission-twin .drow:hover { background: rgba(120,170,255,.05); }
+.pg-mission-twin .drow.sel { background: rgba(92,225,255,.09); box-shadow: inset 2px 0 0 #5CE1FF; }
+.pg-mission-twin .drow-t { display: block; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 112%; font-style: italic; font-weight: 600; font-size: 14px; text-transform: uppercase; color: #fff; }
+.pg-mission-twin .drow-s { display: block; margin-top: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #62738F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pg-mission-twin .drow-c { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #CFDAEE; }
+/* view controls */
+.pg-mission-twin .ctl { position: absolute; top: 16px; right: 16px; display: flex; gap: 10px; z-index: 3; transition: right .35s cubic-bezier(.2,.7,.2,1); }
+.pg-mission-twin .ctl.shifted { right: 420px; }
+.pg-mission-twin .ctl .glass { display: flex; align-items: center; padding: 4px; }
+.pg-mission-twin .zbtn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #CFDAEE; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 15px; }
+.pg-mission-twin .zbtn:hover { background: rgba(92,225,255,.1); color: #fff; }
+.pg-mission-twin .readout { position: absolute; left: 350px; bottom: 108px; padding: 6px 9px; z-index: 3; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .06em; color: #7F90AD; background: rgba(3,8,20,.8); box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); white-space: nowrap; }
+.pg-mission-twin .readout b { color: #E9F1FF; font-weight: 500; }
+.pg-mission-twin .amber { color: #FFB547; }
+.pg-mission-twin .hint { position: absolute; right: 16px; top: 64px; width: 280px; padding: 14px 16px; z-index: 3; font-size: 13px; line-height: 1.5; color: #A9B8D0; }
+.pg-mission-twin .hint .lbl { display: block; margin-bottom: 6px; }
+/* dossier */
+.pg-mission-twin .dossier { position: absolute; right: 16px; top: 16px; bottom: 108px; width: 390px; display: flex; flex-direction: column; z-index: 4; animation: slideIn .4s cubic-bezier(.2,.7,.2,1) both; }
+.pg-mission-twin .ds-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px 12px 18px; border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-mission-twin .ds-id { font-size: 11px; letter-spacing: .1em; color: #9FB0CC; }
+.pg-mission-twin .ds-x { margin-left: auto; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #9FB0CC; cursor: pointer; }
+.pg-mission-twin .ds-x:hover { color: #fff; background: rgba(120,170,255,.1); }
+.pg-mission-twin .ds-body { flex: 1; padding: 14px 18px 16px; }
+.pg-mission-twin .ds-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 6px; }
+.pg-mission-twin .ds-title .h2 { font-size: 28px; }
+.pg-mission-twin .ds-title b { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 18px; font-weight: 500; color: #fff; }
+.pg-mission-twin .frame { position: relative; margin-top: 14px; width: 100%; aspect-ratio: 16 / 10; max-width: 100%; }
+.pg-mission-twin .fbox { position: absolute; left: 36%; top: 27%; width: 33%; height: 40%; box-shadow: inset 0 0 0 1.5px #5CE1FF, 0 0 0 1px rgba(3,8,20,.6); }
+.pg-mission-twin .fbox b { position: absolute; left: -1px; top: -19px; padding: 2px 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; letter-spacing: .06em; color: #030814; background: #5CE1FF; white-space: nowrap; }
+.pg-mission-twin .f-tl { position: absolute; left: 8px; top: 8px; padding: 2px 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; color: #E6ECF5; background: rgba(3,8,20,.7); }
+.pg-mission-twin .f-br { position: absolute; right: 8px; bottom: 8px; }
+.pg-mission-twin .f-scale { position: absolute; left: 8px; bottom: 10px; display: flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; color: #E6ECF5; }
+.pg-mission-twin .f-scale i { width: 40px; height: 4px; border: 1px solid #E6ECF5; border-top: 0; }
+.pg-mission-twin .f-cross { position: absolute; left: 52.5%; top: 47%; width: 18px; height: 18px; transform: translate(-50%, -50%); }
+.pg-mission-twin .f-cross::before, .pg-mission-twin .f-cross::after { content: ''; position: absolute; background: rgba(255,255,255,.7); }
+.pg-mission-twin .f-cross::before { left: 50%; top: 0; bottom: 0; width: 1px; }
+.pg-mission-twin .f-cross::after { top: 50%; left: 0; right: 0; height: 1px; }
+.pg-mission-twin .conf { margin-top: 16px; }
+.pg-mission-twin .conf-top { display: flex; justify-content: space-between; align-items: center; }
+.pg-mission-twin .conf-bar { position: relative; height: 6px; margin-top: 8px; background: rgba(120,170,255,.12); }
+.pg-mission-twin .conf-bar b { display: block; height: 100%; background: linear-gradient(90deg, #2F6FE0, #5CE1FF); }
+.pg-mission-twin .conf-bar i { position: absolute; left: 50%; top: -4px; width: 1px; height: 14px; background: #FFB547; }
+.pg-mission-twin .conf-note { margin-top: 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; color: #62738F; text-transform: uppercase; }
+.pg-mission-twin .kv { margin-top: 14px; border-top: 1px solid rgba(120,170,255,.1); }
+.pg-mission-twin .kv-row { display: grid; grid-template-columns: 112px minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 32px; border-bottom: 1px solid rgba(120,170,255,.06); }
+.pg-mission-twin .kv-row span { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #62738F; }
+.pg-mission-twin .kv-row b { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 400; color: #E6ECF5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pg-mission-twin .prov { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; padding: 10px 12px; font-size: 12.5px; line-height: 1.5; color: #E8CFA5; background: rgba(255,181,71,.06); box-shadow: inset 0 0 0 1px rgba(255,181,71,.25); }
+.pg-mission-twin .prov .dia { margin-top: 5px; }
+.pg-mission-twin .ds-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px 18px 16px; border-top: 1px solid rgba(120,170,255,.1); }
+.pg-mission-twin .ds-actions .wide { grid-column: 1 / -1; }
+/* timeline */
+.pg-mission-twin .tl { position: absolute; left: 16px; right: 16px; bottom: 16px; height: 76px; display: flex; align-items: center; gap: 18px; padding: 0 16px 0 14px; z-index: 5; }
+.pg-mission-twin .tl-play { width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border: 0; background: #2F6FE0; color: #fff; cursor: pointer; clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px)); }
+.pg-mission-twin .tl-play:hover { background: #4C88F5; }
+.pg-mission-twin .tl-time { flex: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+.pg-mission-twin .tl-time b { font-size: 18px; font-weight: 500; color: #fff; font-variant-numeric: tabular-nums; }
+.pg-mission-twin .tl-time span { margin-left: 6px; font-size: 12px; color: #7F90AD; }
+.pg-mission-twin .tl-time em { display: block; margin-top: 2px; font-style: normal; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: #53637D; }
+.pg-mission-twin .tl-track { position: relative; flex: 1; height: 44px; cursor: pointer; touch-action: none; }
+.pg-mission-twin .tl-rail { position: absolute; left: 0; right: 0; top: 21px; height: 2px; background: rgba(120,170,255,.18); }
+.pg-mission-twin .tl-fill { position: absolute; left: 0; top: 21px; height: 2px; width: 0; background: #FFB547; box-shadow: 0 0 8px rgba(255,181,71,.6); }
+.pg-mission-twin .tl-head { position: absolute; top: 10px; width: 2px; height: 24px; margin-left: -1px; background: #fff; box-shadow: 0 0 8px rgba(255,255,255,.6); }
+.pg-mission-twin .tl-ticks { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, rgba(120,170,255,.16) 0 1px, transparent 1px 10%); background-size: 100% 6px; background-repeat: no-repeat; background-position: 0 30px; }
+.pg-mission-twin .tl-tick { position: absolute; top: 2px; width: 18px; height: 18px; margin-left: -9px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; cursor: pointer; }
+.pg-mission-twin .tl-tick .dia { width: 9px; height: 9px; }
+.pg-mission-twin .tl-tick.on .dia { box-shadow: 0 0 0 3px rgba(92,225,255,.5); }
+.pg-mission-twin .tl-read { flex: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .08em; color: #7F90AD; white-space: nowrap; }
+.pg-mission-twin .tl-read b { color: #E9F1FF; font-weight: 500; }
+
+/* Responsive adjustments for MissionTwin */
+@media (max-width: 1024px) {
+  .pg-mission-twin .stage {
+    position: relative;
+    min-height: 100vh;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 12px;
+  }
+  .pg-mission-twin .mis {
+    position: relative;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  .pg-mission-twin .dossier {
+    position: relative;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    margin-top: 12px;
+  }
+  .pg-mission-twin .tl {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    height: auto;
+    padding: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .pg-mission-twin .readout {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    margin: 8px 0;
+  }
+  .pg-mission-twin .ctl.shifted {
+    right: 16px;
+  }
+}
+

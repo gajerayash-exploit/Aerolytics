@@ -1,0 +1,70 @@
+/* Generated from design/landing-page/LiveOps.template.html — scoped to .pg-live-ops */
+.pg-live-ops .lv { display: grid; grid-template-columns: minmax(0, 8.5fr) minmax(0, 3.5fr); gap: 14px; height: 100%; padding: 14px 18px 16px; }
+.pg-live-ops .lcol { display: grid; grid-template-rows: 42px minmax(0, 1fr) 176px; gap: 12px; min-height: 0; }
+.pg-live-ops .rcol { display: grid; grid-template-rows: minmax(0, 1fr) auto auto; gap: 12px; min-height: 0; }
+.pg-live-ops .strip { display: flex; align-items: center; gap: 16px; padding: 0 14px; background: rgba(5,14,34,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #9FB0CC; white-space: nowrap; }
+.pg-live-ops .live { display: flex; align-items: center; gap: 8px; color: #FF6A3D; font-weight: 500; }
+.pg-live-ops .live i { width: 9px; height: 9px; border-radius: 50%; background: #FF6A3D; box-shadow: 0 0 10px #FF6A3D; animation: blink 1.2s steps(2) infinite; }
+.pg-live-ops .strip b { color: #fff; font-weight: 500; }
+.pg-live-ops .strip .sep { width: 1px; height: 18px; background: rgba(120,170,255,.18); }
+.pg-live-ops .strip .push { margin-left: auto; }
+.pg-live-ops .feed { position: relative; overflow: hidden; background: #000; box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+.pg-live-ops .feed.thermal .gl { filter: grayscale(1) contrast(1.45) brightness(1.15); }
+.pg-live-ops .feed-fx { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.7) 100%), repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 3px); }
+.pg-live-ops .hud { position: absolute; inset: 0; pointer-events: none; font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #C8F4FF; text-shadow: 0 0 6px rgba(92,225,255,.55); }
+.pg-live-ops .feed.thermal .hud { color: #FFE2B8; text-shadow: 0 0 6px rgba(255,181,71,.55); }
+.pg-live-ops .hud-tl, .pg-live-ops .hud-tr, .pg-live-ops .hud-bl, .pg-live-ops .hud-br { position: absolute; display: flex; flex-direction: column; gap: 4px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+.pg-live-ops .hud-tl { left: 18px; top: 16px; }
+.pg-live-ops .hud-tr { right: 18px; top: 16px; align-items: flex-end; }
+.pg-live-ops .hud-bl { left: 18px; bottom: 16px; }
+.pg-live-ops .hud-br { right: 18px; bottom: 16px; align-items: flex-end; }
+.pg-live-ops .rec { display: flex; align-items: center; gap: 7px; color: #FF8A63; }
+.pg-live-ops .rec i { width: 8px; height: 8px; border-radius: 50%; background: #FF6A3D; animation: blink 1s steps(2) infinite; }
+.pg-live-ops .htape { position: absolute; top: 14px; left: 50%; width: 480px; height: 34px; margin-left: -240px; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
+.pg-live-ops .htape-strip { position: absolute; left: 0; top: 0; height: 100%; will-change: transform; }
+.pg-live-ops .ht { position: absolute; bottom: 0; width: 1px; height: 7px; background: currentColor; }
+.pg-live-ops .ht.major { height: 13px; }
+.pg-live-ops .ht span { position: absolute; bottom: 15px; left: -14px; width: 28px; text-align: center; font-size: 10px; }
+.pg-live-ops .hbox { position: absolute; top: 50px; left: 50%; transform: translateX(-50%); padding: 2px 8px; font-size: 13px; box-shadow: inset 0 0 0 1px currentColor; background: rgba(0,0,0,.35); }
+.pg-live-ops .hbox::before { content: ''; position: absolute; left: 50%; top: -7px; margin-left: -5px; border: 5px solid transparent; border-bottom-color: currentColor; border-top: 0; }
+.pg-live-ops .reticle { position: absolute; left: 50%; top: 50%; width: 120px; height: 120px; margin: -60px 0 0 -60px; }
+.pg-live-ops .horizon { position: absolute; left: 50%; top: 50%; width: 0; height: 0; will-change: transform; }
+.pg-live-ops .hz-line { position: absolute; top: 0; height: 1px; background: currentColor; }
+.pg-live-ops .hz-line.l { left: -210px; width: 130px; }
+.pg-live-ops .hz-line.r { left: 80px; width: 130px; }
+.pg-live-ops .pl { position: absolute; left: -70px; width: 140px; height: 0; border-top: 1px dashed currentColor; opacity: .55; }
+.pg-live-ops .pl span { position: absolute; top: -7px; left: -26px; font-size: 9.5px; }
+.pg-live-ops .tape { position: absolute; top: 50%; width: 78px; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.pg-live-ops .tape.alt { right: 26px; }
+.pg-live-ops .tape.spd { left: 26px; }
+.pg-live-ops .tape-box { padding: 4px 8px; font-size: 15px; box-shadow: inset 0 0 0 1px currentColor; background: rgba(0,0,0,.35); font-variant-numeric: tabular-nums; }
+.pg-live-ops .tape small { font-size: 9.5px; letter-spacing: .12em; opacity: .8; }
+.pg-live-ops .tape-ticks { width: 20px; height: 120px; background: repeating-linear-gradient(0deg, currentColor 0 1px, transparent 1px 12px); opacity: .4; -webkit-mask-image: linear-gradient(0deg, transparent, #000 30%, #000 70%, transparent); mask-image: linear-gradient(0deg, transparent, #000 30%, #000 70%, transparent); }
+.pg-live-ops .boxes { position: absolute; inset: 0; pointer-events: none; }
+.pg-live-ops .tbox { position: absolute; left: 0; top: 0; display: none; box-shadow: inset 0 0 0 1.5px currentColor; }
+.pg-live-ops .tbox b { position: absolute; left: -1px; bottom: 100%; margin-bottom: 3px; padding: 1px 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; letter-spacing: .06em; white-space: nowrap; color: #030814; background: currentColor; text-shadow: none; }
+.pg-live-ops .tbox b span { color: #030814; }
+.pg-live-ops .feed-modes { position: absolute; right: 18px; top: 62px; pointer-events: auto; }
+.pg-live-ops .events { display: flex; flex-direction: column; }
+.pg-live-ops .ev { display: grid; grid-template-columns: 92px 108px minmax(0, 1fr) auto; gap: 12px; align-items: center; height: 30px; padding: 0 16px; border-bottom: 1px solid rgba(120,170,255,.06); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; color: #CFDAEE; animation: rowIn .35s ease-out both; }
+.pg-live-ops .ev time { color: #62738F; font-variant-numeric: tabular-nums; }
+.pg-live-ops .ev span.msg { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pg-live-ops .ev em { font-style: normal; color: #7F90AD; white-space: nowrap; }
+.pg-live-ops .t-det { color: #FF6A3D; }
+.pg-live-ops .t-warn { color: #FFB547; }
+.pg-live-ops .t-sys { color: #7FB2FF; }
+.pg-live-ops .t-op { color: #5CE1FF; }
+.pg-live-ops .map { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #040B1C; }
+.pg-live-ops .map-ctl { position: absolute; right: 10px; top: 10px; }
+.pg-live-ops .gauges { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pg-live-ops .g { padding: 10px 14px; border-bottom: 1px solid rgba(120,170,255,.07); }
+.pg-live-ops .g:nth-child(odd) { border-right: 1px solid rgba(120,170,255,.07); }
+.pg-live-ops .g b { display: block; margin-top: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 15px; font-weight: 500; color: #fff; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pg-live-ops .g em { display: block; margin-top: 1px; font-style: normal; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; color: #62738F; white-space: nowrap; }
+.pg-live-ops .g-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.pg-live-ops .sig { display: flex; align-items: flex-end; gap: 2px; height: 16px; }
+.pg-live-ops .sig i { width: 4px; background: #5CE1FF; }
+.pg-live-ops .sig i.off { background: rgba(120,170,255,.2); }
+.pg-live-ops .ctrl { padding: 12px 14px 14px; }
+.pg-live-ops .ctrl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.pg-live-ops .ctrl-note { margin-top: 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #53637D; }

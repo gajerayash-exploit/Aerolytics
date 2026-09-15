@@ -1,0 +1,28 @@
+/* Generated from design/landing-page/Reports.template.html — scoped to .pg-reports */
+.pg-reports .cols { display: grid; grid-template-columns: minmax(0, 7.7fr) minmax(0, 4.3fr); gap: 14px; min-height: 0; }
+.pg-reports .fmt { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .12em; color: #030814; background: #CFDAEE; }
+.pg-reports .fmt.json { background: #7FB2FF; }
+.pg-reports .sched { grid-template-columns: minmax(0, 1fr) 150px 110px 34px; padding: 12px 16px; cursor: default; }
+.pg-reports .toggle { width: 34px; height: 18px; position: relative; border: 0; padding: 0; background: rgba(120,170,255,.18); cursor: pointer; }
+.pg-reports .toggle i { position: absolute; left: 3px; top: 3px; width: 12px; height: 12px; background: #7F90AD; transition: left .2s, background .2s; }
+.pg-reports .toggle.on { background: rgba(92,225,255,.3); }
+.pg-reports .toggle.on i { left: 19px; background: #5CE1FF; }
+.pg-reports .pv { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.pg-reports .pv-stage { display: flex; justify-content: center; padding: 16px 0; background: #0A1224; border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-reports .mini { width: 250px; height: 330px; padding: 16px 16px 12px; background: #F4F6FA; color: #16213A; box-shadow: 0 14px 30px rgba(0,0,0,.45); overflow: hidden; }
+.pg-reports .mini-h { display: flex; align-items: center; gap: 6px; padding-bottom: 6px; border-bottom: 1.5px solid #2F6FE0; }
+.pg-reports .mini-h img { width: 14px; }
+.pg-reports .mini-h b { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-size: 9px; font-weight: 700; text-transform: uppercase; color: #0B1530; }
+.pg-reports .mini-h span { margin-left: auto; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 6px; letter-spacing: .1em; color: #6A7892; text-transform: uppercase; }
+.pg-reports .mini-t { margin-top: 10px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 116%; font-style: italic; font-weight: 700; font-size: 13px; line-height: 1.05; text-transform: uppercase; color: #0B1530; }
+.pg-reports .mini-p { margin-top: 8px; padding: 5px 6px; font-size: 6.5px; line-height: 1.45; color: #4A3712; background: #FFF6E6; box-shadow: inset 2px 0 0 #D98E12; }
+.pg-reports .mini-k { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 8px; border: 1px solid #D5DBE6; }
+.pg-reports .mini-k div { padding: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 5.5px; color: #6A7892; text-transform: uppercase; }
+.pg-reports .mini-k div + div { border-left: 1px solid #D5DBE6; }
+.pg-reports .mini-k b { display: block; margin-top: 2px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-size: 11px; color: #0B1530; }
+.pg-reports .mini-map { height: 88px; margin-top: 8px; border: 1px solid #D5DBE6; background: repeating-linear-gradient(0deg, transparent 0 9px, rgba(217,142,18,.7) 9px 10px), repeating-linear-gradient(90deg, #E9EDF4 0 16px, #B9C7E3 16px 30px); }
+.pg-reports .mini-rows { margin-top: 8px; }
+.pg-reports .mini-rows i { display: block; height: 5px; margin-bottom: 4px; background: #DDE2EB; }
+.pg-reports .pv-body { flex: 1; }
+.pg-reports .pv-acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px 16px 14px; border-top: 1px solid rgba(120,170,255,.1); }
+.pg-reports .pv-acts .wide { grid-column: 1 / -1; }

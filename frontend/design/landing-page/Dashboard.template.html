@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .dash { display: grid; grid-template-rows: 54px 132px minmax(0, 1fr) 236px; gap: 14px; height: 100%; padding: 18px 24px 20px; }
+    .dash-head { display: flex; align-items: flex-end; gap: 24px; }
+    .dash-head .meta { margin-left: auto; padding-bottom: 6px; white-space: nowrap; }
+
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .kpi { padding: 16px 18px; }
+    .kpi-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .kpi-mid { display: flex; align-items: flex-end; gap: 8px; margin-top: 16px; }
+    .kpi-of { padding-bottom: 5px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #7F90AD; white-space: nowrap; }
+    .big.crit { color: #FF6A3D; }
+    .kpi-note { margin-top: 10px; font-size: 12.5px; color: #8C9CB6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62%; }
+    .kpi-viz { position: absolute; right: 18px; bottom: 18px; width: 104px; display: flex; justify-content: flex-end; align-items: flex-end; }
+    .kpi-viz .bar3 { width: 100%; }
+    .hist { display: flex; align-items: flex-end; gap: 3px; height: 40px; }
+    .hist i { width: 5px; background: #5CE1FF; }
+    .dias { display: grid; grid-template-columns: repeat(6, 10px); gap: 8px 7px; justify-content: end; }
+    .ndvi { width: 100%; }
+    .ndvi-strip { height: 8px; background: linear-gradient(90deg, #FF4A2E, #FFC53D 45%, #58D36A); }
+    .ndvi-tick { position: relative; height: 10px; }
+    .ndvi-tick b { position: absolute; left: 22%; top: 2px; width: 2px; height: 8px; background: #fff; }
+    .ndvi-lbl { display: flex; justify-content: space-between; margin-top: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9px; color: #62738F; }
+
+    .row2 { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 14px; min-height: 0; }
+    .twin-view { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #040B1C; }
+    .layers { position: absolute; left: 12px; top: 12px; width: 178px; padding: 10px 12px 8px; }
+    .layers .lbl { display: block; margin-bottom: 4px; }
+    .readout { position: absolute; left: 12px; bottom: 12px; padding: 6px 9px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .06em; color: #7F90AD; background: rgba(3,8,20,.8); box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); white-space: nowrap; }
+    .readout b { color: #E9F1FF; font-weight: 500; }
+    .amber { color: #FFB547; }
+    .legend { position: absolute; right: 12px; bottom: 12px; display: flex; align-items: center; gap: 14px; padding: 7px 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9FB0CC; }
+    .legend span { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+    .zoom { position: absolute; right: 12px; top: 12px; display: flex; flex-direction: column; }
+    .zoom button { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #CFDAEE; cursor: pointer; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 15px; }
+    .zoom button + button { border-top: 1px solid rgba(120,170,255,.14); }
+    .zoom button:hover { background: rgba(92,225,255,.1); color: #fff; }
+
+    .alert-list { flex: 1; }
+    .alert { width: 100%; display: grid; grid-template-columns: 3px 46px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 9px 14px 9px 0; border: 0; border-bottom: 1px solid rgba(120,170,255,.07); background: transparent; cursor: pointer; text-align: left; animation: rowIn .3s ease-out both; }
+    .alert:hover { background: rgba(120,170,255,.05); }
+    .alert.sel { background: rgba(92,225,255,.08); box-shadow: inset 0 0 0 1px rgba(92,225,255,.35); }
+    .al-sev { align-self: stretch; }
+    .al-thumb { width: 46px; height: 46px; }
+    .al-body { min-width: 0; }
+    .al-cls { display: block; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 112%; font-style: italic; font-weight: 600; font-size: 15px; text-transform: uppercase; color: #fff; white-space: nowrap; }
+    .al-cls em { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-style: normal; font-weight: 400; font-size: 12px; color: #9FB0CC; }
+    .al-loc { display: block; margin-top: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #62738F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .al-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .al-ago { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; color: #53637D; white-space: nowrap; }
+    .empty { padding: 28px 16px; text-align: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #53637D; }
+    .panel-foot { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid rgba(120,170,255,.1); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; flex: none; }
+
+    .row3 { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 2.4fr) minmax(0, 2.6fr); gap: 14px; min-height: 0; }
+    .tbl-wrap { flex: 1; }
+    .proc { display: flex; align-items: center; gap: 8px; }
+    .proc .bar3 { width: 56px; }
+    .stat { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+    .retry { margin-left: 6px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+    .cls-list { display: flex; flex-direction: column; gap: 13px; padding: 14px 16px; }
+    .cls-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #CFDAEE; }
+    .cls-bar { grid-column: 1 / -1; height: 6px; background: rgba(120,170,255,.1); }
+    .cls-bar b { display: block; height: 100%; }
+    .foot-note { margin-top: auto; padding: 10px 16px; border-top: 1px solid rgba(120,170,255,.08); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #53637D; }
+    .pipe { display: flex; flex-direction: column; padding: 10px 16px 0; }
+    .ps { position: relative; display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 12px; align-items: center; height: 30px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #CFDAEE; }
+    .ps:not(:last-child)::after { content: ''; position: absolute; left: 6px; top: 21px; width: 1px; height: 18px; background: rgba(120,170,255,.25); }
+    .ps .dia { width: 9px; height: 9px; margin-left: 2px; }
+    .ps em { font-style: normal; font-size: 10.5px; letter-spacing: .04em; text-transform: none; color: #7F90AD; }
+    .ps.pending { color: #53637D; }
+    .dia-off { box-shadow: inset 0 0 0 1px rgba(160,190,240,.35); }
+    .dia-live { background: #5CE1FF; animation: pulse 1.4s ease-out infinite; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:dashboard-->
+  <!--TOPBAR:Command center|Dashboard-->
+
+  <main class="main">
+    <div class="dash">
+      <div class="dash-head">
+        <div>
+          <div class="kicker" style="color: {{ pc.color }}"><i></i>{{ pc.name }} · {{ pc.long }}</div>
+          <h1 class="h1" style="margin-top: 10px">Mission overview</h1>
+        </div>
+        <div class="meta">Site: {{ pc.site }} · AO 22.3000° N 70.8000° E · Last sync <span data-clock="utc">--:--:-- UTC</span></div>
+        <a class="btn btn-primary" href="#">+ New inspection</a>
+      </div>
+
+      <div class="kpis">
+        <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+          <div class="panel kpi">
+            <div class="kpi-top"><span class="lbl">{{ k.k }}</span><span class="badge {{ k.bcls }}">{{ k.badge }}</span></div>
+            <div class="kpi-mid"><span class="big {{ k.bigCls }}">{{ k.v }}</span><span class="kpi-of">{{ k.of }}</span></div>
+            <div class="kpi-note">{{ k.note }}</div>
+            <div class="kpi-viz">
+              <sc-if value="{{ k.isBar }}" hint-placeholder-val="{{ false }}">
+                <div class="bar3"><b style="width: {{ k.pctStr }}"></b></div>
+              </sc-if>
+              <sc-if value="{{ k.isHist }}" hint-placeholder-val="{{ false }}">
+                <div class="hist"><sc-for list="{{ k.hist }}" as="h" hint-placeholder-count="12"><i style="height: {{ h.h }}; opacity: {{ h.o }}"></i></sc-for></div>
+              </sc-if>
+              <sc-if value="{{ k.isDia }}" hint-placeholder-val="{{ false }}">
+                <div class="dias"><sc-for list="{{ k.dias }}" as="x" hint-placeholder-count="6"><i class="dia sev-crit"></i></sc-for></div>
+              </sc-if>
+              <sc-if value="{{ k.isRing }}" hint-placeholder-val="{{ false }}">
+                <svg width="46" height="46" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="none" stroke="rgba(120,170,255,.16)" stroke-width="2"></circle><circle cx="20" cy="20" r="16" fill="none" stroke="#5CE1FF" stroke-width="2" stroke-dasharray="{{ k.dash }}" transform="rotate(-90 20 20)"></circle><circle cx="20" cy="20" r="11" fill="none" stroke="rgba(120,170,255,.2)" stroke-width="1" stroke-dasharray="1 5.9"></circle></svg>
+              </sc-if>
+              <sc-if value="{{ k.isNdvi }}" hint-placeholder-val="{{ false }}">
+                <div class="ndvi"><div class="ndvi-tick"><b></b></div><div class="ndvi-strip"></div><div class="ndvi-lbl"><span>Stress</span><span>Healthy</span></div></div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div class="row2">
+        <section class="panel">
+          <div class="ph">
+            <div class="ph-l"><span class="lbl strong">Site digital twin</span><span class="badge b-sim">Simulated telemetry</span></div>
+            <div class="ph-l">
+              <div class="segs"><sc-for list="{{ views }}" as="v" hint-placeholder-count="3"><button class="{{ v.cls }}" onClick="{{ v.pick }}">{{ v.name }}</button></sc-for></div>
+              <a class="btn btn-ghost btn-sm" href="#">Open mission twin →</a>
+            </div>
+          </div>
+          <div class="twin-view">
+            <canvas class="gl" data-gl="twin"></canvas>
+            <div class="gl-labels" data-gl-labels="twin"></div>
+            <div class="glass layers">
+              <span class="lbl">Layers</span>
+              <sc-for list="{{ layerList }}" as="l" hint-placeholder-count="4"><button class="ck {{ l.cls }}" onClick="{{ l.toggle }}"><i></i>{{ l.name }}</button></sc-for>
+            </div>
+            <div class="glass zoom">
+              <button onClick="{{ zoomIn }}">+</button>
+              <button onClick="{{ zoomOut }}">−</button>
+              <button onClick="{{ resetView }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12a8 8 0 108-8H7"></path><path d="M9 1L6 4l3 3"></path></svg></button>
+            </div>
+            <div class="readout">DRONE <b data-hud="lat">22.30000° N</b> <b data-hud="lon">70.80000° E</b> · HDG <b data-hud="hdg">090°</b> · LANE <b data-hud="lane">1 / 7</b> <span class="amber">±APPROX.</span></div>
+            <div class="glass legend">
+              <span><i class="dia sev-crit"></i>Critical</span>
+              <span><i class="dia sev-warn"></i>Warning</span>
+              <span><svg width="22" height="4"><line x1="0" y1="2" x2="22" y2="2" stroke="#5CE1FF" stroke-width="2"></line></svg>Recorded</span>
+              <span><svg width="22" height="4"><line x1="0" y1="2" x2="22" y2="2" stroke="#FFB547" stroke-width="2" stroke-dasharray="4 3"></line></svg>Simulated</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="ph"><span class="lbl strong">Priority alerts</span><span class="badge b-crit">{{ critCount }} critical</span></div>
+          <div class="tabs"><sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3"><button class="tab {{ t.cls }}" onClick="{{ t.pick }}">{{ t.name }}<em>{{ t.n }}</em></button></sc-for></div>
+          <div class="scroll alert-list">
+            <sc-for list="{{ alerts }}" as="al" hint-placeholder-count="4">
+              <button class="alert {{ al.selCls }}" onClick="{{ al.pick }}">
+                <i class="al-sev {{ al.sevCls }}"></i>
+                <span class="thumb {{ al.thumb }} al-thumb"><span class="bbox"></span></span>
+                <span class="al-body"><span class="al-cls">{{ al.cls }} <em>· {{ al.confStr }}</em></span><span class="al-loc">{{ al.loc }} · {{ al.lat }}</span></span>
+                <span class="al-right"><span class="chip {{ al.statusCls }}">{{ al.status }}</span><span class="al-ago">{{ al.ago }}</span></span>
+              </button>
+            </sc-for>
+            <sc-if value="{{ noAlerts }}" hint-placeholder-val="{{ false }}"><div class="empty">No alerts in this view</div></sc-if>
+          </div>
+          <a class="panel-foot" href="#"><span>View all detections</span><span>→</span></a>
+        </section>
+      </div>
+
+      <div class="row3">
+        <section class="panel">
+          <div class="ph"><span class="lbl strong">Recent missions</span><a class="btn btn-ghost btn-sm" href="#">All missions →</a></div>
+          <div class="scroll tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Mission ID</th><th>Site</th><th>Pillar</th><th>Date (UTC)</th><th>Frames</th><th>Crit / Total</th><th>Telemetry</th><th>Status</th></tr></thead>
+              <tbody>
+                <sc-for list="{{ missions }}" as="m" hint-placeholder-count="5">
+                  <tr class="{{ m.selCls }}" onClick="{{ m.pick }}">
+                    <td style="color: #fff">{{ m.id }}</td>
+                    <td>{{ m.site }}</td>
+                    <td><span class="chip {{ m.chip }}">{{ m.pillarName }}</span></td>
+                    <td>{{ m.date }}</td>
+                    <td>{{ m.frames }}</td>
+                    <td>{{ m.det }}</td>
+                    <td><span class="badge {{ m.tcls }}">{{ m.tele }}</span></td>
+                    <td>
+                      <sc-if value="{{ m.isProc }}" hint-placeholder-val="{{ false }}"><span class="proc"><span class="stat" style="color: #5CE1FF">{{ m.pctStr }}</span><span class="bar3"><b style="width: {{ m.pctStr }}"></b></span></span></sc-if>
+                      <sc-if value="{{ m.isDone }}" hint-placeholder-val="{{ true }}"><span class="stat" style="color: #7BE3A0"><i class="dia sev-ok"></i>Complete</span></sc-if>
+                      <sc-if value="{{ m.isFail }}" hint-placeholder-val="{{ false }}"><span class="stat" style="color: #FF6A3D"><i class="dia sev-crit"></i>Failed<a class="retry" href="#">Retry</a></span></sc-if>
+                    </td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="ph"><span class="lbl strong">{{ pc.classesLbl }}</span></div>
+          <div class="cls-list">
+            <sc-for list="{{ classes }}" as="c" hint-placeholder-count="4">
+              <div class="cls-row"><span>{{ c.name }}</span><span>{{ c.n }}</span><div class="cls-bar"><b style="width: {{ c.w }}; background: {{ c.color }}"></b></div></div>
+            </sc-for>
+          </div>
+          <div class="foot-note">Model: {{ pc.model }} · demo</div>
+        </section>
+
+        <section class="panel">
+          <div class="ph"><span class="lbl strong">Processing · AER-EN-0143</span><span class="chip st-new">64%</span></div>
+          <div class="pipe">
+            <sc-for list="{{ pipe }}" as="s" hint-placeholder-count="5">
+              <div class="ps {{ s.rowCls }}"><i class="dia {{ s.diaCls }}"></i><span>{{ s.name }}</span><em class="{{ s.noteCls }}">{{ s.note }}</em></div>
+            </sc-for>
+          </div>
+          <div class="foot-note" style="display: flex; align-items: center; gap: 8px"><i class="dia sev-warn"></i>API · demo mode · sample timings</div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', tab: 'all', sel: null, view: 'orbit', selMission: 'AER-EN-0142', layers: { terrain: true, path: true, dets: true, overlay: true } };
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, tab, sel, view, selMission, layers } = this.state;
+    const pc = D.P[pillar];
+    const all = pc.dets;
+    const firstStatus = all.length ? (pillar === 'rescue' ? 'New' : 'New') : '';
+    const list = tab === 'crit' ? all.filter((q) => q.sev === 'crit') : tab === 'open' ? all.filter((q) => q.status === firstStatus) : all;
+    const HIST = [14, 22, 18, 30, 12, 26, 34, 20, 28, 16, 24, 38];
+    const counts = pc.classes.map((c) => c[1]);
+    const max = Math.max(1, ...counts);
+    const pick = (k) => {
+      this.setState({ pillar: k, sel: null, tab: 'all' });
+      if (this._twin) { this._twin.setPillar(k); this._twin.select(null); }
+    };
+    return {
+      pillars: this._pillarTabs(pillar, pick),
+      pc,
+      kpis: pc.kpis.map((k) => Object.assign({}, k, {
+        bigCls: k.crit ? 'crit' : '',
+        isBar: k.viz === 'bar', isHist: k.viz === 'hist', isDia: k.viz === 'dia', isRing: k.viz === 'ring', isNdvi: k.viz === 'ndvi',
+        pctStr: (k.pct || 0) + '%',
+        dash: ((k.pct || 0) * 1.005).toFixed(1) + ' 100.5',
+        hist: HIST.map((h, i) => ({ h: h + 'px', o: i === HIST.length - 1 ? '1' : '0.5' })),
+        dias: Array.from({ length: k.n || 0 }, (_, i) => ({ i })),
+      })),
+      tabs: [
+        ['all', 'All', all.length],
+        ['crit', 'Critical', all.filter((q) => q.sev === 'crit').length],
+        ['open', pillar === 'rescue' ? 'Unconfirmed' : 'Unassigned', all.filter((q) => q.status === firstStatus).length],
+      ].map(([key, name, n]) => ({ name, n, cls: tab === key ? 'on' : '', pick: () => this.setState({ tab: key }) })),
+      alerts: list.map((q) => Object.assign({}, q, { thumb: pc.thumb, confStr: q.conf.toFixed(2), selCls: q.id === sel ? 'sel' : '', pick: () => this._select(q.id) })),
+      noAlerts: list.length === 0,
+      critCount: all.filter((q) => q.sev === 'crit').length,
+      views: [['orbit', '3D'], ['top', 'Top'], ['follow', 'Follow drone']].map(([k, name]) => ({
+        name, cls: view === k ? 'on' : '', pick: () => { this.setState({ view: k }); if (this._twin) this._twin.setView(k); },
+      })),
+      layerList: [['terrain', 'Terrain'], ['path', pillar === 'rescue' ? 'Search path' : 'Flight path'], ['dets', pillar === 'rescue' ? 'Heat signatures' : 'Detections'], ['overlay', pc.overlay]].map(([k, name]) => ({
+        name, cls: layers[k] ? 'on' : '', toggle: () => {
+          const next = Object.assign({}, this.state.layers, { [k]: !this.state.layers[k] });
+          this.setState({ layers: next });
+          if (this._twin) this._twin.setLayers(next);
+        },
+      })),
+      zoomIn: () => this._twin && this._twin.zoom(0.8),
+      zoomOut: () => this._twin && this._twin.zoom(1.25),
+      resetView: () => { if (this._twin) this._twin.resetView(); this.setState({ view: 'orbit', sel: null }); },
+      missions: D.missions.map((m) => Object.assign({}, m, {
+        chip: D.P[m.pillar].chip, pillarName: D.P[m.pillar].name, selCls: m.id === selMission ? 'sel' : '',
+        pick: () => this.setState({ selMission: m.id }),
+        isProc: m.status === 'Processing', isDone: m.status === 'Complete', isFail: m.status === 'Failed', pctStr: m.pct + '%',
+      })),
+      classes: pc.classes.map(([name, n, sev]) => ({ name, n: n || '—', w: (n / max) * 100 + '%', color: sev === 'crit' ? '#FF6A3D' : '#FFB547' })),
+      pipe: [
+        ['Upload', '212 / 212 frames', 'done'],
+        ['Telemetry', 'Manifest fallback', 'warn'],
+        ['Inference', '38 ms / frame', 'live'],
+        ['Normalize', 'Queued', 'pending'],
+        ['Geo-map', 'Queued', 'pending'],
+      ].map(([name, note, st]) => ({
+        name, note,
+        rowCls: st === 'pending' ? 'pending' : '',
+        diaCls: st === 'pending' ? 'dia-off' : st === 'live' ? 'dia-live' : 'sev-info',
+        noteCls: st === 'warn' ? 'amber' : '',
+      })),
+    };
+  }
+
+  _select(id) {
+    const next = this.state.sel === id ? null : id;
+    this.setState({ sel: next });
+    if (this._twin) this._twin.select(next);
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._startClock();
+    this._boot(0);
+  }
+
+  componentWillUnmount() {
+    this._alive = false;
+    this._stopClock();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._twin) this._twin.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="twin"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    const hud = {};
+    ['lat', 'lon', 'hdg', 'lane'].forEach((k) => { hud[k] = document.querySelector('[data-hud="' + k + '"]'); });
+    this._twin = this._twinScene(this._engine(), canvas, {
+      pillar: this.state.pillar,
+      mode: 'overview',
+      labelsEl: document.querySelector('[data-gl-labels="twin"]'),
+      onPick: (id) => { if (id) this._select(id); },
+      onHud: (h) => { Object.keys(hud).forEach((k) => { if (hud[k]) hud[k].textContent = h[k]; }); },
+    });
+    this._loop([this._twin]);
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

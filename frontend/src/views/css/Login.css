@@ -1,0 +1,242 @@
+/* Refactored Login.css for seamless cross-resolution responsiveness */
+.pg-login * { box-sizing: border-box; }
+.pg-login {
+  margin: 0;
+  background: #030814;
+  color: #E6ECF5;
+  font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+.pg-login a { color: #7FD4FF; text-decoration: none; }
+.pg-login a:hover { color: #C4EEFF; }
+.pg-login .mono { font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace; }
+
+.pg-login .stage {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 100px 72px 40px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #040B1C;
+}
+
+.pg-login .gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; z-index: 0; }
+.pg-login .gl-labels { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+.pg-login .shade {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(270deg, rgba(3,8,20,.94) 0%, rgba(3,8,20,.62) 40%, rgba(3,8,20,0) 70%),
+              linear-gradient(180deg, rgba(3,8,20,.75) 0%, rgba(3,8,20,0) 20%, rgba(3,8,20,0) 70%, rgba(3,8,20,.9) 100%);
+}
+.pg-login .grain { position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .5; background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px); }
+
+.pg-login .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 20px;
+  border: 0;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 13px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  transition: background .2s, color .2s;
+}
+.pg-login .btn-primary { background: #2F6FE0; color: #fff; }
+.pg-login .btn-primary:hover { background: #4C88F5; color: #fff; }
+.pg-login .btn-ghost { background: rgba(120,170,255,.08); color: #CFE0FF; box-shadow: inset 0 0 0 1px rgba(120,170,255,.28); }
+.pg-login .btn-ghost:hover { background: rgba(120,170,255,.16); color: #fff; }
+.pg-login .btn-block { width: 100%; }
+.pg-login .btn.is-busy { background: repeating-linear-gradient(120deg, #2F6FE0 0 14px, #3A7BEA 14px 28px); background-size: 200% 100%; animation: busy 1s linear infinite; cursor: progress; }
+.pg-login .btn-go { background: #1F9D62; color: #fff; }
+.pg-login .btn-go:hover { background: #28B573; color: #fff; }
+
+.pg-login .badge { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+.pg-login .b-sim { color: #FFB547; border: 1px solid rgba(255,181,71,.45); background: repeating-linear-gradient(135deg, rgba(255,181,71,.18) 0 5px, rgba(255,181,71,.04) 5px 10px); }
+.pg-login .b-ok { color: #7BE3A0; border: 1px solid rgba(123,227,160,.45); background: rgba(123,227,160,.08); }
+
+.pg-login .nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 48px;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(4,11,28,.85) 0%, rgba(4,11,28,0) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.pg-login .nav img { height: 36px; width: auto; display: block; }
+.pg-login .lockup { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.pg-login :where(.lockup) { height: 34px; }
+.pg-login :where(.lockup) img { height: 100%; width: auto; display: block; }
+.pg-login .lockup b { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 20px; line-height: 1; letter-spacing: .01em; color: #fff; white-space: nowrap; text-transform: none; }
+.pg-login .nav-back { display: flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #9FB0CC; transition: color .2s; }
+.pg-login .nav-back:hover { color: #fff; }
+
+.pg-login .panel {
+  position: relative;
+  width: 452px;
+  max-width: 100%;
+  z-index: 2;
+  margin: auto 0;
+  padding: 32px 34px 28px;
+  background: rgba(5,14,34,.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: inset 0 0 0 1px rgba(120,170,255,.2), 0 20px 50px rgba(0,0,0,.5);
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+  animation: panelIn .8s cubic-bezier(.2,.7,.2,1) .1s both;
+}
+
+.pg-login .kicker { display: flex; align-items: center; gap: 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: #5CE1FF; }
+.pg-login .kicker i { width: 7px; height: 7px; background: #5CE1FF; transform: rotate(45deg); box-shadow: 0 0 10px #5CE1FF; animation: blink 1.6s steps(2) infinite; }
+.pg-login .panel h1 { margin: 14px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 120%; font-style: italic; font-weight: 700; font-size: clamp(32px, 4vw, 42px); line-height: 1; text-transform: uppercase; color: #fff; }
+.pg-login .panel-p { margin: 10px 0 0; font-size: 14.5px; line-height: 1.5; color: #A9B8D0; text-wrap: pretty; }
+.pg-login .fields { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
+.pg-login .field label { display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: #7F90AD; }
+.pg-login .field label a { letter-spacing: .06em; text-transform: none; font-size: 11.5px; }
+.pg-login .input { position: relative; display: flex; align-items: center; margin-top: 6px; height: 46px; background: rgba(2,7,18,.75); box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); transition: box-shadow .2s; }
+.pg-login .input:focus-within { box-shadow: inset 0 0 0 1px #5CE1FF, 0 0 0 3px rgba(92,225,255,.12); }
+.pg-login .input input { flex: 1; min-width: 0; height: 100%; padding: 0 14px; border: 0; outline: 0; background: transparent; color: #fff; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13.5px; }
+.pg-login .input input::placeholder { color: #4B5B75; }
+.pg-login .input .suffix { padding-right: 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #53637D; white-space: nowrap; }
+.pg-login .input button { height: 100%; padding: 0 14px; border: 0; background: transparent; color: #7FD4FF; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+.pg-login .input svg { margin-left: 14px; flex: none; }
+.pg-login .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; font-size: 13px; color: #8C9CB6; }
+.pg-login .check { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.pg-login .check input { width: 16px; height: 16px; margin: 0; accent-color: #2F6FE0; }
+.pg-login .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+.pg-login .or { display: flex; align-items: center; gap: 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .2em; color: #53637D; text-transform: uppercase; }
+.pg-login .or::before, .pg-login .or::after { content: ''; flex: 1; height: 1px; background: rgba(120,170,255,.14); }
+.pg-login .log { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; padding: 12px 14px; background: rgba(2,7,18,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.14); }
+.pg-login .log-row { display: flex; justify-content: space-between; gap: 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; color: #A9B8D0; animation: rowIn .3s ease-out; }
+.pg-login .log-row b { font-weight: 500; color: #5CE1FF; }
+.pg-login .log-row.ok, .pg-login .log-row.ok b { color: #7BE3A0; }
+.pg-login .demo { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; margin-top: 20px; padding: 14px 16px; background: rgba(255,181,71,.05); box-shadow: inset 0 0 0 1px rgba(255,181,71,.24); color: #E6ECF5; transition: background .2s; }
+.pg-login .demo:hover { background: rgba(255,181,71,.1); color: #fff; }
+.pg-login .demo-t { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 112%; font-weight: 600; font-size: 16px; }
+.pg-login .demo-s { grid-column: 1 / -1; font-size: 12.5px; color: #8C9CB6; line-height: 1.4; }
+.pg-login .foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(120,170,255,.1); font-size: 12.5px; color: #7F90AD; flex-wrap: wrap; }
+.pg-login .granted { padding: 4px 0; animation: rowIn .5s ease-out; }
+.pg-login .granted h1 { color: #fff; }
+.pg-login .granted .kicker { color: #7BE3A0; }
+.pg-login .granted .kicker i { background: #7BE3A0; box-shadow: 0 0 10px #7BE3A0; }
+
+.pg-login .status {
+  position: fixed;
+  left: 48px;
+  bottom: 36px;
+  width: 350px;
+  z-index: 2;
+  padding: 16px 18px;
+  background: rgba(5,14,34,.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: inset 0 0 0 1px rgba(120,170,255,.16);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  animation: rowIn .9s ease-out .6s both;
+}
+.pg-login .status-head { display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .2em; color: #7F90AD; text-transform: uppercase; }
+.pg-login .status-rows { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.pg-login .srow { display: grid; grid-template-columns: 8px 1fr auto; gap: 12px; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; color: #CFDAEE; }
+.pg-login .srow i { width: 8px; height: 8px; transform: rotate(45deg); }
+.pg-login .srow em { font-style: normal; color: #7F90AD; }
+.pg-login .clock { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(120,170,255,.1); display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .12em; color: #62738F; text-transform: uppercase; }
+.pg-login .clock b { color: #E9F1FF; font-weight: 500; font-variant-numeric: tabular-nums; }
+.pg-login .gl-tag { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); padding: 3px 8px; white-space: nowrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .16em; background: rgba(3,8,20,.75); border: 1px solid currentColor; will-change: transform; pointer-events: none; }
+
+@keyframes blink { 50% { opacity: .25; } }
+@keyframes busy { to { background-position: -56px 0; } }
+@keyframes rowIn { from { opacity: 0; transform: translateY(6px); } }
+@keyframes panelIn { from { opacity: 0; transform: translateY(16px); filter: blur(6px); } }
+
+/* Media Queries for Cross-Device & Resolution Support */
+@media (max-width: 1200px) {
+  .pg-login .status { display: none; }
+}
+
+@media (max-width: 1024px) {
+  .pg-login .stage {
+    align-items: center;
+    padding: 90px 24px 30px;
+  }
+  .pg-login .panel {
+    margin: auto 0;
+    width: 100%;
+    max-width: 460px;
+  }
+  .pg-login .shade {
+    background: linear-gradient(180deg, rgba(3,8,20,.9) 0%, rgba(3,8,20,.65) 50%, rgba(3,8,20,.95) 100%);
+  }
+}
+
+@media (max-width: 640px) {
+  .pg-login .nav {
+    padding: 16px 20px;
+  }
+  .pg-login .lockup b {
+    font-size: 17px;
+  }
+  .pg-login .nav-back {
+    font-size: 11px;
+    letter-spacing: .08em;
+  }
+  .pg-login .stage {
+    padding: 76px 14px 20px;
+  }
+  .pg-login .panel {
+    padding: 24px 20px 22px;
+    box-shadow: inset 0 0 0 1px rgba(120,170,255,.2);
+  }
+  .pg-login .panel h1 {
+    font-size: 28px;
+  }
+  .pg-login .input .suffix {
+    font-size: 11px;
+    padding-right: 10px;
+  }
+  .pg-login .btn {
+    height: 44px;
+    font-size: 12px;
+  }
+  .pg-login .demo {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .pg-login .demo-t {
+    font-size: 15px;
+  }
+}
+
+@media (max-height: 700px) {
+  .pg-login .stage {
+    padding-top: 80px;
+    padding-bottom: 20px;
+  }
+  .pg-login .panel {
+    margin: 10px 0;
+  }
+  .pg-login .status {
+    display: none;
+  }
+}
+

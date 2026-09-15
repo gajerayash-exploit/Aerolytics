@@ -1,0 +1,24 @@
+/* Generated from design/landing-page/SettingsOrganization.template.html — scoped to .pg-settings-organization */
+.pg-settings-organization .aomap { position: relative; height: 300px; overflow: hidden; background: #040B1C; border-top: 1px solid rgba(120,170,255,.1); border-bottom: 1px solid rgba(120,170,255,.1); }
+.pg-settings-organization .pill-t { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 18px; border-top: 1px solid rgba(120,170,255,.07); }
+.pg-settings-organization .brand { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.pg-settings-organization .brand-tile { height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); }
+.pg-settings-organization .brand-tile.dark { background: #040B1C; }
+.pg-settings-organization .brand-tile.light { background: #F4F6FA; }
+.pg-settings-organization .brand-tile img { width: 44px; height: auto; }
+.pg-settings-organization .brand-tile span { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: #7F90AD; }
+.pg-settings-organization .brand-tile.light b { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 13px; color: #0B1530; text-transform: uppercase; }
+.pg-settings-organization .ret { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 18px; border-top: 1px solid rgba(120,170,255,.07); }
+.pg-settings-organization .meter { display: flex; align-items: center; gap: 10px; }
+.pg-settings-organization .meter .hbar { width: 110px; }
+
+/* Responsive adjustments for SettingsOrganization */
+@media (max-width: 640px) {
+  .pg-settings-organization .brand {
+    grid-template-columns: 1fr;
+  }
+  .pg-settings-organization .aomap {
+    height: 200px;
+  }
+}
+

@@ -1,0 +1,81 @@
+/* Generated from design/landing-page/MissionsLog.template.html — scoped to .pg-missions-log */
+.pg-missions-log .ml { display: grid; grid-template-rows: 58px 44px minmax(0, 1fr); gap: 14px; height: 100%; padding: 18px 24px 20px; }
+.pg-missions-log .ml-head { display: flex; align-items: flex-end; gap: 20px; }
+.pg-missions-log .ml-head .acts { margin-left: auto; display: flex; gap: 8px; }
+.pg-missions-log .filters { display: flex; align-items: center; gap: 14px; }
+.pg-missions-log .find { display: flex; align-items: center; gap: 8px; width: 280px; height: 40px; padding: 0 12px; background: rgba(2,7,18,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+.pg-missions-log .find:focus-within { box-shadow: inset 0 0 0 1px #5CE1FF, 0 0 0 3px rgba(92,225,255,.12); }
+.pg-missions-log .find input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; color: #fff; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; }
+.pg-missions-log .find input::placeholder { color: #4B5B75; }
+.pg-missions-log .fgroup { display: flex; align-items: center; gap: 8px; }
+.pg-missions-log .range { margin-left: auto; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #CFDAEE; box-shadow: inset 0 0 0 1px rgba(120,170,255,.2); }
+.pg-missions-log .cols { display: grid; grid-template-columns: minmax(0, 8.3fr) minmax(0, 3.7fr); gap: 14px; min-height: 0; }
+.pg-missions-log .bulk { display: flex; align-items: center; gap: 8px; }
+.pg-missions-log .bulk b { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: #5CE1FF; margin-right: 6px; }
+.pg-missions-log .tbl-wrap { flex: 1; }
+.pg-missions-log .tbl td.id { color: #fff; }
+.pg-missions-log .cbx { width: 14px; height: 14px; display: inline-block; vertical-align: middle; box-shadow: inset 0 0 0 1px rgba(160,190,240,.4); cursor: pointer; }
+.pg-missions-log .cbx.on { background: #5CE1FF; box-shadow: inset 0 0 0 3px #04101F, inset 0 0 0 4px #5CE1FF; }
+.pg-missions-log .cov { display: flex; align-items: center; gap: 8px; }
+.pg-missions-log .cov .bar3 { width: 54px; }
+.pg-missions-log .cov .bar3.warn b { background: #FFB547; box-shadow: none; }
+.pg-missions-log .stat { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+.pg-missions-log .pager { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid rgba(120,170,255,.1); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .08em; color: #62738F; flex: none; }
+.pg-missions-log .pages { display: flex; gap: 4px; }
+.pg-missions-log .pages button { width: 30px; height: 28px; border: 0; background: transparent; color: #7F90AD; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(120,170,255,.14); }
+.pg-missions-log .pages button.on { color: #fff; background: rgba(92,225,255,.12); box-shadow: inset 0 0 0 1px #5CE1FF; }
+.pg-missions-log .empty { padding: 40px 16px; text-align: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #53637D; }
+.pg-missions-log .side { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 14px; min-height: 0; }
+.pg-missions-log .ao { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #040B1C; }
+.pg-missions-log .ao-legend { position: absolute; left: 10px; bottom: 10px; display: flex; gap: 12px; padding: 6px 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9FB0CC; }
+.pg-missions-log .ao-legend span { display: flex; align-items: center; gap: 6px; }
+.pg-missions-log .ao-hint { position: absolute; right: 10px; top: 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #53637D; }
+.pg-missions-log .sel { padding: 14px 16px 16px; }
+.pg-missions-log .sel-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pg-missions-log .sel h2 { margin-top: 8px; }
+.pg-missions-log .sel-site { margin-top: 4px; font-size: 13px; color: #A9B8D0; }
+.pg-missions-log .kvg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; margin-top: 14px; }
+.pg-missions-log .kvg b { display: block; margin-top: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pg-missions-log .sel-acts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+
+/* Responsive adjustments for MissionsLog */
+@media (max-width: 1024px) {
+  .pg-missions-log .ml {
+    grid-template-rows: auto auto minmax(0, 1fr);
+    height: auto;
+    overflow-y: auto;
+  }
+  .pg-missions-log .cols {
+    grid-template-columns: 1fr;
+  }
+  .pg-missions-log .side {
+    grid-template-rows: 280px auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .pg-missions-log .ml-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .pg-missions-log .ml-head .acts {
+    margin-left: 0;
+    width: 100%;
+  }
+  .pg-missions-log .filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .pg-missions-log .find {
+    width: 100%;
+  }
+  .pg-missions-log .range {
+    margin-left: 0;
+  }
+  .pg-missions-log .kvg, .pg-missions-log .sel-acts {
+    grid-template-columns: 1fr;
+  }
+}
+

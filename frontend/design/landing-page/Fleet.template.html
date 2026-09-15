@@ -1,0 +1,253 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .body { display: grid; grid-template-rows: 350px minmax(0, 1fr); gap: 14px; min-height: 0; }
+    .lower { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 14px; min-height: 0; }
+    .batt { display: flex; align-items: center; gap: 8px; }
+    .batt .hbar { width: 54px; height: 4px; }
+    .side-body { flex: 1; padding: 14px 16px; }
+    .side-body .h2 { margin-top: 8px; }
+    .checks { margin-top: 14px; border-top: 1px solid rgba(120,170,255,.1); }
+    .chk { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 10px; align-items: center; height: 30px; border-bottom: 1px solid rgba(120,170,255,.06); font-size: 12.5px; color: #CFDAEE; }
+    .chk em { font-style: normal; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .06em; }
+    .side-acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px 16px 14px; border-top: 1px solid rgba(120,170,255,.1); }
+    .hint { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #53637D; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:fleet-->
+  <!--TOPBAR:Command center|Fleet-->
+
+  <main class="main">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <div class="kicker"><i></i>Fleet · aircraft &amp; sensors</div>
+          <h1 class="h1" style="margin-top: 10px">Fleet</h1>
+        </div>
+        <div class="meta">{{ count }} aircraft · no hardware linked · sample fleet</div>
+        <div class="acts">
+          <div class="segs"><sc-for list="{{ filters }}" as="f" hint-placeholder-count="5"><button class="{{ f.cls }}" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for></div>
+          <button class="btn btn-primary">+ Register aircraft</button>
+        </div>
+      </div>
+
+      <div class="body">
+        <section class="panel">
+          <div class="ph"><div class="ph-l"><span class="lbl strong">Hangar</span><span class="badge b-sim">Visualisation · sample</span></div><span class="hint">Click an aircraft</span></div>
+          <div class="view3d">
+            <canvas class="gl" data-gl="hangar"></canvas>
+            <div class="gl-labels" data-gl-labels="hangar"></div>
+          </div>
+        </section>
+
+        <div class="lower">
+          <section class="panel">
+            <div class="scroll" style="flex: 1">
+              <table class="tbl">
+                <thead><tr><th>Aircraft</th><th>Model</th><th>Payload</th><th>Status</th><th>Battery</th><th>Hours</th><th>Cycles</th><th>Maintenance</th><th>Link</th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ rows }}" as="a" hint-placeholder-count="4">
+                    <tr class="{{ a.selCls }}" onClick="{{ a.pick }}">
+                      <td style="color: #fff">{{ a.id }}</td>
+                      <td>{{ a.model }}</td>
+                      <td>{{ a.payload }}</td>
+                      <td><span class="chip {{ a.scls }}">{{ a.status }}</span></td>
+                      <td><span class="batt"><span class="hbar"><b style="width: {{ a.battStr }}; background: {{ a.battColor }}"></b></span>{{ a.battStr }}</span></td>
+                      <td>{{ a.hours }}</td>
+                      <td>{{ a.cycles }}</td>
+                      <td class="{{ a.maintCls }}">{{ a.maint }}</td>
+                      <td><span class="badge {{ a.linkCls }}">{{ a.link }}</span></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <div class="note">Battery = last reported charge · linking real aircraft needs the telemetry gateway (MQTT / WebSocket)</div>
+          </section>
+
+          <section class="panel">
+            <div class="side-body scroll">
+              <div style="display: flex; justify-content: space-between; align-items: center"><span class="chip {{ cur.scls }}">{{ cur.status }}</span><span class="chip {{ cur.chip }}">{{ cur.pillarName }}</span></div>
+              <h2 class="h2">{{ cur.id }}</h2>
+              <div class="li-s" style="margin-top: 4px">{{ cur.name }} · {{ cur.payload }}</div>
+              <div class="checks">
+                <sc-for list="{{ checks }}" as="c" hint-placeholder-count="6">
+                  <div class="chk"><i class="dia {{ c.dia }}"></i><span>{{ c.name }}</span><em class="{{ c.cls }}">{{ c.state }}</em></div>
+                </sc-for>
+              </div>
+            </div>
+            <div class="side-acts"><a class="btn btn-primary btn-sm" href="#">Open aircraft →</a><button class="btn btn-ghost btn-sm">Schedule service</button></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', sf: 'all', sel: 'QUAD-01' };
+    this._sel = 'QUAD-01';
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, sf, sel } = this.state;
+    const rows = D.fleet.filter((a) => sf === 'all' || a.status.toLowerCase().replace(' ', '') === sf);
+    const cur0 = D.fleet.find((a) => a.id === sel) || D.fleet[0];
+    this._sel = cur0.id;
+    const cur = Object.assign({}, cur0, { chip: D.P[cur0.pillar].chip, pillarName: D.P[cur0.pillar].name });
+    const linked = cur.sim;
+    return {
+      pillars: this._pillarTabs(pillar, (k) => {
+        const a = D.fleet.find((x) => x.pillar === k && !x.sim) || D.fleet[0];
+        this.setState({ pillar: k, sel: a.id });
+      }),
+      count: D.fleet.length,
+      filters: [['all', 'All'], ['ready', 'Ready'], ['inflight', 'In flight'], ['maintenance', 'Service'], ['offline', 'Offline']].map(([k, name]) => ({ name, cls: sf === k ? 'on' : '', pick: () => this.setState({ sf: k }) })),
+      rows: rows.map((a) => Object.assign({}, a, {
+        battStr: a.batt + '%', battColor: a.batt < 30 ? '#FFB547' : '#3FB3E0',
+        maintCls: a.maint === 'Due now' ? 'amber' : '',
+        linkCls: a.sim ? 'b-sim' : 'b-man',
+        selCls: a.id === cur.id ? 'sel' : '', pick: () => this.setState({ sel: a.id }),
+      })),
+      cur,
+      checks: [
+        ['Battery', linked ? cur.batt + '% · simulated' : 'Awaiting link'],
+        ['Propellers & motors', cur.status === 'Maintenance' ? 'Motor 3 over hours' : linked ? 'Simulated' : 'Awaiting link'],
+        ['GNSS lock', linked ? 'Not available · manifest' : 'Awaiting link'],
+        ['Compass calibration', linked ? 'Simulated' : 'Awaiting link'],
+        ['Payload · ' + cur.payload.split(' ·')[0], linked ? 'Simulated' : 'Awaiting link'],
+        ['Firmware ' + cur.firmware, cur.firmware.charAt(0) === '[' ? 'Not registered' : 'Current'],
+      ].map(([name, state]) => {
+        const warn = /Awaiting|over hours|Not registered|Not available/.test(state);
+        return { name, state, cls: warn ? 'amber' : 'ok', dia: warn ? 'sev-warn' : 'sev-ok' };
+      }),
+    };
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._startClock();
+    this._boot(0);
+  }
+
+  componentWillUnmount() {
+    this._alive = false;
+    this._stopClock();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._hangar) this._hangar.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="hangar"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._hangar = this._hangarScene(this._engine(), canvas, document.querySelector('[data-gl-labels="hangar"]'));
+    this._loop([this._hangar]);
+  }
+
+  // Four landing pads in a row; each aircraft drawn in its current state. Click picks.
+  _hangarScene(K, canvas, labelsEl) {
+    const R = K.renderer(canvas, [0.016, 0.043, 0.11]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp, clamp } = K;
+    const self = this;
+    const D = this._data();
+    const GAP = 26;
+    const pads = D.fleet.map((f, i) => {
+      const el = labelsEl ? document.createElement('div') : null;
+      if (el) { el.className = 'gl-tag'; el.style.color = f.status === 'Maintenance' ? '#FFB547' : f.status === 'Offline' ? '#7F90AD' : '#5CE1FF'; el.innerHTML = f.id + '<i>' + f.status.toUpperCase() + '</i>'; labelsEl.appendChild(el); }
+      return { f, x: (i - (D.fleet.length - 1) / 2) * GAP, el, sx: -1, sy: -1, lift: 0 };
+    });
+    const floor = new Batch();
+    for (let g = -90; g <= 90; g += 6) {
+      floor.line(g, 0, -40, g, 0, 40, [0.3, 0.55, 1, g % 30 === 0 ? 0.16 : 0.07]);
+    }
+    for (let g = -40; g <= 40; g += 6) floor.line(-90, 0, g, 90, 0, g, [0.3, 0.55, 1, 0.07]);
+    const floorArr = new Float32Array(floor.a);
+    let cx = 0, drag = null, yaw = 0.25, pitch = 0.38;
+    const onDown = (e) => { drag = { x: e.clientX, y: e.clientY, yaw, pitch, moved: false }; };
+    const onMove = (e) => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true; yaw = drag.yaw - dx * 0.005; pitch = clamp(drag.pitch + dy * 0.003, 0.12, 1.1); };
+    const onUp = (e) => {
+      if (drag && !drag.moved) {
+        const r = canvas.getBoundingClientRect(), px = (e.clientX - r.left) * canvas.clientWidth / Math.max(1, r.width), py = (e.clientY - r.top) * canvas.clientHeight / Math.max(1, r.height);
+        let best = null, bd = 60;
+        pads.forEach((p) => { const d = Math.hypot(p.sx - px, p.sy - py); if (d < bd) { bd = d; best = p; } });
+        if (best) self.setState({ sel: best.f.id });
+      }
+      drag = null;
+    };
+    canvas.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+
+    return {
+      destroy() { canvas.removeEventListener('pointerdown', onDown); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); },
+      frame(t, dt) {
+        const asp = R.resize();
+        const cur = pads.find((p) => p.f.id === self._sel) || pads[0];
+        cx = lerp(cx, cur.x * 0.6, Math.min(1, dt * 2.5));
+        const cy = yaw + (drag ? 0 : Math.sin(t * 0.15) * 0.12), rad = 92 * Math.max(1, 2.2 / asp);
+        const T = [cx, 6, 0];
+        const eye = [T[0] + rad * Math.cos(pitch) * Math.sin(cy), T[1] + rad * Math.sin(pitch), T[2] + rad * Math.cos(pitch) * Math.cos(cy)];
+        const M = K.camera(asp, eye, T, 0.62);
+        R.begin(M, eye, 80, 260);
+        R.draw(floorArr, 'lines', 'add');
+        const ln = new Batch(), fill = new Batch(), pts = new Batch();
+        pads.forEach((p) => {
+          const st = p.f.status, on = p === cur;
+          const tone = st === 'Maintenance' ? COL.warn : st === 'Offline' ? [0.5, 0.56, 0.68, 1] : COL.cyan;
+          for (let k = 0; k < 6; k++) {
+            const a1 = (k / 6) * Math.PI * 2 + Math.PI / 6, a2 = ((k + 1) / 6) * Math.PI * 2 + Math.PI / 6;
+            ln.line(p.x + Math.cos(a1) * 9, 0.1, Math.sin(a1) * 9, p.x + Math.cos(a2) * 9, 0.1, Math.sin(a2) * 9, a(tone, on ? 0.95 : 0.45));
+            fill.tri([p.x, 0.05, 0], [p.x + Math.cos(a1) * 9, 0.05, Math.sin(a1) * 9], [p.x + Math.cos(a2) * 9, 0.05, Math.sin(a2) * 9], a(tone, on ? 0.1 : 0.04));
+          }
+          if (on) {
+            const ph = (t * 0.6) % 1;
+            ln.ring(p.x, 0.1, 0, 9 + ph * 5, 36, a(tone, 0.7 * (1 - ph)));
+            for (let k = 0; k < 10; k++) { const an = (k / 10) * Math.PI * 2; ln.line(p.x + Math.cos(an) * 6, 30, Math.sin(an) * 6, p.x + Math.cos(an) * 8, 0.2, Math.sin(an) * 8, a(tone, 0.07)); }
+          }
+          const flying = st === 'In flight', offline = st === 'Offline';
+          p.lift = lerp(p.lift, flying ? 9 + Math.sin(t * 1.4) * 0.8 : 1.3, Math.min(1, dt * 2));
+          const time = offline ? 0 : st === 'Maintenance' ? t * 0.05 : t;
+          self._drawDrone(K, ln, p.x, p.lift, 0, 0.6 + (flying ? t * 0.3 : 0), 1.7, time, {
+            explode: st === 'Maintenance' ? 0.45 + 0.1 * Math.sin(t) : 0,
+            color: offline ? [0.55, 0.6, 0.7, 1] : COL.white,
+            rotor: offline ? [0.4, 0.45, 0.55, 1] : st === 'Maintenance' ? COL.warn : COL.blue,
+          });
+          if (flying) pts.v(p.x, p.lift - 2, 0, a(COL.cyan, 0.5));
+          const sp = K.project(M, p.x, p.lift + 7, 0, R.w, R.h), hit = K.project(M, p.x, p.lift, 0, R.w, R.h);
+          if (hit) { p.sx = hit[0]; p.sy = hit[1]; }
+          if (p.el) {
+            if (sp) { p.el.style.opacity = on ? '1' : '0.7'; p.el.className = on ? 'gl-tag sel' : 'gl-tag'; p.el.style.transform = 'translate(' + sp[0].toFixed(1) + 'px,' + sp[1].toFixed(1) + 'px) translate(-50%,-100%)'; }
+            else p.el.style.opacity = '0';
+          }
+        });
+        R.draw(fill, 'tris', 'alpha');
+        R.draw(ln, 'lines', 'add');
+        R.draw(pts, 'points', 'add', 90);
+      },
+    };
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

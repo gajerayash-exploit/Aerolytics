@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+.data/
+.env*.local
+next-env.d.ts
+*.tsbuildinfo
+design/landing-page/aerolytics-landing-page.html
+e2e-report/
+test-results/

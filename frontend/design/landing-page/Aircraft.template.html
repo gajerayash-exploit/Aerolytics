@@ -1,0 +1,244 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .cols { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 14px; min-height: 0; }
+    .stack { display: flex; flex-direction: column; gap: 12px; padding-right: 2px; }
+    .callout { position: absolute; left: 0; top: 0; padding: 4px 8px; white-space: nowrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #CFE0FF; background: rgba(3,8,20,.85); box-shadow: inset 0 0 0 1px rgba(120,170,255,.35); will-change: transform; transition: opacity .3s; }
+    .callout b { display: block; margin-top: 1px; font-weight: 500; color: #fff; letter-spacing: .04em; }
+    .callout.warn { box-shadow: inset 0 0 0 1px rgba(255,181,71,.7); }
+    .callout.warn b { color: #FFB547; }
+    .dims { padding: 6px 10px; }
+    .motors { display: flex; flex-direction: column; gap: 10px; padding: 12px 16px 14px; }
+    .motor { display: grid; grid-template-columns: 70px minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #CFDAEE; }
+    .motor b { font-weight: 500; text-align: right; }
+    .mtrack { position: relative; height: 8px; background: rgba(120,170,255,.1); }
+    .mtrack b { display: block; height: 100%; }
+    .mtrack i { position: absolute; left: 86.7%; top: -4px; width: 1px; height: 16px; background: #FFB547; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:fleet-->
+  <!--TOPBAR:Fleet|Aircraft-->
+
+  <main class="main">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <div class="kicker"><i></i>Aircraft · {{ cur.payload }}</div>
+          <h1 class="h1" style="margin-top: 10px">{{ cur.id }} · {{ cur.name }}</h1>
+        </div>
+        <div class="acts">
+          <div class="segs"><sc-for list="{{ picker }}" as="p" hint-placeholder-count="4"><button class="{{ p.cls }}" onClick="{{ p.pick }}">{{ p.id }}</button></sc-for></div>
+          <button class="btn btn-ghost">Log maintenance</button>
+          <button class="btn btn-primary">Assign to mission</button>
+        </div>
+      </div>
+
+      <div class="cols">
+        <section class="panel">
+          <div class="ph">
+            <div class="ph-l"><span class="lbl strong">Airframe model</span><span class="badge b-sim">Generic quad · not to scale</span></div>
+            <div class="segs"><sc-for list="{{ views }}" as="v" hint-placeholder-count="2"><button class="{{ v.cls }}" onClick="{{ v.pick }}">{{ v.name }}</button></sc-for></div>
+          </div>
+          <div class="view3d">
+            <canvas class="gl" data-gl="model"></canvas>
+            <div class="gl-labels" data-gl-labels="model"></div>
+            <div class="ov ov-bl glass dims"><span class="lbl">Wheelbase</span> <span class="mono" style="font-size: 12px; color: #fff">[DIAGONAL WHEELBASE] mm</span></div>
+            <div class="ov ov-br readout">Drag to rotate · callouts follow components</div>
+          </div>
+        </section>
+
+        <div class="scroll stack">
+          <section class="panel">
+            <div class="ph"><div class="ph-l"><span class="chip {{ cur.scls }}">{{ cur.status }}</span><span class="badge {{ cur.linkCls }}">{{ cur.link }}</span></div><span class="lbl">{{ cur.model }}</span></div>
+            <div class="pad"><div class="kvg c3">
+              <div><span class="lbl">Battery</span><b>{{ cur.batt }}%</b></div>
+              <div><span class="lbl">Flight hours</span><b>{{ cur.hours }}</b></div>
+              <div><span class="lbl">Cycles</span><b>{{ cur.cycles }}</b></div>
+              <div><span class="lbl">Firmware</span><b>{{ cur.firmware }}</b></div>
+              <div><span class="lbl">Last service</span><b class="{{ cur.maintCls }}">{{ cur.maint }}</b></div>
+              <div><span class="lbl">Home pillar</span><b>{{ cur.pillarName }}</b></div>
+            </div></div>
+          </section>
+
+          <section class="panel">
+            <div class="ph"><span class="lbl strong">Motor hours</span><span class="lbl"><span class="amber">|</span> Service at 130 h · sample</span></div>
+            <div class="motors">
+              <sc-for list="{{ motors }}" as="m" hint-placeholder-count="4">
+                <div class="motor"><span>Motor {{ m.n }}</span><div class="mtrack"><b style="width: {{ m.w }}; background: {{ m.color }}"></b><i></i></div><b class="{{ m.cls }}">{{ m.label }}</b></div>
+              </sc-for>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="ph"><span class="lbl strong">Payload &amp; sensors</span></div>
+            <sc-for list="{{ sensors }}" as="s" hint-placeholder-count="5"><div class="kvl-row"><span>{{ s.k }}</span><b>{{ s.v }}</b><i></i></div></sc-for>
+          </section>
+
+          <section class="panel">
+            <div class="ph"><span class="lbl strong">Maintenance log</span><button class="btn btn-ghost btn-sm">+ Entry</button></div>
+            <table class="tbl">
+              <thead><tr><th>Date</th><th>Work</th><th>By</th><th>Status</th></tr></thead>
+              <tbody>
+                <sc-for list="{{ log }}" as="l" hint-placeholder-count="3">
+                  <tr><td>{{ l.date }}</td><td style="color: #fff">{{ l.work }}</td><td>{{ l.by }}</td><td><span class="chip {{ l.cls }}">{{ l.status }}</span></td></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', sel: 'QUAD-02', view: 'exploded' };
+    this._sel = 'QUAD-02';
+    this._view = 'exploded';
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, sel, view } = this.state;
+    const a0 = D.fleet.find((a) => a.id === sel) || D.fleet[0];
+    this._sel = a0.id;
+    this._view = view;
+    const cur = Object.assign({}, a0, { pillarName: D.P[a0.pillar].name, linkCls: a0.sim ? 'b-sim' : 'b-man', maintCls: a0.maint === 'Due now' ? 'amber' : '' });
+    const LIMIT = 150;
+    return {
+      pillars: this._pillarTabs(pillar, (k) => { const a = D.fleet.find((x) => x.pillar === k && !x.sim) || D.fleet[0]; this.setState({ pillar: k, sel: a.id }); }),
+      cur,
+      picker: D.fleet.map((a) => ({ id: a.id, cls: a.id === cur.id ? 'on' : '', pick: () => this.setState({ sel: a.id }) })),
+      views: [['assembled', 'Assembled'], ['exploded', 'Exploded']].map(([k, name]) => ({ name, cls: view === k ? 'on' : '', pick: () => this.setState({ view: k }) })),
+      motors: cur.motors.map((h, i) => ({
+        n: i + 1, w: Math.min(100, (h / LIMIT) * 100) + '%', color: h > 130 ? '#FFB547' : '#3FB3E0',
+        label: cur.sim ? 'sim' : h + ' h', cls: h > 130 ? 'amber' : '',
+      })),
+      sensors: [
+        ['Primary camera', cur.payload],
+        ['Gimbal', '[GIMBAL MODEL] · 3-axis'],
+        ['GNSS', cur.sim ? 'None · manifest positions' : '[GNSS MODULE] · RTK not fitted'],
+        ['Remote ID', cur.sim ? 'n/a · simulated' : '[REMOTE ID NUMBER]'],
+        ['Telemetry link', cur.sim ? 'WebSocket demo stream' : 'Not linked · MQTT planned'],
+      ].map(([k, v]) => ({ k, v })),
+      log: (cur.sim ? [['14 Sep 2026', 'Simulator reset', 'System', 'Done', 'st-resolved']] : [
+        [cur.maint === 'Due now' ? 'Due now' : '—', 'Motor 3 inspection / replace', 'Tech-1', cur.status === 'Maintenance' ? 'Open' : 'Planned', cur.status === 'Maintenance' ? 'st-warn' : 'st-off'],
+        [cur.maint === 'Due now' ? '21 Aug 2026' : cur.maint, 'Propeller set replaced', 'Tech-2', 'Done', 'st-resolved'],
+        ['02 Jul 2026', 'Compass & IMU calibration', 'Tech-1', 'Done', 'st-resolved'],
+      ]).map(([date, work, by, status, cls]) => ({ date, work, by, status, cls })),
+    };
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._startClock();
+    this._boot(0);
+  }
+
+  componentWillUnmount() {
+    this._alive = false;
+    this._stopClock();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._model) this._model.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="model"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._model = this._modelScene(this._engine(), canvas, document.querySelector('[data-gl-labels="model"]'));
+    this._loop([this._model]);
+  }
+
+  // Turntable airframe with explode animation and component callouts.
+  _modelScene(K, canvas, labelsEl) {
+    const R = K.renderer(canvas, [0.016, 0.043, 0.11]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp, clamp } = K;
+    const self = this;
+    const D = this._data();
+    const PARTS = ['body', 'battery', 'camera', 'm1', 'm2', 'm3', 'm4'];
+    const els = {};
+    PARTS.forEach((p) => {
+      if (!labelsEl) return;
+      const el = document.createElement('div');
+      el.className = 'callout';
+      labelsEl.appendChild(el);
+      els[p] = el;
+    });
+    const grid = new Batch();
+    for (let g = -60; g <= 60; g += 5) { grid.line(g, -12, -60, g, -12, 60, [0.3, 0.55, 1, 0.07]); grid.line(-60, -12, g, 60, -12, g, [0.3, 0.55, 1, 0.07]); }
+    grid.ring(0, -11.9, 0, 26, 72, [0.36, 0.88, 1, 0.3], true);
+    const gridArr = new Float32Array(grid.a);
+    let ex = 0, drag = null, yaw = 0.7, pitch = 0.42;
+    const onDown = (e) => { drag = { x: e.clientX, y: e.clientY, yaw, pitch }; };
+    const onMove = (e) => { if (!drag) return; yaw = drag.yaw - (e.clientX - drag.x) * 0.006; pitch = clamp(drag.pitch + (e.clientY - drag.y) * 0.004, -0.2, 1.3); };
+    const onUp = () => { drag = null; };
+    canvas.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+
+    return {
+      destroy() { canvas.removeEventListener('pointerdown', onDown); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); },
+      frame(t, dt) {
+        const asp = R.resize();
+        const air = D.fleet.find((f) => f.id === self._sel) || D.fleet[0];
+        ex = lerp(ex, self._view === 'exploded' ? 1 : 0, Math.min(1, dt * 2.2));
+        const cy = yaw + (drag ? 0 : t * 0.25), rad = 60 * Math.max(1, 1.3 / asp);
+        const eye = [rad * Math.cos(pitch) * Math.sin(cy), 2 + rad * Math.sin(pitch), rad * Math.cos(pitch) * Math.cos(cy)];
+        const M = K.camera(asp, eye, [0, 1, 0], 0.7);
+        R.begin(M, eye, 40, 160);
+        R.draw(gridArr, 'lines', 'add');
+        const ln = new Batch(), SC = 6, spin = air.status === 'Offline' ? 0 : t * 0.3;
+        self._drawDrone(K, ln, 0, 0, 0, 0, SC, spin, { explode: ex, legs: true, rotor: air.status === 'Maintenance' ? COL.warn : COL.blue });
+        const P = (lx, ly, lz) => [lx * SC, ly * SC, lz * SC];
+        const o = 2.6 + ex * 1.3;
+        const anchors = {
+          body: [P(0, 0.3, -1.0), 'Flight controller', air.firmware, false],
+          battery: [P(0, 0.7 + ex * 1.6, 0), 'Battery', air.sim ? 'simulated' : air.batt + '% · ' + air.cycles + ' cycles', air.batt < 30 && !air.sim],
+          camera: [P(1.1 + ex * 0.8, -0.9 - ex * 1.4, 0), 'Payload', air.payload.split(' ·')[0], false],
+        };
+        [[1, 1], [1, -1], [-1, -1], [-1, 1]].forEach(([sx, sz], i) => {
+          const h = air.motors[i];
+          anchors['m' + (i + 1)] = [P(sx * o, 0.9 + ex * 1.2, sz * o), 'Motor ' + (i + 1), air.sim ? 'simulated' : h + ' h', h > 130];
+        });
+        Object.keys(anchors).forEach((k) => {
+          const [p, name, val, warn] = anchors[k];
+          const lift = [p[0] + (p[0] >= 0 ? 6 : -6), p[1] + 7, p[2]];
+          ln.line(p[0], p[1], p[2], lift[0], lift[1], lift[2], warn ? a(COL.warn, 0.9) : a(COL.cyan, 0.5));
+          const sp = K.project(M, lift[0], lift[1], lift[2], R.w, R.h);
+          const el = els[k];
+          if (!el) return;
+          if (sp) {
+            el.style.opacity = '1';
+            el.className = warn ? 'callout warn' : 'callout';
+            el.innerHTML = name + '<b>' + val + '</b>';
+            el.style.transform = 'translate(' + sp[0].toFixed(1) + 'px,' + sp[1].toFixed(1) + 'px) translate(' + (p[0] >= 0 ? '0' : '-100%') + ',-100%)';
+          } else el.style.opacity = '0';
+        });
+        R.draw(ln, 'lines', 'add');
+      },
+    };
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

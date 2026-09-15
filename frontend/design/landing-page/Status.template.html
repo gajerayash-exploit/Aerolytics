@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .cols { display: grid; grid-template-columns: minmax(0, 6.6fr) minmax(0, 5.4fr); gap: 14px; min-height: 0; }
+    .right { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 14px; min-height: 0; }
+    .svc { grid-template-columns: 10px minmax(0, 1fr) 150px 128px; padding: 12px 16px; }
+    .svc .dia { width: 10px; height: 10px; }
+    .strip { display: grid; grid-template-columns: repeat(30, minmax(0, 1fr)); gap: 2px; height: 18px; }
+    .strip i { background: repeating-linear-gradient(135deg, rgba(120,170,255,.16) 0 2px, rgba(120,170,255,.05) 2px 4px); }
+    .strip.live i:last-child { background: #7BE3A0; }
+    .strip-lbl { display: flex; justify-content: space-between; margin-top: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9px; color: #53637D; }
+    .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid rgba(120,170,255,.1); }
+    .summary div { padding: 10px 16px; }
+    .summary div + div { border-left: 1px solid rgba(120,170,255,.08); }
+    .summary b { display: block; margin-top: 3px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 22px; }
+    .legend { display: flex; gap: 12px; padding: 6px 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9FB0CC; }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .inc { padding: 14px 16px; font-size: 13px; line-height: 1.55; color: #A9B8D0; }
+    .inc b { display: block; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 112%; font-style: italic; font-weight: 600; font-size: 16px; text-transform: uppercase; color: #fff; margin-bottom: 4px; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:none-->
+  <!--TOPBAR:System|Status-->
+
+  <main class="main">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <div class="kicker" style="color: #FFB547"><i></i>System status</div>
+          <h1 class="h1" style="margin-top: 10px">Demo mode · core services up</h1>
+        </div>
+        <div class="meta">Last checked <span data-clock="utc">--:--:-- UTC</span></div>
+        <div class="acts">
+          <div class="segs"><sc-for list="{{ filters }}" as="f" hint-placeholder-count="4"><button class="{{ f.cls }}" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for></div>
+          <button class="btn btn-ghost">Subscribe to updates</button>
+        </div>
+      </div>
+
+      <div class="cols">
+        <section class="panel">
+          <div class="summary">
+            <sc-for list="{{ summary }}" as="s" hint-placeholder-count="4"><div><span class="lbl">{{ s.k }}</span><b style="color: {{ s.color }}">{{ s.n }}</b></div></sc-for>
+          </div>
+          <div class="scroll" style="flex: 1">
+            <sc-for list="{{ services }}" as="s" hint-placeholder-count="9">
+              <button class="li svc {{ s.selCls }}" onClick="{{ s.pick }}">
+                <i class="dia" style="background: {{ s.color }}"></i>
+                <span style="min-width: 0"><span class="li-t" style="font-size: 14px">{{ s.name }}</span><span class="li-s">{{ s.desc }}</span></span>
+                <span><span class="{{ s.stripCls }}"><sc-for list="{{ s.cells }}" as="c" hint-placeholder-count="30"><i></i></sc-for></span><span class="strip-lbl"><span>30 d</span><span>{{ s.hist }}</span></span></span>
+                <span style="text-align: right"><span class="chip" style="color: {{ s.color }}">{{ s.status }}</span></span>
+              </button>
+            </sc-for>
+          </div>
+          <div class="note">Uptime history needs monitoring to be connected · hatched cells mean no data, not downtime</div>
+        </section>
+
+        <div class="right">
+          <section class="panel">
+            <div class="ph"><div class="ph-l"><span class="lbl strong">Data flow</span><span class="badge b-sim">Packets simulated</span></div><span class="lbl">{{ selName }}</span></div>
+            <div class="view3d">
+              <canvas class="gl" data-gl="topo"></canvas>
+              <div class="gl-labels" data-gl-labels="topo"></div>
+              <div class="ov ov-bl glass legend">
+                <span><i class="dia" style="background: #7BE3A0"></i>Operational</span>
+                <span><i class="dia" style="background: #FFB547"></i>Demo / simulated</span>
+                <span><i class="dia" style="background: #62738F"></i>Planned</span>
+              </div>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="ph"><span class="lbl strong">Incidents</span><span class="lbl">Last 30 days</span></div>
+            <div class="inc"><b>No incidents recorded</b>Incident history starts once uptime monitoring and alerting are connected. Planned maintenance: <span class="mono" style="color: #CFDAEE">[MAINTENANCE WINDOW]</span></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', sf: 'all', sel: 'infer' };
+    this._sel = 'infer';
+  }
+
+  _services() {
+    return [
+      { key: 'web', name: 'Web app', desc: 'Command center you are using now', st: 'op', node: [0, 0, 26] },
+      { key: 'drone', name: 'Drone telemetry source', desc: 'Golden-demo flight manifest (backend/telemetry.py)', st: 'demo', node: [-44, 6, -14] },
+      { key: 'ingest', name: 'Telemetry ingest · WebSocket', desc: 'Live stream endpoint · demo stream only', st: 'demo', node: [-26, 0, -6] },
+      { key: 'infer', name: 'Inference API · FastAPI', desc: 'POST /api/v1/infer/{pillar} · YOLO', st: 'demo', node: [-6, 4, -2] },
+      { key: 'm-energy', name: 'Model · solar_best.pt', desc: 'Weights present · not benchmarked', st: 'demo', node: [-10, 14, -14] },
+      { key: 'm-agri', name: 'Model · agri_best.pt', desc: 'Weights present · not benchmarked', st: 'demo', node: [-2, 16, -18] },
+      { key: 'm-rescue', name: 'Model · thermal_best.pt', desc: 'Weights present · not benchmarked', st: 'demo', node: [6, 14, -14] },
+      { key: 'geo', name: 'Normalize & geo-map', desc: 'Detections → site coordinates', st: 'op', node: [14, 0, 4] },
+      { key: 'report', name: 'Report export', desc: 'PDF / JSON from session payload', st: 'demo', node: [30, 2, 16] },
+      { key: 'mqtt', name: 'MQTT gateway', desc: 'Real aircraft telemetry', st: 'planned', node: [-44, -2, 12] },
+      { key: 'postgis', name: 'PostGIS database', desc: 'Sites, missions, detections', st: 'planned', node: [24, -8, -16] },
+      { key: 'storage', name: 'Object storage', desc: 'Frames and annotated imagery', st: 'planned', node: [36, -4, -2] },
+    ];
+  }
+
+  renderVals() {
+    const { pillar, sf, sel } = this.state;
+    const all = this._services();
+    const meta = { op: ['Operational', '#7BE3A0'], demo: ['Demo mode', '#FFB547'], planned: ['Planned', '#62738F'] };
+    const list = all.filter((s) => sf === 'all' || s.st === sf);
+    const cur = all.find((s) => s.key === sel) || all[0];
+    this._sel = cur.key;
+    const count = (k) => all.filter((s) => s.st === k).length;
+    return {
+      pillars: this._pillarTabs(pillar, (k) => this.setState({ pillar: k })),
+      filters: [['all', 'All'], ['op', 'Up'], ['demo', 'Demo'], ['planned', 'Planned']].map(([k, name]) => ({ name, cls: sf === k ? 'on' : '', pick: () => this.setState({ sf: k }) })),
+      summary: [['Services', all.length, '#fff'], ['Operational', count('op'), '#7BE3A0'], ['Demo mode', count('demo'), '#FFB547'], ['Planned', count('planned'), '#9FB0CC']].map(([k, n, color]) => ({ k, n, color })),
+      services: list.map((s) => ({
+        name: s.name, desc: s.desc, status: meta[s.st][0], color: meta[s.st][1],
+        cells: Array.from({ length: 30 }, (_, i) => ({ i })), stripCls: s.st === 'op' ? 'strip live' : 'strip',
+        hist: s.st === 'planned' ? 'not deployed' : 'today only',
+        selCls: s.key === cur.key ? 'sel' : '', pick: () => this.setState({ sel: s.key }),
+      })),
+      selName: cur.name,
+    };
+  }
+
+  componentDidMount() { this._alive = true; this._startClock(); this._boot(0); }
+
+  componentWillUnmount() {
+    this._alive = false;
+    this._stopClock();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._topo) this._topo.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="topo"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._topo = this._topoScene(this._engine(), canvas, document.querySelector('[data-gl-labels="topo"]'));
+    this._loop([this._topo]);
+  }
+
+  // 3D service topology with packets travelling along live edges.
+  _topoScene(K, canvas, labelsEl) {
+    const R = K.renderer(canvas, [0.016, 0.043, 0.11]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp, clamp } = K;
+    const self = this;
+    const svcs = this._services();
+    const by = {};
+    svcs.forEach((s) => { by[s.key] = s; });
+    const EDGES = [['drone', 'ingest'], ['ingest', 'infer'], ['infer', 'm-energy'], ['infer', 'm-agri'], ['infer', 'm-rescue'], ['infer', 'geo'], ['geo', 'web'], ['geo', 'report'], ['report', 'web'], ['mqtt', 'ingest'], ['geo', 'postgis'], ['infer', 'storage']];
+    const col = (st) => (st === 'op' ? COL.green : st === 'demo' ? COL.warn : [0.38, 0.45, 0.56, 1]);
+    const tags = {};
+    svcs.forEach((s) => {
+      if (!labelsEl) return;
+      const el = document.createElement('div');
+      el.className = 'gl-tag';
+      el.style.color = s.st === 'op' ? '#7BE3A0' : s.st === 'demo' ? '#FFB547' : '#7F90AD';
+      el.textContent = s.name.split(' · ')[s.key.indexOf('m-') === 0 ? 1 : 0];
+      labelsEl.appendChild(el);
+      tags[s.key] = el;
+    });
+    const grid = new Batch();
+    for (let g = -60; g <= 60; g += 6) { grid.line(g, -14, -40, g, -14, 40, [0.3, 0.55, 1, 0.06]); grid.line(-60, -14, g * 0.66, 60, -14, g * 0.66, [0.3, 0.55, 1, 0.06]); }
+    const gridArr = new Float32Array(grid.a);
+    let drag = null, yaw = 0.35, pitch = 0.45, zoomT = [0, 2, 0];
+    const onDown = (e) => { drag = { x: e.clientX, y: e.clientY, yaw, pitch }; };
+    const onMove = (e) => { if (!drag) return; yaw = drag.yaw - (e.clientX - drag.x) * 0.005; pitch = clamp(drag.pitch + (e.clientY - drag.y) * 0.004, 0, 1.3); };
+    const onUp = () => { drag = null; };
+    canvas.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+
+    return {
+      destroy() { canvas.removeEventListener('pointerdown', onDown); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); },
+      frame(t, dt) {
+        const asp = R.resize();
+        const sel = by[self._sel] || svcs[0];
+        zoomT = [lerp(zoomT[0], sel.node[0] * 0.4, dt * 2), lerp(zoomT[1], 2 + sel.node[1] * 0.4, dt * 2), lerp(zoomT[2], sel.node[2] * 0.4, dt * 2)];
+        const cy = yaw + (drag ? 0 : Math.sin(t * 0.12) * 0.35), rad = 110 * Math.max(1, 1.2 / asp);
+        const eye = [zoomT[0] + rad * Math.cos(pitch) * Math.sin(cy), zoomT[1] + rad * Math.sin(pitch), zoomT[2] + rad * Math.cos(pitch) * Math.cos(cy)];
+        const M = K.camera(asp, eye, zoomT, 0.7);
+        R.begin(M, eye, 80, 260);
+        R.draw(gridArr, 'lines', 'add');
+        const ln = new Batch(), pts = new Batch(), fill = new Batch();
+        EDGES.forEach(([f, g], i) => {
+          const A = by[f].node, B = by[g].node, live = by[f].st !== 'planned' && by[g].st !== 'planned';
+          const hot = f === sel.key || g === sel.key;
+          const c = live ? (hot ? COL.cyan : [0.36, 0.6, 0.9, 1]) : [0.38, 0.45, 0.56, 1];
+          if (live) ln.line(...A, ...B, a(c, hot ? 0.8 : 0.35));
+          else for (let k = 0; k < 10; k += 2) ln.line(lerp(A[0], B[0], k / 10), lerp(A[1], B[1], k / 10), lerp(A[2], B[2], k / 10), lerp(A[0], B[0], (k + 1) / 10), lerp(A[1], B[1], (k + 1) / 10), lerp(A[2], B[2], (k + 1) / 10), a(c, 0.4));
+          if (live) for (let p = 0; p < 3; p++) {
+            const u = (t * 0.45 + i * 0.13 + p / 3) % 1;
+            pts.v(lerp(A[0], B[0], u), lerp(A[1], B[1], u), lerp(A[2], B[2], u), a(hot ? COL.cyan : COL.white, 0.9));
+          }
+        });
+        svcs.forEach((s) => {
+          const [x, y, z] = s.node, c = col(s.st), on = s.key === sel.key, r = on ? 3.2 : 2.2;
+          const hex = Array.from({ length: 6 }, (_, k) => { const an = (k / 6) * Math.PI * 2 + t * (on ? 0.6 : 0.15); return [x + Math.cos(an) * r, y, z + Math.sin(an) * r]; });
+          for (let k = 0; k < 6; k++) {
+            ln.line(...hex[k], ...hex[(k + 1) % 6], a(c, 0.95));
+            ln.line(hex[k][0], y - 1.2, hex[k][2], hex[(k + 1) % 6][0], y - 1.2, hex[(k + 1) % 6][2], a(c, 0.4));
+            ln.line(...hex[k], hex[k][0], y - 1.2, hex[k][2], a(c, 0.3));
+            fill.tri([x, y, z], hex[k], hex[(k + 1) % 6], a(c, on ? 0.3 : 0.12));
+          }
+          ln.line(x, y - 1.2, z, x, -14, z, a(c, 0.12));
+          if (on) { const ph = (t * 0.7) % 1; ln.ring(x, y, z, r + ph * 7, 30, a(COL.cyan, 0.7 * (1 - ph))); }
+          const sp = K.project(M, x, y + 4, z, R.w, R.h), el = tags[s.key];
+          if (el) {
+            if (sp) { el.style.opacity = on ? '1' : '0.8'; el.className = on ? 'gl-tag sel' : 'gl-tag'; el.style.transform = 'translate(' + sp[0].toFixed(1) + 'px,' + sp[1].toFixed(1) + 'px) translate(-50%,-100%)'; }
+            else el.style.opacity = '0';
+          }
+        });
+        R.draw(fill, 'tris', 'alpha');
+        R.draw(ln, 'lines', 'add');
+        R.draw(pts, 'points', 'add', 26);
+      },
+    };
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1010 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #030814; color: #E6ECF5; font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #7FD4FF; text-decoration: none; }
+    a:hover { color: #C4EEFF; }
+    .page { background: #030814; overflow: hidden; }
+    .mono { font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace; }
+    .disp { font-family: 'Saira', 'Bahnschrift', 'Arial Narrow', sans-serif; font-stretch: 118%; }
+
+    /* ---------- buttons & badges ---------- */
+    .btn { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); transition: background .2s, color .2s; }
+    .btn-primary { background: #2F6FE0; color: #fff; }
+    .btn-primary:hover { background: #4C88F5; color: #fff; }
+    .btn-ghost { background: rgba(120,170,255,.08); color: #CFE0FF; box-shadow: inset 0 0 0 1px rgba(120,170,255,.28); }
+    .btn-ghost:hover { background: rgba(120,170,255,.16); color: #fff; }
+    .badge { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+    .b-sim { color: #FFB547; border: 1px solid rgba(255,181,71,.45); background: repeating-linear-gradient(135deg, rgba(255,181,71,.18) 0 5px, rgba(255,181,71,.04) 5px 10px); }
+    .b-man { color: #7FB2FF; border: 1px solid rgba(127,178,255,.45); background: rgba(127,178,255,.08); }
+    .b-exif { color: #5CE1FF; border: 1px solid rgba(92,225,255,.45); background: rgba(92,225,255,.08); }
+    .b-live { color: #7BE3A0; border: 1px solid rgba(123,227,160,.45); background: rgba(123,227,160,.08); }
+
+    /* ---------- hero ---------- */
+    .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 150px 48px 44px; overflow: hidden; background: #040B1C; }
+    .hero-gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .gl-labels { position: absolute; inset: 0; pointer-events: none; }
+    .hero-shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(3,8,20,.92) 0%, rgba(3,8,20,.55) 34%, rgba(3,8,20,0) 58%), linear-gradient(180deg, rgba(3,8,20,.7) 0%, rgba(3,8,20,0) 18%, rgba(3,8,20,0) 72%, #030814 100%); }
+    .hero-grain { position: absolute; inset: 0; pointer-events: none; opacity: .5; background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px); }
+    .nav { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 26px 48px; z-index: 3; }
+    .nav-logo { height: 42px; width: auto; display: block; }
+    /* logo lockup: mark and wordmark on one centred line */
+    .lockup { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+    /* zero-specificity defaults: a context rule such as .mk-foot img or .brand img still sets the size */
+    :where(.lockup) { height: 34px; }
+    :where(.lockup) img { height: 100%; width: auto; display: block; }
+    .lockup b { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 20px; line-height: 1; letter-spacing: .01em; color: #fff; white-space: nowrap; text-transform: none; }
+    .foot .lockup b { font-size: 15px; }
+    .nav-links { display: flex; gap: 34px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+    .nav-links a { color: #9FB0CC; }
+    .nav-links a:hover { color: #fff; }
+    .hero-copy { position: relative; width: 620px; max-width: calc(100% - 380px); z-index: 2; }
+    .eyebrow { display: flex; align-items: center; gap: 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: #5CE1FF; }
+    .eyebrow i { width: 8px; height: 8px; background: #5CE1FF; transform: rotate(45deg); box-shadow: 0 0 12px #5CE1FF; animation: blink 1.6s steps(2) infinite; }
+    .hero h1 { margin: 26px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 120%; font-style: italic; font-weight: 700; font-size: 80px; line-height: .94; letter-spacing: -.01em; text-transform: uppercase; color: #fff; }
+    .hero h1 span { color: #6FA4FF; }
+    .lede { margin: 28px 0 0; max-width: 520px; font-size: 18px; line-height: 1.6; color: #A9B8D0; text-wrap: pretty; }
+    .cta-row { display: flex; gap: 14px; margin-top: 40px; flex-wrap: wrap; }
+
+    .hud { position: absolute; right: 48px; top: 132px; width: 318px; z-index: 2; padding: 18px 20px 20px; background: rgba(5,14,34,.62); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(120,170,255,.18); clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px)); }
+    .hud-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .2em; color: #7F90AD; text-transform: uppercase; }
+    .hud-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; margin-top: 16px; }
+    .hud-k { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .16em; color: #62738F; text-transform: uppercase; }
+    .hud-v { margin-top: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 14px; color: #E9F1FF; font-variant-numeric: tabular-nums; }
+    .hud-sep { height: 1px; margin: 18px 0; background: linear-gradient(90deg, rgba(120,170,255,.3), rgba(120,170,255,0)); }
+    .hud-count { display: flex; align-items: flex-end; gap: 22px; margin-top: 12px; }
+    .hud-big { font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 110%; font-weight: 600; font-size: 44px; line-height: 1; color: #fff; font-variant-numeric: tabular-nums; }
+    .hud-big.crit { color: #FF6A3D; }
+    .cov { height: 3px; margin-top: 16px; background: rgba(120,170,255,.14); }
+    .cov b { display: block; height: 100%; width: 0; background: #5CE1FF; box-shadow: 0 0 10px #5CE1FF; }
+    .feed { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; min-height: 124px; }
+    .feed-row { display: grid; grid-template-columns: 3px 1fr auto; gap: 10px; align-items: center; padding: 6px 8px 6px 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; color: #CFDAEE; background: rgba(120,170,255,.05); animation: rowIn .35s ease-out; }
+    .feed-row s { align-self: stretch; text-decoration: none; }
+    .feed-row em { font-style: normal; color: #7F90AD; }
+    .feed-empty { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; color: #53637D; }
+
+    .pillar-bar { position: relative; margin-top: 56px; display: flex; gap: 12px; z-index: 2; }
+    .pill { width: 196px; padding: 16px 0 0; text-align: left; background: none; border: 0; border-top: 2px solid rgba(160,190,240,.18); color: #7F90AD; cursor: pointer; transition: border-color .25s, color .25s; }
+    .pill:hover { color: #CFDAEE; border-top-color: rgba(160,190,240,.4); }
+    .pill.is-active { border-top-color: #5CE1FF; color: #fff; }
+    .pill-idx { display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .16em; color: #5CE1FF; }
+    .pill-name { display: block; margin-top: 6px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 600; font-size: 22px; text-transform: uppercase; }
+    .pill-sub { display: block; margin-top: 2px; font-size: 13px; color: #7F90AD; }
+    .ao { position: absolute; right: 48px; bottom: 50px; z-index: 2; text-align: right; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .16em; line-height: 1.8; color: #62738F; text-transform: uppercase; }
+    .ao b { color: #CFDAEE; font-weight: 500; }
+
+    .gl-tag { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); padding: 4px 8px; white-space: nowrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .08em; background: rgba(3,8,20,.8); border: 1px solid currentColor; opacity: 0; transition: opacity .3s; will-change: transform; }
+    .gl-tag i { font-style: normal; color: #E6ECF5; margin-left: 8px; }
+
+    /* ---------- sections ---------- */
+    .sec { position: relative; padding: 120px 48px; border-top: 1px solid rgba(120,170,255,.08); }
+    .sec-head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: end; }
+    .kicker { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: .22em; color: #5CE1FF; text-transform: uppercase; }
+    .sec h2 { margin: 18px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 54px; line-height: 1; text-transform: uppercase; color: #fff; text-wrap: balance; }
+    .sec-p { margin: 0; font-size: 17px; line-height: 1.65; color: #A9B8D0; text-wrap: pretty; }
+
+    .pipe { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0; margin-top: 72px; }
+    .pipe-track { position: absolute; left: 0; right: 0; top: 21px; height: 1px; background: rgba(120,170,255,.22); overflow: hidden; }
+    .pipe-track b { position: absolute; top: 0; left: -20%; width: 18%; height: 1px; background: linear-gradient(90deg, rgba(92,225,255,0), #5CE1FF, rgba(92,225,255,0)); box-shadow: 0 0 12px #5CE1FF; animation: travel 5s linear infinite; }
+    .stage { position: relative; padding-right: 24px; }
+    .stage-node { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #030814; }
+    .stage-node i { width: 12px; height: 12px; border: 1px solid #5CE1FF; transform: rotate(45deg); background: rgba(92,225,255,.15); }
+    .stage-idx { margin-top: 18px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .16em; color: #62738F; }
+    .stage h3 { margin: 8px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 112%; font-weight: 600; font-size: 21px; color: #fff; }
+    .stage p { margin: 10px 0 0; font-size: 14px; line-height: 1.55; color: #8C9CB6; text-wrap: pretty; }
+
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 72px; }
+    .card { position: relative; background: linear-gradient(180deg, #081631 0%, #050D20 100%); box-shadow: inset 0 0 0 1px rgba(120,170,255,.14); clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); }
+    .card-gl { display: block; width: 100%; height: 300px; }
+    .card-view { position: relative; }
+    .card-view .badge { position: absolute; left: 16px; top: 16px; }
+    .card-body { padding: 28px 28px 32px; border-top: 1px solid rgba(120,170,255,.12); }
+    .card h3 { margin: 10px 0 0; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 118%; font-style: italic; font-weight: 700; font-size: 30px; text-transform: uppercase; color: #fff; }
+    .card p { margin: 12px 0 0; font-size: 15px; line-height: 1.6; color: #A9B8D0; text-wrap: pretty; }
+    .chips-k { margin-top: 24px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .18em; color: #62738F; text-transform: uppercase; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .chip { padding: 5px 9px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .06em; color: #CFDAEE; box-shadow: inset 0 0 0 1px rgba(160,190,240,.22); }
+    .chip.dim { color: #62738F; box-shadow: inset 0 0 0 1px rgba(160,190,240,.12); }
+
+    .prov { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; margin-top: 72px; }
+    .prov-list { grid-column: span 7; display: flex; flex-direction: column; }
+    .prov-row { display: grid; grid-template-columns: 150px 1fr; gap: 24px; align-items: center; padding: 22px 0; border-top: 1px solid rgba(120,170,255,.1); }
+    .prov-row p { margin: 0; font-size: 15px; line-height: 1.55; color: #A9B8D0; }
+    .prov-row p b { color: #fff; font-weight: 500; }
+    .readout { grid-column: 9 / span 4; align-self: start; padding: 24px; background: rgba(5,14,34,.7); box-shadow: inset 0 0 0 1px rgba(120,170,255,.16); clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px)); }
+    .readout-coord { margin-top: 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 22px; color: #fff; line-height: 1.4; }
+    .readout-note { margin-top: 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .08em; color: #FFB547; }
+    .legend { display: flex; flex-direction: column; gap: 14px; margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(120,170,255,.1); font-size: 13px; color: #A9B8D0; }
+    .legend div { display: flex; align-items: center; gap: 14px; }
+
+    .cta { padding: 150px 48px 120px; text-align: center; border-top: 1px solid rgba(120,170,255,.08); background: radial-gradient(60% 70% at 50% 100%, rgba(47,111,224,.22) 0%, rgba(3,8,20,0) 70%); }
+    .cta img { width: 88px; height: auto; display: block; margin: 0 auto; }
+    .cta h2 { margin: 32px auto 0; max-width: 900px; font-family: 'Saira', 'Bahnschrift', sans-serif; font-stretch: 120%; font-style: italic; font-weight: 700; font-size: 64px; line-height: 1; text-transform: uppercase; color: #fff; text-wrap: balance; }
+    .cta p { margin: 22px auto 0; max-width: 560px; font-size: 18px; line-height: 1.6; color: #A9B8D0; }
+    .cta-actions { display: flex; justify-content: center; align-items: center; gap: 22px; margin-top: 40px; flex-wrap: wrap; }
+    .foot { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 30px 48px; border-top: 1px solid rgba(120,170,255,.08); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; color: #53637D; text-transform: uppercase; flex-wrap: wrap; }
+    .foot img { height: 30px; width: auto; display: block; }
+    .foot nav { display: flex; gap: 28px; }
+    .foot nav a { color: #7F90AD; }
+
+    /* ---------- motion ---------- */
+    @keyframes blink { 50% { opacity: .25; } }
+    @keyframes travel { to { left: 110%; } }
+    @keyframes rowIn { from { opacity: 0; transform: translateX(10px); } }
+    @keyframes rise { from { opacity: 0; transform: translateY(26px); filter: blur(6px); } }
+    @keyframes slideL { from { opacity: 0; transform: translateX(30px); } }
+    .r1 { animation: rise .9s cubic-bezier(.2,.7,.2,1) .15s both; }
+    .r2 { animation: rise .9s cubic-bezier(.2,.7,.2,1) .35s both; }
+    .r3 { animation: rise .9s cubic-bezier(.2,.7,.2,1) .55s both; }
+    .r4 { animation: rise .9s cubic-bezier(.2,.7,.2,1) .75s both; }
+    .r5 { animation: slideL 1s cubic-bezier(.2,.7,.2,1) .9s both; }
+
+    @media (max-width: 1100px) {
+      .hud, .ao { display: none; }
+      .hero { padding: 130px 24px 28px; }
+      .hero-copy { width: auto; max-width: none; }
+      .hero h1 { font-size: 52px; }
+      .nav { padding: 20px 24px; }
+      .nav-links { display: none; }
+      .pillar-bar { margin-top: 40px; }
+      .pill { width: auto; flex: 1; }
+      .pill-sub { display: none; }
+      .sec { padding: 88px 24px; }
+      .sec-head > div { grid-column: 1 / -1 !important; }
+      .sec h2 { font-size: 38px; }
+      .pipe { grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 28px; }
+      .pipe-track { display: none; }
+      .cards { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+      .prov-list, .readout { grid-column: 1 / -1; }
+      .prov-row { grid-template-columns: 1fr; gap: 10px; }
+      .cta { padding: 100px 24px; }
+      .cta h2 { font-size: 40px; }
+      .foot { padding: 24px; }
+    }
+  </style>
+</helmet>
+
+<div class="page">
+
+  <!-- ================= HERO: live 3D digital twin ================= -->
+  <section class="hero">
+    <canvas class="hero-gl" data-gl="hero"></canvas>
+    <div class="hero-shade"></div>
+    <div class="hero-grain"></div>
+    <div class="gl-labels" data-gl-labels="hero"></div>
+
+    <header class="nav">
+      <span class="lockup nav-logo"><img src="logo-mark.png" alt=""><b>Aerolytics</b></span>
+      <nav class="nav-links">
+        <a href="#platform">Platform</a>
+        <a href="#pillars">Energy</a>
+        <a href="#pillars">Agri</a>
+        <a href="#pillars">Rescue</a>
+        <a href="#provenance">Data integrity</a>
+      </nav>
+      <a class="btn btn-primary" href="#contact">Request a pilot</a>
+    </header>
+
+    <div class="hero-copy">
+      <div class="eyebrow r1"><i></i>Aerolytics — Drone Intelligence Engine</div>
+      <h1 class="r2">Every flight,<br><span>mapped into action.</span></h1>
+      <p class="lede r3">Aerolytics turns drone imagery into AI detections pinned to coordinates inside a live 3D digital twin — for solar farms, crop fields and search-and-rescue zones.</p>
+      <div class="cta-row r4">
+        <a class="btn btn-primary" href="#contact">Request a pilot deployment</a>
+        <a class="btn btn-ghost" href="#platform">See how it works</a>
+      </div>
+    </div>
+
+    <aside class="hud r5">
+      <div class="hud-head"><span>Telemetry</span><span class="badge b-sim">Simulated · Demo</span></div>
+      <div class="hud-grid">
+        <div><div class="hud-k">Lat</div><div class="hud-v" data-hud="lat">22.30000° N</div></div>
+        <div><div class="hud-k">Lon</div><div class="hud-v" data-hud="lon">70.80000° E</div></div>
+        <div><div class="hud-k">Alt AGL</div><div class="hud-v" data-hud="alt">42.0 m</div></div>
+        <div><div class="hud-k">Heading</div><div class="hud-v" data-hud="hdg">090°</div></div>
+        <div><div class="hud-k">Lane</div><div class="hud-v" data-hud="lane">1 / 7</div></div>
+        <div><div class="hud-k">Model</div><div class="hud-v" data-hud="model">solar_best</div></div>
+      </div>
+      <div class="cov"><b data-hud="cov"></b></div>
+      <div class="hud-sep"></div>
+      <div class="hud-head"><span>Detections</span><span data-hud="covtxt">Coverage 0%</span></div>
+      <div class="hud-count">
+        <div><div class="hud-big" data-hud="count">0</div><div class="hud-k" style="margin-top: 6px">Total</div></div>
+        <div><div class="hud-big crit" data-hud="crit">0</div><div class="hud-k" style="margin-top: 6px">Critical</div></div>
+      </div>
+      <div class="feed" data-hud="feed"></div>
+    </aside>
+
+    <div class="pillar-bar r4">
+      <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="3">
+        <button class="pill {{ p.state }}" onClick="{{ p.pick }}">
+          <span class="pill-idx">{{ p.idx }}</span>
+          <span class="pill-name">{{ p.name }}</span>
+          <span class="pill-sub">{{ p.sub }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <div class="ao">
+      <div>Area of operation</div>
+      <div><b>Rajkot, Gujarat</b> · 22.3000° N 70.8000° E</div>
+    </div>
+  </section>
+
+  <!-- ================= PIPELINE ================= -->
+  <section class="sec" id="platform">
+    <div class="sec-head">
+      <div style="grid-column: span 7">
+        <div class="kicker">01 / Platform</div>
+        <h2>One engine, from rotor to report.</h2>
+      </div>
+      <div style="grid-column: 9 / span 4">
+        <p class="sec-p">Energy, Agri and Rescue run on the same pipeline. Every model returns the same structure, so every detection lands on the same map.</p>
+      </div>
+    </div>
+    <div class="pipe">
+      <div class="pipe-track"><b></b></div>
+      <div class="stage"><div class="stage-node"><i></i></div><div class="stage-idx">01</div><h3>Capture</h3><p>RGB, thermal and multispectral frames from the drone.</p></div>
+      <div class="stage"><div class="stage-node"><i></i></div><div class="stage-idx">02</div><h3>Telemetry</h3><p>GPS and EXIF when present. A flight manifest when they are not.</p></div>
+      <div class="stage"><div class="stage-node"><i></i></div><div class="stage-idx">03</div><h3>Inference</h3><p>Pillar-specific YOLO models find defects, disease and people.</p></div>
+      <div class="stage"><div class="stage-node"><i></i></div><div class="stage-idx">04</div><h3>Normalize</h3><p>One schema: class, confidence, box, world offset.</p></div>
+      <div class="stage"><div class="stage-node"><i></i></div><div class="stage-idx">05</div><h3>Geo-map</h3><p>Pixel detections projected into site coordinates.</p></div>
+      <div class="stage"><div class="stage-node"><i></i></div><div class="stage-idx">06</div><h3>Digital twin</h3><p>Markers placed on a 3D model of the site.</p></div>
+      <div class="stage"><div class="stage-node"><i></i></div><div class="stage-idx">07</div><h3>Action</h3><p>Inspection dossiers, priorities, JSON and PDF reports.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= PILLARS ================= -->
+  <section class="sec" id="pillars">
+    <div class="sec-head">
+      <div style="grid-column: span 7">
+        <div class="kicker">02 / Missions</div>
+        <h2>Three missions. One command view.</h2>
+      </div>
+      <div style="grid-column: 9 / span 4">
+        <p class="sec-p">Switch pillars and the twin, the metrics and the vocabulary change with it.</p>
+      </div>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="card-view"><canvas class="card-gl" data-gl="energy"></canvas><span class="badge b-exif">Visual + thermal</span></div>
+        <div class="card-body">
+          <div class="kicker">01 · Energy</div>
+          <h3>Solar intelligence</h3>
+          <p>Find cracked, soiled and obstructed panels across an entire PV plant, each one located to the row.</p>
+          <div class="chips-k">Model classes</div>
+          <div class="chips"><span class="chip">Crack</span><span class="chip">Dust</span><span class="chip">Cover</span><span class="chip dim">Hotspot · thermal</span></div>
+        </div>
+      </article>
+      <article class="card">
+        <div class="card-view"><canvas class="card-gl" data-gl="agri"></canvas><span class="badge b-exif">NDVI-style false color</span></div>
+        <div class="card-body">
+          <div class="kicker" style="color: #9BE15D">02 · Agri</div>
+          <h3>Crop health</h3>
+          <p>Spot disease and stress early, see where it is spreading, and estimate the affected acreage.</p>
+          <div class="chips-k">Model classes</div>
+          <div class="chips"><span class="chip">Leaf rust</span><span class="chip">Leaf blight</span><span class="chip">Blast</span><span class="chip">Brown spots</span></div>
+        </div>
+      </article>
+      <article class="card">
+        <div class="card-view"><canvas class="card-gl" data-gl="rescue"></canvas><span class="badge b-exif">LWIR thermal</span></div>
+        <div class="card-body">
+          <div class="kicker" style="color: #FF7A4D">03 · Rescue</div>
+          <h3>Thermal search</h3>
+          <p>Detect people through darkness, smoke and debris, and put every signature on the responders' map.</p>
+          <div class="chips-k">Model classes</div>
+          <div class="chips"><span class="chip">Person</span><span class="chip dim">Vehicle · planned</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= PROVENANCE ================= -->
+  <section class="sec" id="provenance">
+    <div class="sec-head">
+      <div style="grid-column: span 7">
+        <div class="kicker">03 / Data integrity</div>
+        <h2>Simulated data never passes as real.</h2>
+      </div>
+      <div style="grid-column: 9 / span 4">
+        <p class="sec-p">Drone media often loses its GPS metadata. Aerolytics can still map the mission, and it labels every value with where it came from.</p>
+      </div>
+    </div>
+    <div class="prov">
+      <div class="prov-list">
+        <div class="prov-row"><span><span class="badge b-live">Live GPS</span></span><p><b>Streamed from the aircraft.</b> RTK-grade where the hardware supports it.</p></div>
+        <div class="prov-row"><span><span class="badge b-exif">EXIF</span></span><p><b>Read from the image file.</b> As accurate as the drone's own GPS.</p></div>
+        <div class="prov-row"><span><span class="badge b-man">Manifest</span></span><p><b>Matched to a planned flight path.</b> Positions are approximate.</p></div>
+        <div class="prov-row"><span><span class="badge b-sim">Simulated</span></span><p><b>Generated for demonstration.</b> Never shown as a field measurement.</p></div>
+      </div>
+      <div class="readout">
+        <div class="hud-head"><span>Detection position</span><span class="badge b-man">Manifest</span></div>
+        <div class="readout-coord">22.30010° N<br>70.80010° E</div>
+        <div class="readout-note">± approximate · not survey-grade</div>
+        <div class="legend">
+          <div><svg width="64" height="4" viewBox="0 0 64 4"><line x1="0" y1="2" x2="64" y2="2" stroke="#5CE1FF" stroke-width="2"></line></svg>Flight path from recorded telemetry</div>
+          <div><svg width="64" height="4" viewBox="0 0 64 4"><line x1="0" y1="2" x2="64" y2="2" stroke="#FFB547" stroke-width="2" stroke-dasharray="6 5"></line></svg>Flight path from manifest or simulation</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section class="cta" id="contact">
+    <img src="logo-mark.png" alt="">
+    <h2>Put Aerolytics over your site.</h2>
+    <p>Start with a pilot mission over a solar plant, a farm, or a response zone.</p>
+    <div class="cta-actions">
+      <a class="btn btn-primary" href="#contact">Request a pilot deployment</a>
+      <span class="mono" style="font-size: 13px; letter-spacing: .08em; color: #7F90AD">[CONTACT EMAIL]</span>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span class="lockup"><img src="logo-mark.png" alt=""><b>Aerolytics</b></span>
+    <span>© 2026 Aerolytics · Drone Intelligence Engine</span>
+    <nav><a href="#platform">Platform</a><a href="#pillars">Missions</a><a href="#provenance">Data integrity</a></nav>
+  </footer>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":4100}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy' };
+  }
+
+  renderVals() {
+    const defs = [
+      ['energy', '01', 'Energy', 'Solar intelligence'],
+      ['agri', '02', 'Agri', 'Crop health'],
+      ['rescue', '03', 'Rescue', 'Thermal search'],
+    ];
+    return {
+      pillars: defs.map(([id, idx, name, sub]) => ({
+        id, idx, name, sub,
+        state: this.state.pillar === id ? 'is-active' : '',
+        pick: () => {
+          this.setState({ pillar: id });
+          if (this._hero) this._hero.setPillar(id);
+        },
+      })),
+    };
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._boot(0);
+  }
+
+  componentWillUnmount() {
+    this._alive = false;
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._io) this._io.disconnect();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const heroCanvas = document.querySelector('[data-gl="hero"]');
+    if (!heroCanvas) {
+      if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1));
+      return;
+    }
+    const E = this._engine();
+    const scenes = [];
+    this._hero = E.hero(heroCanvas, this.state.pillar);
+    if (this._hero) scenes.push(this._hero);
+    ['energy', 'agri', 'rescue'].forEach((k) => {
+      const c = document.querySelector('[data-gl="' + k + '"]');
+      const s = c && E.mini(c, k);
+      if (s) scenes.push(s);
+    });
+    // Only render scenes that are on screen
+    if ('IntersectionObserver' in window) {
+      this._io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          const s = scenes.find((x) => x.canvas === en.target);
+          if (s) s.visible = en.isIntersecting;
+        });
+      });
+      scenes.forEach((s) => { s.visible = true; this._io.observe(s.canvas); });
+    } else {
+      scenes.forEach((s) => { s.visible = true; });
+    }
+    const t0 = performance.now();
+    let last = t0;
+    const loop = (now) => {
+      if (!this._alive) return;
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const t = (now - t0) / 1000;
+      scenes.forEach((s) => { if (s.visible) s.frame(t, dt); });
+      this._raf = requestAnimationFrame(loop);
+    };
+    this._raf = requestAnimationFrame(loop);
+  }
+
+  // ------------------------------------------------------------------
+  // Minimal WebGL engine: line / triangle / point batches with distance fog.
+  // (The production app uses React Three Fiber; this sandbox cannot load libraries.)
+  // ------------------------------------------------------------------
+  _engine() {
+    const self = this;
+
+    function perspective(fov, asp, n, f) {
+      const t = 1 / Math.tan(fov / 2);
+      return [t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) / (n - f), -1, 0, 0, (2 * f * n) / (n - f), 0];
+    }
+    function lookAt(e, c) {
+      let zx = e[0] - c[0], zy = e[1] - c[1], zz = e[2] - c[2];
+      let l = Math.hypot(zx, zy, zz); zx /= l; zy /= l; zz /= l;
+      let xx = zz, xy = 0, xz = -zx; // up = (0,1,0)
+      l = Math.hypot(xx, xy, xz); xx /= l; xz /= l;
+      const yx = zy * xz - zz * xy, yy = zz * xx - zx * xz, yz = zx * xy - zy * xx;
+      return [xx, yx, zx, 0, xy, yy, zy, 0, xz, yz, zz, 0,
+        -(xx * e[0] + xy * e[1] + xz * e[2]), -(yx * e[0] + yy * e[1] + yz * e[2]), -(zx * e[0] + zy * e[1] + zz * e[2]), 1];
+    }
+    function mul(a, b) {
+      const o = new Array(16);
+      for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) {
+        let s = 0;
+        for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k];
+        o[c * 4 + r] = s;
+      }
+      return o;
+    }
+    function project(m, x, y, z, w, h) {
+      const cx = m[0] * x + m[4] * y + m[8] * z + m[12];
+      const cy = m[1] * x + m[5] * y + m[9] * z + m[13];
+      const cw = m[3] * x + m[7] * y + m[11] * z + m[15];
+      if (cw <= 0.1) return null;
+      return [(cx / cw * 0.5 + 0.5) * w, (1 - (cy / cw * 0.5 + 0.5)) * h];
+    }
+
+    function Batch() { this.a = []; }
+    Batch.prototype.v = function (x, y, z, c) { this.a.push(x, y, z, c[0], c[1], c[2], c[3]); };
+    Batch.prototype.line = function (x1, y1, z1, x2, y2, z2, c, c2) { this.v(x1, y1, z1, c); this.v(x2, y2, z2, c2 || c); };
+    Batch.prototype.tri = function (p, q, r, c) { this.v(p[0], p[1], p[2], c); this.v(q[0], q[1], q[2], c); this.v(r[0], r[1], r[2], c); };
+    Batch.prototype.quad = function (p, q, r, s, c) { this.tri(p, q, r, c); this.tri(p, r, s, c); };
+    Batch.prototype.ring = function (x, y, z, rad, seg, c, dash) {
+      for (let i = 0; i < seg; i++) {
+        if (dash && i % 2) continue;
+        const a1 = (i / seg) * Math.PI * 2, a2 = ((i + 1) / seg) * Math.PI * 2;
+        this.line(x + Math.cos(a1) * rad, y, z + Math.sin(a1) * rad, x + Math.cos(a2) * rad, y, z + Math.sin(a2) * rad, c);
+      }
+    };
+
+    function renderer(canvas, bg) {
+      const gl = canvas.getContext('webgl', { antialias: true, alpha: false });
+      if (!gl) return null;
+      const vs = 'attribute vec3 p;attribute vec4 c;uniform mat4 m;uniform vec3 eye;uniform vec2 fog;uniform float ps;varying vec4 v;' +
+        'void main(){gl_Position=m*vec4(p,1.);float d=distance(p,eye);v=vec4(c.rgb,c.a*(1.-smoothstep(fog.x,fog.y,d)));gl_PointSize=ps*120./max(d,1.);}';
+      const fs = 'precision mediump float;varying vec4 v;uniform float pt;' +
+        'void main(){float a=1.;if(pt>.5){a=smoothstep(.5,0.,length(gl_PointCoord-.5));}gl_FragColor=vec4(v.rgb,v.a*a);}';
+      const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+      const pr = gl.createProgram();
+      gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs));
+      gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
+      gl.linkProgram(pr);
+      if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return null;
+      gl.useProgram(pr);
+      const L = {
+        p: gl.getAttribLocation(pr, 'p'), c: gl.getAttribLocation(pr, 'c'),
+        m: gl.getUniformLocation(pr, 'm'), eye: gl.getUniformLocation(pr, 'eye'),
+        fog: gl.getUniformLocation(pr, 'fog'), ps: gl.getUniformLocation(pr, 'ps'), pt: gl.getUniformLocation(pr, 'pt'),
+      };
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.enableVertexAttribArray(L.p); gl.enableVertexAttribArray(L.c);
+      gl.vertexAttribPointer(L.p, 3, gl.FLOAT, false, 28, 0);
+      gl.vertexAttribPointer(L.c, 4, gl.FLOAT, false, 28, 12);
+      gl.enable(gl.BLEND);
+      gl.disable(gl.DEPTH_TEST);
+      const R = {
+        gl, w: 1, h: 1,
+        resize() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+          const w = Math.max(1, Math.round(canvas.clientWidth * dpr)), h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+          if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+          gl.viewport(0, 0, w, h);
+          R.w = canvas.clientWidth; R.h = canvas.clientHeight;
+          return R.w / Math.max(1, R.h);
+        },
+        begin(m, eye, fogN, fogF) {
+          gl.clearColor(bg[0], bg[1], bg[2], 1);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+          gl.uniformMatrix4fv(L.m, false, new Float32Array(m));
+          gl.uniform3f(L.eye, eye[0], eye[1], eye[2]);
+          gl.uniform2f(L.fog, fogN, fogF);
+        },
+        // mode: 'lines' | 'tris' | 'points'; blend: 'add' | 'alpha'
+        draw(batch, mode, blend, size) {
+          const arr = batch instanceof Float32Array ? batch : new Float32Array(batch.a);
+          if (!arr.length) return;
+          if (blend === 'alpha') gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); else gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+          gl.uniform1f(L.pt, mode === 'points' ? 1 : 0);
+          gl.uniform1f(L.ps, size || 1);
+          gl.bufferData(gl.ARRAY_BUFFER, arr, gl.DYNAMIC_DRAW);
+          gl.drawArrays(mode === 'lines' ? gl.LINES : mode === 'points' ? gl.POINTS : gl.TRIANGLES, 0, arr.length / 7);
+        },
+      };
+      return R;
+    }
+
+    function camera(asp, eye, target, fov) {
+      const m = mul(perspective(fov, asp, 1, 900), lookAt(eye, target));
+      return m;
+    }
+
+    const COL = {
+      cyan: [0.36, 0.88, 1, 1], blue: [0.3, 0.55, 1, 1], white: [0.9, 0.95, 1, 1],
+      crit: [1, 0.38, 0.22, 1], warn: [1, 0.71, 0.28, 1], green: [0.48, 0.89, 0.63, 1],
+    };
+    const a = (c, al) => [c[0], c[1], c[2], al];
+    const lerp = (x, y, t) => x + (y - x) * t;
+    const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+    const smooth = (e0, e1, x) => { const t = clamp((x - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
+
+    const K = { perspective, lookAt, mul, project, Batch, renderer, camera, COL, a, lerp, clamp, smooth, self };
+    return { hero: (c, p) => self._heroScene(K, c, p), mini: (c, k) => self._miniScene(K, c, k) };
+  }
+
+  // ------------------------------------------------------------------
+  // HERO — Rajkot golden-demo digital twin: terrain, lawnmower flight,
+  // scan footprint, detections revealed as the drone passes.
+  // ------------------------------------------------------------------
+  _heroScene(K, canvas, initialPillar) {
+    const R = K.renderer(canvas, [0.016, 0.043, 0.11]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp, clamp, smooth } = K;
+    const labelsEl = document.querySelector('[data-gl-labels="hero"]');
+    const hud = {};
+    ['lat', 'lon', 'alt', 'hdg', 'lane', 'model', 'cov', 'covtxt', 'count', 'crit', 'feed'].forEach((k) => {
+      hud[k] = document.querySelector('[data-hud="' + k + '"]');
+    });
+
+    const ground = (x, z) => {
+      const base = 9 * Math.sin(x * 0.028 + 1.3) * Math.cos(z * 0.024) + 4.5 * Math.sin(x * 0.07 + z * 0.05) + 2.2 * Math.cos(z * 0.11 - x * 0.045);
+      const m = smooth(58, 125, Math.hypot(x / 1.25, z));
+      return base * (0.08 + 0.92 * m) + m * m * 18;
+    };
+
+    // Lawnmower survey path (7 lanes) + return leg
+    const LANES = 7, X0 = -56, X1 = 56, Z0 = -36, DZ = 12, ALT = 28, SPEED = 19;
+    const wps = [];
+    for (let i = 0; i < LANES; i++) {
+      const z = Z0 + i * DZ;
+      if (i % 2 === 0) wps.push([X0, z, i], [X1, z, i]); else wps.push([X1, z, i], [X0, z, i]);
+    }
+    wps.push([X1 + 18, Z0 + (LANES - 1) * DZ, -1], [X1 + 18, Z0 - 18, -1], [X0, Z0 - 18, -1], [X0, Z0, -1]);
+    const segs = [];
+    let total = 0, laneEnd = 0;
+    for (let i = 0; i < wps.length - 1; i++) {
+      const p = wps[i], q = wps[i + 1];
+      const len = Math.hypot(q[0] - p[0], q[1] - p[1]);
+      const lane = p[2] >= 0 && p[2] === q[2] ? p[2] : -1;
+      segs.push({ x1: p[0], z1: p[1], x2: q[0], z2: q[1], len, cum: total, lane });
+      total += len;
+      if (lane === LANES - 1) laneEnd = total;
+    }
+    const pos = (d) => {
+      d = ((d % total) + total) % total;
+      for (const s of segs) {
+        if (d <= s.cum + s.len) {
+          const t = (d - s.cum) / s.len;
+          return { x: lerp(s.x1, s.x2, t), z: lerp(s.z1, s.z2, t), dx: (s.x2 - s.x1) / s.len, dz: (s.z2 - s.z1) / s.len, lane: s.lane };
+        }
+      }
+      return { x: X0, z: Z0, dx: 1, dz: 0, lane: 0 };
+    };
+    const pathD = (px, pz) => {
+      let best = 1e9, bd = 0;
+      for (const s of segs) {
+        if (s.lane < 0) continue;
+        const t = clamp(((px - s.x1) * (s.x2 - s.x1) + (pz - s.z1) * (s.z2 - s.z1)) / (s.len * s.len), 0, 1);
+        const dd = Math.hypot(px - lerp(s.x1, s.x2, t), pz - lerp(s.z1, s.z2, t));
+        if (dd < best) { best = dd; bd = s.cum + t * s.len; }
+      }
+      return bd;
+    };
+
+    const TINT = {
+      energy: { lo: [0.13, 0.3, 0.72], hi: [0.42, 0.68, 1], model: 'solar_best' },
+      agri: { lo: [0.1, 0.34, 0.44], hi: [0.42, 0.82, 0.62], model: 'agri_best' },
+      rescue: { lo: [0.24, 0.24, 0.4], hi: [0.66, 0.56, 0.72], model: 'thermal_best' },
+    };
+    const DETS = {
+      energy: [[-37.5, -30, 'CRACK', 0.91, 'crit'], [9.5, -19, 'HOTSPOT', 0.87, 'crit'], [41, -8, 'DUST', 0.78, 'warn'],
+        [-20, 3.5, 'COVER', 0.72, 'warn'], [30, 14.5, 'CRACK', 0.83, 'crit'], [-47, 31, 'DUST', 0.66, 'warn']],
+      agri: [[-34, -20, 'LEAF RUST', 0.88, 'crit'], [18, -8, 'LEAF BLIGHT', 0.81, 'crit'], [42, 14, 'BROWN SPOTS', 0.74, 'warn'],
+        [-12, 22, 'BLAST', 0.79, 'crit'], [-48, 6, 'LEAF RUST', 0.69, 'warn']],
+      rescue: [[-40, -30, 'PERSON', 0.93, 'crit'], [-6, -14, 'PERSON', 0.88, 'crit'], [-2.5, -10.5, 'PERSON', 0.81, 'crit'],
+        [30, 4, 'PERSON', 0.76, 'warn'], [48, 26, 'PERSON', 0.84, 'crit'], [-30, 31, 'PERSON', 0.71, 'warn']],
+    };
+
+    let pillar = initialPillar, terrainArr = null, staticArr = null, dets = [], cells = [], droneD = 0, hy = 0, shown = -1;
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const ndvi = (x, z) => {
+      let n = 0.6 + 0.3 * Math.sin(x * 0.06 + 1) * Math.cos(z * 0.08) + 0.1 * Math.sin(x * 0.2 + z * 0.13);
+      DETS.agri.forEach((d) => { n -= 0.75 * Math.exp(-((x - d[0]) ** 2 + (z - d[1]) ** 2) / 120); });
+      return clamp(n, 0, 1);
+    };
+    const ndviColor = (n) => n < 0.45
+      ? [lerp(1, 1, n / 0.45), lerp(0.25, 0.78, n / 0.45), 0.2]
+      : [lerp(1, 0.35, (n - 0.45) / 0.55), lerp(0.78, 0.92, (n - 0.45) / 0.55), lerp(0.2, 0.38, (n - 0.45) / 0.55)];
+
+    function build() {
+      const T = TINT[pillar];
+      const tb = new Batch();
+      const S = 176, STEP = 8, SUB = 4;
+      const tc = (h) => {
+        const k = smooth(-4, 30, h);
+        return [lerp(T.lo[0], T.hi[0], k), lerp(T.lo[1], T.hi[1], k), lerp(T.lo[2], T.hi[2], k), 0.2 + 0.32 * k];
+      };
+      for (let g = -S; g <= S; g += STEP) {
+        for (let u = -S; u < S; u += SUB) {
+          const h1 = ground(u, g), h2 = ground(u + SUB, g);
+          tb.line(u, h1, g, u + SUB, h2, g, tc(h1), tc(h2));
+          const k1 = ground(g, u), k2 = ground(g, u + SUB);
+          tb.line(g, k1, u, g, k2, u + SUB, tc(k1), tc(k2));
+        }
+      }
+      terrainArr = new Float32Array(tb.a);
+
+      // survey boundary brackets + pillar-specific static structures
+      const sb = new Batch();
+      const bx = 64, bz = 44, L = 10, bc = a(COL.cyan, 0.7);
+      [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sz]) => {
+        const x = sx * bx, z = sz * bz, y = ground(x, z) + 0.4;
+        sb.line(x, y, z, x - sx * L, y, z, bc);
+        sb.line(x, y, z, x, y, z - sz * L, bc);
+      });
+      if (pillar === 'rescue') {
+        seed = 11;
+        for (let i = 0; i < 30; i++) {
+          const x = -60 + rnd() * 120, z = -40 + rnd() * 80, w = 3 + rnd() * 6, d = 3 + rnd() * 5, h = 1 + rnd() * 5, r = rnd() * 1.2;
+          const g = ground(x, z), c = Math.cos(r), s = Math.sin(r), col = a([0.62, 0.56, 0.78], 0.32);
+          const P = [[-w, -d], [w, -d], [w, d], [-w, d]].map(([lx, lz]) => [x + lx * c * 0.5 - lz * s * 0.5, z + lx * s * 0.5 + lz * c * 0.5]);
+          for (let k = 0; k < 4; k++) {
+            const p = P[k], q = P[(k + 1) % 4], hh = h * (k % 2 ? 1 : 0.55);
+            sb.line(p[0], g, p[1], q[0], g, q[1], col);
+            sb.line(p[0], g + hh, p[1], q[0], g + h * ((k + 1) % 2 ? 1 : 0.55), q[1], col);
+            sb.line(p[0], g, p[1], p[0], g + hh, p[1], col);
+          }
+        }
+      }
+      staticArr = new Float32Array(sb.a);
+
+      cells = [];
+      if (pillar === 'energy') {
+        for (let r = 0; r < 14; r++) for (let c = 0; c < 23; c++) {
+          const x = -57.5 + c * 5.2, z = -38.5 + r * 5.5;
+          cells.push({ x, z, trig: pathD(x, z), hot: false });
+        }
+      } else {
+        for (let r = 0; r < 14; r++) for (let c = 0; c < 20; c++) {
+          const x = -57 + c * 6, z = -39 + r * 6;
+          cells.push({ x, z, trig: pathD(x, z), n: pillar === 'agri' ? ndvi(x, z) : 0.2 + 0.5 * Math.max(0, Math.sin(x * 0.09) * Math.cos(z * 0.12)) });
+        }
+      }
+      dets = DETS[pillar].map((d, i) => {
+        const det = { x: d[0], z: d[1], cls: d[2], conf: d[3], sev: d[4], trig: pathD(d[0], d[1]), i };
+        if (pillar === 'energy') {
+          let best = null, bd = 1e9;
+          cells.forEach((c) => { const dd = Math.hypot(c.x - det.x, c.z - det.z); if (dd < bd) { bd = dd; best = c; } });
+          if (best) { best.hot = det; det.x = best.x; det.z = best.z; }
+        }
+        return det;
+      });
+      if (labelsEl) {
+        labelsEl.innerHTML = '';
+        dets.forEach((d) => {
+          const el = document.createElement('div');
+          el.className = 'gl-tag';
+          el.style.color = d.sev === 'crit' ? '#FF6A3D' : '#FFB547';
+          el.innerHTML = d.cls + '<i>' + d.conf.toFixed(2) + '</i>';
+          labelsEl.appendChild(el);
+          d.el = el;
+        });
+      }
+      if (hud.model) hud.model.textContent = T.model;
+      droneD = 0;
+      shown = -1;
+    }
+
+    function updateFeed(active) {
+      if (!hud.feed || active.length === shown) return;
+      shown = active.length;
+      const crit = active.filter((d) => d.sev === 'crit').length;
+      if (hud.count) hud.count.textContent = String(active.length);
+      if (hud.crit) hud.crit.textContent = String(crit);
+      if (!active.length) { hud.feed.innerHTML = '<div class="feed-empty">Scanning survey lanes…</div>'; return; }
+      hud.feed.innerHTML = active.slice(-4).reverse().map((d) => {
+        const lat = (22.3 - d.z * 1.5 / 111320).toFixed(5), lon = (70.8 + d.x * 1.5 / 102990).toFixed(5);
+        return '<div class="feed-row"><s style="background:' + (d.sev === 'crit' ? '#FF6A3D' : '#FFB547') + '"></s><span>' + d.cls +
+          ' <em>' + lat + ', ' + lon + '</em></span><em>' + d.conf.toFixed(2) + '</em></div>';
+      }).join('');
+    }
+
+    let mx = 0, my = 0, tmx = 0, tmy = 0, hudT = 0;
+    const host = canvas.parentElement || canvas;
+    host.addEventListener('pointermove', (e) => {
+      const r = canvas.getBoundingClientRect();
+      tmx = ((e.clientX - r.left) / r.width) * 2 - 1;
+      tmy = ((e.clientY - r.top) / r.height) * 2 - 1;
+    });
+
+    build();
+
+    const scene = {
+      canvas, visible: true,
+      setPillar(id) { if (id !== pillar && TINT[id]) { pillar = id; build(); } },
+      frame(t, dt) {
+        const asp = R.resize();
+        droneD += dt * SPEED;
+        if (droneD > total) { droneD = 0; shown = -1; }
+        mx = lerp(mx, tmx, 0.04); my = lerp(my, tmy, 0.04);
+        const P = pos(droneD);
+        const ty = Math.atan2(P.dz, P.dx);
+        let dy = ty - hy;
+        while (dy > Math.PI) dy -= Math.PI * 2;
+        while (dy < -Math.PI) dy += Math.PI * 2;
+        hy += dy * Math.min(1, dt * 3.5);
+
+        // camera: slow orbit, mouse parallax, loosely follows the drone, offset right of the copy
+        const cyaw = 0.7 + t * 0.03 + mx * 0.3, pitch = 0.6 + my * 0.07;
+        const rad = 150 * Math.max(1, 1.3 / asp), shift = asp > 1.25 ? 36 : 0;
+        const rx = Math.cos(cyaw), rz = -Math.sin(cyaw);
+        const T = [lerp(0, P.x, 0.25) - rx * shift, 2, lerp(0, P.z, 0.25) - rz * shift];
+        const eye = [T[0] + rad * Math.cos(pitch) * Math.sin(cyaw), T[1] + rad * Math.sin(pitch), T[2] + rad * Math.cos(pitch) * Math.cos(cyaw)];
+        const M = K.camera(asp, eye, T, 0.72);
+        R.begin(M, eye, 150, 380);
+        R.draw(terrainArr, 'lines', 'add');
+        R.draw(staticArr, 'lines', 'add');
+
+        // pillar cells, revealed once scanned
+        const fill = new Batch(), edge = new Batch(), glow = new Batch();
+        if (pillar === 'energy') {
+          cells.forEach((c) => {
+            const g = ground(c.x, c.z), done = droneD > c.trig;
+            const hot = c.hot && done;
+            const p1 = [c.x - 2.3, g + 0.5, c.z + 1.25], p2 = [c.x + 2.3, g + 0.5, c.z + 1.25], p3 = [c.x + 2.3, g + 2.1, c.z - 1.25], p4 = [c.x - 2.3, g + 2.1, c.z - 1.25];
+            fill.quad(p1, p2, p3, p4, hot ? a(COL.crit, 0.6) : done ? [0.12, 0.32, 0.78, 0.34] : [0.2, 0.35, 0.7, 0.1]);
+            const ec = hot ? a(COL.crit, 1) : done ? a(COL.cyan, 0.5) : a(COL.blue, 0.22);
+            edge.line(...p1, ...p2, ec); edge.line(...p2, ...p3, ec); edge.line(...p3, ...p4, ec); edge.line(...p4, ...p1, ec);
+          });
+        } else {
+          cells.forEach((c) => {
+            const done = droneD > c.trig, g = ground(c.x, c.z) + 0.2, h = 2.7;
+            const p1 = [c.x - h, g, c.z - h], p2 = [c.x + h, g, c.z - h], p3 = [c.x + h, g, c.z + h], p4 = [c.x - h, g, c.z + h];
+            if (pillar === 'agri') {
+              const col = ndviColor(c.n);
+              if (done) fill.quad(p1, p2, p3, p4, [col[0], col[1], col[2], 0.36]);
+              const ec = done ? [col[0], col[1], col[2], 0.35] : [0.4, 0.8, 0.6, 0.1];
+              edge.line(...p1, ...p2, ec); edge.line(...p2, ...p3, ec);
+            } else if (done) {
+              fill.quad(p1, p2, p3, p4, [lerp(0.25, 1, c.n), lerp(0.1, 0.55, c.n * c.n), lerp(0.45, 0.15, c.n), 0.1 + 0.12 * c.n]);
+            }
+          });
+        }
+        R.draw(fill, 'tris', 'alpha');
+        R.draw(edge, 'lines', 'add');
+
+        // flight path — dashed amber = simulated manifest
+        const path = new Batch();
+        segs.forEach((s) => {
+          for (let u = 0; u < s.len; u += 3) {
+            const u2 = Math.min(s.len, u + 1.6), d1 = s.cum + u;
+            const c = d1 < droneD ? a(COL.warn, 0.8) : a(COL.white, 0.16);
+            path.line(lerp(s.x1, s.x2, u / s.len), ALT, lerp(s.z1, s.z2, u / s.len), lerp(s.x1, s.x2, u2 / s.len), ALT, lerp(s.z1, s.z2, u2 / s.len), c);
+          }
+        });
+        R.draw(path, 'lines', 'add');
+
+        // scan footprint + frustum
+        const fx = Math.cos(hy), fz = Math.sin(hy);
+        const loc = (lx, lz) => [P.x + lx * fx - lz * fz, P.z + lx * fz + lz * fx];
+        const corners = [[-7, -11], [7, -11], [7, 11], [-7, 11]].map(([lx, lz]) => { const q = loc(lx, lz); return [q[0], ground(q[0], q[1]) + 0.5, q[1]]; });
+        const scan = new Batch(), scanFill = new Batch();
+        scanFill.quad(corners[0], corners[1], corners[2], corners[3], a(COL.cyan, 0.08));
+        for (let k = 0; k < 4; k++) {
+          const p = corners[k], q = corners[(k + 1) % 4];
+          scan.line(p[0], p[1], p[2], q[0], q[1], q[2], a(COL.cyan, 0.9));
+          scan.line(P.x, ALT - 1.2, P.z, p[0], p[1], p[2], a(COL.cyan, 0.45), a(COL.cyan, 0.08));
+        }
+        const sw = -7 + 14 * ((t * 1.4) % 1), s1 = loc(sw, -11), s2 = loc(sw, 11);
+        scan.line(s1[0], ground(s1[0], s1[1]) + 0.6, s1[1], s2[0], ground(s2[0], s2[1]) + 0.6, s2[1], a(COL.cyan, 0.75));
+        R.draw(scanFill, 'tris', 'alpha');
+        R.draw(scan, 'lines', 'add');
+
+        // drone
+        const dr = new Batch(), SC = 1.7, y = ALT;
+        const D = (lx, lz) => loc(lx * SC, lz * SC);
+        const arms = [[2.3, 2.3], [2.3, -2.3], [-2.3, -2.3], [-2.3, 2.3]];
+        const c0 = D(0, 0);
+        arms.forEach(([lx, lz], i) => {
+          const e = D(lx, lz);
+          dr.line(c0[0], y, c0[1], e[0], y + 0.3, e[1], a(COL.white, 0.95));
+          for (let k = 0; k < 14; k++) {
+            const a1 = (k / 14) * Math.PI * 2, a2 = ((k + 1) / 14) * Math.PI * 2, rr = 1.5 * SC;
+            dr.line(e[0] + Math.cos(a1) * rr, y + 0.6, e[1] + Math.sin(a1) * rr, e[0] + Math.cos(a2) * rr, y + 0.6, e[1] + Math.sin(a2) * rr, a(COL.blue, 0.8));
+          }
+          const bang = t * 38 + i;
+          dr.line(e[0] - Math.cos(bang) * 1.4 * SC, y + 0.65, e[1] - Math.sin(bang) * 1.4 * SC, e[0] + Math.cos(bang) * 1.4 * SC, y + 0.65, e[1] + Math.sin(bang) * 1.4 * SC, a(COL.cyan, 0.6));
+        });
+        const b = [D(1.1, 0.8), D(1.1, -0.8), D(-1.1, -0.8), D(-1.1, 0.8)];
+        for (let k = 0; k < 4; k++) dr.line(b[k][0], y + 0.2, b[k][1], b[(k + 1) % 4][0], y + 0.2, b[(k + 1) % 4][1], a(COL.white, 1));
+        R.draw(dr, 'lines', 'add');
+        const blink = Math.sin(t * 9) > 0.2 ? 1 : 0.15;
+        const fl = D(2.3, 2.3), fr = D(2.3, -2.3), rl = D(-2.3, -2.3), rr2 = D(-2.3, 2.3);
+        glow.v(c0[0], y, c0[1], a(COL.cyan, 0.55));
+        glow.v(fl[0], y + 0.4, fl[1], a(COL.green, 0.9)); glow.v(fr[0], y + 0.4, fr[1], a(COL.green, 0.9));
+        glow.v(rl[0], y + 0.4, rl[1], a(COL.crit, blink)); glow.v(rr2[0], y + 0.4, rr2[1], a(COL.crit, blink));
+        R.draw(glow, 'points', 'add', 16);
+        const halo = new Batch(); halo.v(c0[0], y, c0[1], a(COL.blue, 0.35));
+        R.draw(halo, 'points', 'add', 90);
+
+        // detections
+        const mk = new Batch(), mkGlow = new Batch(), active = [];
+        const W = R.w, H = R.h;
+        dets.forEach((d) => {
+          const age = droneD - d.trig;
+          if (age <= 0) { if (d.el) d.el.style.opacity = '0'; return; }
+          active.push(d);
+          const s = smooth(0, 12, age), c = d.sev === 'crit' ? COL.crit : COL.warn;
+          const gy = ground(d.x, d.z) + (pillar === 'energy' ? 2.2 : 0.4), top = gy + 5 + 11 * s;
+          mk.line(d.x, gy, d.z, d.x, top, d.z, a(c, 0.9), a(c, 0.15));
+          mk.ring(d.x, gy, d.z, 2.4, 20, a(c, 0.95));
+          mk.ring(d.x, gy, d.z, 4.2, 24, a(c, 0.5), true);
+          const ph = (t * 0.55 + d.i * 0.31) % 1;
+          mk.ring(d.x, gy, d.z, 2.4 + ph * 10, 28, a(c, 0.7 * (1 - ph)));
+          const q = 1.3;
+          [[q, 0, 0], [-q, 0, 0], [0, 0, q], [0, 0, -q]].forEach(([ox, , oz]) => {
+            mk.line(d.x + ox, top, d.z + oz, d.x, top + 1.8, d.z, a(c, 1));
+            mk.line(d.x + ox, top, d.z + oz, d.x, top - 1.8, d.z, a(c, 1));
+          });
+          mkGlow.v(d.x, gy, d.z, a(c, 0.8 * s));
+          if (pillar === 'rescue') mkGlow.v(d.x, gy + 0.5, d.z, [1, 0.92, 0.8, 0.9 * (0.75 + 0.25 * Math.sin(t * 5 + d.i))]);
+          if (d.el) {
+            const sp = K.project(M, d.x, top + 2.4, d.z, W, H);
+            if (sp) { d.el.style.transform = 'translate(' + sp[0].toFixed(1) + 'px,' + sp[1].toFixed(1) + 'px) translate(-50%,-100%)'; d.el.style.opacity = String(s); }
+            else d.el.style.opacity = '0';
+          }
+        });
+        R.draw(mk, 'lines', 'add');
+        R.draw(mkGlow, 'points', 'add', 60);
+
+        // HUD (throttled)
+        hudT += dt;
+        if (hudT > 0.12) {
+          hudT = 0;
+          const set = (k, v) => { if (hud[k]) hud[k].textContent = v; };
+          set('lat', (22.3 - P.z * 1.5 / 111320).toFixed(5) + '° N');
+          set('lon', (70.8 + P.x * 1.5 / 102990).toFixed(5) + '° E');
+          set('alt', (ALT * 1.5).toFixed(1) + ' m');
+          const hdg = (Math.atan2(Math.cos(hy), -Math.sin(hy)) * 180 / Math.PI + 360) % 360;
+          set('hdg', String(Math.round(hdg)).padStart(3, '0') + '°');
+          set('lane', P.lane >= 0 ? (P.lane + 1) + ' / ' + LANES : 'Transit');
+          const cov = Math.min(100, (droneD / laneEnd) * 100);
+          set('covtxt', 'Coverage ' + Math.round(cov) + '%');
+          if (hud.cov) hud.cov.style.width = cov.toFixed(1) + '%';
+          updateFeed(active);
+        }
+      },
+    };
+    return scene;
+  }
+
+  // ------------------------------------------------------------------
+  // MISSION CARDS — one small live scene per pillar
+  // ------------------------------------------------------------------
+  _miniScene(K, canvas, kind) {
+    const R = K.renderer(canvas, kind === 'rescue' ? [0.03, 0.028, 0.07] : [0.02, 0.05, 0.12]);
+    if (!R) return null;
+    const { Batch, COL, a, lerp, clamp, smooth } = K;
+    const ndvi = (x, z) => clamp(0.62 + 0.25 * Math.sin(x * 0.18 + 1) * Math.cos(z * 0.2) - 0.8 * Math.exp(-((x - 6) ** 2 + (z + 3) ** 2) / 40), 0, 1);
+    const ndviColor = (n) => n < 0.45 ? [1, lerp(0.25, 0.78, n / 0.45), 0.2] : [lerp(1, 0.35, (n - 0.45) / 0.55), lerp(0.78, 0.92, (n - 0.45) / 0.55), lerp(0.2, 0.38, (n - 0.45) / 0.55)];
+    const ht = (x, z) => 1.6 * Math.sin(x * 0.2) * Math.cos(z * 0.17) + 0.8 * Math.sin(x * 0.5 + z * 0.3);
+    const PEOPLE = [[-14, -8], [-11, -6], [6, 10], [15, -12], [-4, 15]];
+
+    return {
+      canvas, visible: true,
+      frame(t) {
+        const asp = R.resize();
+        const yaw = 0.65 + t * 0.12, pitch = kind === 'agri' ? 0.62 : 0.56, rad = 60 * Math.max(1, 1.25 / asp);
+        const eye = [rad * Math.cos(pitch) * Math.sin(yaw), rad * Math.sin(pitch), rad * Math.cos(pitch) * Math.cos(yaw)];
+        const M = K.camera(asp, eye, [0, 0, 0], 0.7);
+        R.begin(M, eye, 45, 150);
+        const lines = new Batch(), fill = new Batch(), pts = new Batch();
+        const gc = kind === 'rescue' ? [0.55, 0.5, 0.75, 0.13] : [0.3, 0.55, 1, 0.12];
+        for (let g = -34; g <= 34; g += 4) {
+          for (let u = -34; u < 34; u += 4) {
+            const y1 = kind === 'rescue' ? ht(u, g) : 0, y2 = kind === 'rescue' ? ht(u + 4, g) : 0;
+            lines.line(u, y1, g, u + 4, y2, g, gc);
+            const k1 = kind === 'rescue' ? ht(g, u) : 0, k2 = kind === 'rescue' ? ht(g, u + 4) : 0;
+            lines.line(g, k1, u, g, k2, u + 4, gc);
+          }
+        }
+
+        if (kind === 'energy') {
+          const sweep = ((t * 0.16) % 1.35) * 64 - 30;
+          for (let r = 0; r < 5; r++) for (let c = 0; c < 8; c++) {
+            const x = -21 + c * 6, z = -12 + r * 6, done = x < sweep, hot = done && c === 5 && r === 1;
+            const p1 = [x - 2.6, 0.6, z + 2], p2 = [x + 2.6, 0.6, z + 2], p3 = [x + 2.6, 3.2, z - 2], p4 = [x - 2.6, 3.2, z - 2];
+            fill.quad(p1, p2, p3, p4, hot ? a(COL.crit, 0.55) : done ? [0.12, 0.34, 0.8, 0.4] : [0.2, 0.35, 0.7, 0.12]);
+            const ec = hot ? a(COL.crit, 1) : done ? a(COL.cyan, 0.55) : a(COL.blue, 0.25);
+            lines.line(...p1, ...p2, ec); lines.line(...p2, ...p3, ec); lines.line(...p3, ...p4, ec); lines.line(...p4, ...p1, ec);
+            for (let k = 1; k < 3; k++) lines.line(x - 2.6, lerp(0.6, 3.2, k / 3), lerp(z + 2, z - 2, k / 3), x + 2.6, lerp(0.6, 3.2, k / 3), lerp(z + 2, z - 2, k / 3), a(ec, ec[3] * 0.4));
+            if (hot) {
+              const pulse = 0.6 + 0.4 * Math.sin(t * 4);
+              pts.v(x, 2, z, [1, 0.6, 0.3, pulse]);
+              const bx = 3.4, by0 = 0, by1 = 6, bz = 2.8, bc = a(COL.crit, 0.9);
+              [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sz]) => {
+                lines.line(x + sx * bx, by0, z + sz * bz, x + sx * bx, by0 + 1.2, z + sz * bz, bc);
+                lines.line(x + sx * bx, by1, z + sz * bz, x + sx * bx, by1 - 1.2, z + sz * bz, bc);
+                lines.line(x + sx * bx, by1, z + sz * bz, x + sx * bx * 0.6, by1, z + sz * bz, bc);
+                lines.line(x + sx * bx, by0, z + sz * bz, x + sx * bx * 0.6, by0, z + sz * bz, bc);
+              });
+              lines.ring(x, 0.3, z, 4.5 + ((t * 0.7) % 1) * 5, 28, a(COL.crit, 0.6 * (1 - ((t * 0.7) % 1))));
+            }
+          }
+          fill.quad([sweep, 0, -17], [sweep, 0, 17], [sweep, 9, 17], [sweep, 9, -17], a(COL.cyan, 0.07));
+          lines.line(sweep, 9, -17, sweep, 9, 17, a(COL.cyan, 0.9));
+          lines.line(sweep, 0, -17, sweep, 0, 17, a(COL.cyan, 0.6));
+        } else if (kind === 'agri') {
+          const sweep = ((t * 0.14) % 1.3) * 52 - 22;
+          for (let r = 0; r < 9; r++) for (let c = 0; c < 12; c++) {
+            const x = -22 + c * 4, z = -16 + r * 4, n = ndvi(x, z), done = z < sweep;
+            const h = done ? 0.6 + n * 8 * smooth(0, 6, sweep - z) : 0.3, col = ndviColor(n), s = 1.5;
+            const cc = done ? [col[0], col[1], col[2], 0.9] : [0.4, 0.8, 0.6, 0.2];
+            const top = [[x - s, h, z - s], [x + s, h, z - s], [x + s, h, z + s], [x - s, h, z + s]];
+            fill.quad(top[0], top[1], top[2], top[3], [cc[0], cc[1], cc[2], done ? 0.5 : 0.08]);
+            for (let k = 0; k < 4; k++) {
+              const p = top[k], q = top[(k + 1) % 4];
+              lines.line(p[0], h, p[2], q[0], h, q[2], a(cc, cc[3] * 0.7));
+              if (done) lines.line(p[0], 0, p[2], p[0], h, p[2], a(cc, 0.25));
+            }
+          }
+          lines.ring(6, 0.2, -3, 9, 36, a(COL.crit, 0.8), true);
+          fill.quad([-26, 0, sweep], [26, 0, sweep], [26, 12, sweep], [-26, 12, sweep], [0.6, 0.9, 0.36, 0.06]);
+          lines.line(-26, 12, sweep, 26, 12, sweep, [0.6, 0.9, 0.36, 0.9]);
+        } else {
+          const ang = t * 0.9;
+          for (let k = 0; k < 18; k++) {
+            const a1 = ang - k * 0.04, fade = 1 - k / 18;
+            lines.line(0, 0.5, 0, Math.cos(a1) * 32, ht(Math.cos(a1) * 32, Math.sin(a1) * 32) + 0.5, Math.sin(a1) * 32, [1, 0.5, 0.25, 0.4 * fade], [1, 0.5, 0.25, 0]);
+          }
+          lines.ring(0, 0.5, 0, 32, 64, [1, 0.5, 0.25, 0.3], true);
+          PEOPLE.forEach(([x, z], i) => {
+            const pa = Math.atan2(z, x);
+            let since = (ang - pa) % (Math.PI * 2);
+            if (since < 0) since += Math.PI * 2;
+            const lit = 1 - smooth(0, 3.5, since), y = ht(x, z) + 0.6;
+            pts.v(x, y, z, [1, 0.9, 0.75, 0.55 + 0.45 * lit]);
+            pts.v(x, y, z, [1, 0.4, 0.15, 0.35 + 0.4 * lit]);
+            lines.ring(x, y, z, 1.8 + lit * 3, 20, [1, 0.42, 0.22, 0.25 + 0.7 * lit]);
+            lines.line(x, y, z, x, y + 5 + 3 * lit, z, [1, 0.42, 0.22, 0.6], [1, 0.42, 0.22, 0]);
+          });
+        }
+        R.draw(fill, 'tris', 'alpha');
+        R.draw(lines, 'lines', 'add');
+        R.draw(pts, 'points', 'add', kind === 'rescue' ? 70 : 90);
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

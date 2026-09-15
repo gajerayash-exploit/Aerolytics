@@ -1,0 +1,437 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,300..800;1,75..125,300..800&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+  <style>
+/*SHELL_CSS*/
+
+    .an { display: grid; grid-template-rows: 58px 100px minmax(0, 1fr) 262px; gap: 14px; height: 100%; padding: 18px 24px 20px; }
+    .an-head { display: flex; align-items: flex-end; gap: 20px; }
+    .an-head .acts { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+    .tile { padding: 14px 16px; }
+    .tile .big { margin-top: 10px; font-size: 30px; }
+    .tile .big small { margin-left: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; font-weight: 400; color: #7F90AD; }
+    .tile em { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: #8C9CB6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tile.na .big { color: #62738F; font-size: 20px; margin-top: 14px; }
+
+    .rowA { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 14px; min-height: 0; }
+    .rowB { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; min-height: 0; }
+    .chart { position: relative; flex: 1; min-height: 0; padding: 8px 12px 10px; }
+    .chart svg { display: block; overflow: visible; }
+    .ax { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; fill: #62738F; }
+    .legend { display: flex; align-items: center; gap: 14px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #CFDAEE; }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .tip { position: absolute; z-index: 5; min-width: 150px; padding: 8px 10px; pointer-events: none; transform: translate(-50%, calc(-100% - 10px)); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #E6ECF5; background: #081631; box-shadow: inset 0 0 0 1px rgba(120,170,255,.35), 0 8px 20px rgba(0,0,0,.4); white-space: nowrap; }
+    .tip b { display: block; margin-bottom: 4px; font-weight: 500; color: #fff; }
+    .tip div { display: flex; align-items: center; justify-content: space-between; gap: 14px; color: #A9B8D0; }
+    .tip div span { display: flex; align-items: center; gap: 6px; }
+    .tip div em { font-style: normal; color: #fff; }
+
+    .surf { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #040B1C; }
+    .ramp { position: absolute; left: 12px; bottom: 12px; width: 190px; padding: 8px 10px; }
+    .ramp-bar { height: 8px; margin-top: 6px; background: linear-gradient(90deg, #12305E, #1F6FAF, #3FB3E0, #B8F1FF); }
+    .ramp-lbl { display: flex; justify-content: space-between; margin-top: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; color: #7F90AD; }
+    .surf-hint { position: absolute; right: 12px; top: 12px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #53637D; }
+
+    .funnel { display: flex; flex-direction: column; gap: 14px; padding: 16px; }
+    .fn-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #CFDAEE; }
+    .fn-row em { font-style: normal; color: #7F90AD; text-transform: none; letter-spacing: 0; }
+    .fn-bar { grid-column: 1 / -1; height: 14px; background: rgba(120,170,255,.08); }
+    .fn-bar b { display: block; height: 100%; background: #3FB3E0; }
+    .note { margin-top: auto; padding: 10px 16px; border-top: 1px solid rgba(120,170,255,.08); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #53637D; }
+    .sites .tbl td { height: 36px; }
+    .spark { display: block; }
+    .tbl-sm td, .tbl-sm th { padding-left: 10px; padding-right: 10px; }
+  </style>
+</helmet>
+
+<div class="app">
+  <!--RAIL:analytics-->
+  <!--TOPBAR:Command center|Analytics-->
+
+  <main class="main">
+    <div class="an">
+      <div class="an-head">
+        <div>
+          <div class="kicker" style="color: {{ pc.color }}"><i></i>Analytics · {{ pc.name }}</div>
+          <h1 class="h1" style="margin-top: 10px">Operational intelligence</h1>
+        </div>
+        <div class="meta" style="padding-bottom: 6px">All sites · {{ rangeLbl }} · sample data</div>
+        <div class="acts">
+          <div class="segs"><sc-for list="{{ ranges }}" as="r" hint-placeholder-count="3"><button class="{{ r.cls }}" onClick="{{ r.pick }}">{{ r.name }}</button></sc-for></div>
+          <button class="btn btn-ghost btn-sm">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="tiles">
+        <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="6">
+          <div class="panel tile {{ t.cls }}">
+            <span class="lbl">{{ t.k }}</span>
+            <div class="big">{{ t.v }}<small>{{ t.unit }}</small></div>
+            <em>{{ t.note }}</em>
+          </div>
+        </sc-for>
+      </div>
+
+      <div class="rowA">
+        <section class="panel">
+          <div class="ph">
+            <div class="ph-l"><span class="lbl strong">Detections per {{ bucketLbl }}</span><span class="badge b-sim">Sample</span></div>
+            <div class="legend"><span><i class="dia sev-crit"></i>Critical</span><span><i class="dia sev-warn"></i>Warning</span></div>
+          </div>
+          <div class="chart">
+            <svg width="740" height="258" viewBox="0 0 740 258">
+              <sc-for list="{{ trend.grid }}" as="g" hint-placeholder-count="4">
+                <line x1="40" x2="728" y1="{{ g.y }}" y2="{{ g.y }}" stroke="rgba(120,170,255,.1)" stroke-width="1"></line>
+                <text class="ax" x="32" y="{{ g.ty }}" text-anchor="end">{{ g.label }}</text>
+              </sc-for>
+              <line x1="40" x2="728" y1="230" y2="230" stroke="rgba(120,170,255,.35)" stroke-width="1"></line>
+              <sc-for list="{{ trend.bars }}" as="b" hint-placeholder-count="30">
+                <g onMouseEnter="{{ b.hover }}" onMouseLeave="{{ clearTip }}">
+                  <rect x="{{ b.hx }}" y="10" width="{{ b.hw }}" height="220" fill="{{ b.hoverFill }}"></rect>
+                  <rect x="{{ b.x }}" y="{{ b.cy }}" width="{{ b.w }}" height="{{ b.ch }}" fill="#FF6A3D"></rect>
+                  <rect x="{{ b.x }}" y="{{ b.wy }}" width="{{ b.w }}" height="{{ b.wh }}" fill="#FFB547"></rect>
+                </g>
+              </sc-for>
+              <sc-for list="{{ trend.xlabels }}" as="x" hint-placeholder-count="6">
+                <text class="ax" x="{{ x.x }}" y="248" text-anchor="middle">{{ x.label }}</text>
+              </sc-for>
+            </svg>
+            <sc-if value="{{ tipTrend }}" hint-placeholder-val="{{ false }}">
+              <div class="tip" style="left: {{ tip.left }}; top: {{ tip.top }}">
+                <b>{{ tip.title }}</b>
+                <div><span><i class="dia sev-crit"></i>Critical</span><em>{{ tip.a }}</em></div>
+                <div><span><i class="dia sev-warn"></i>Warning</span><em>{{ tip.b }}</em></div>
+                <div><span>Total</span><em>{{ tip.c }}</em></div>
+              </div>
+            </sc-if>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="ph"><div class="ph-l"><span class="lbl strong">Detection density · {{ pc.site }}</span></div><span class="badge b-man">Approx. cells</span></div>
+          <div class="surf">
+            <canvas class="gl" data-gl="surface"></canvas>
+            <div class="surf-hint">Drag to orbit</div>
+            <div class="glass ramp"><span class="lbl">Detections per cell</span><div class="ramp-bar"></div><div class="ramp-lbl"><span>0</span><span>{{ densMax }}</span></div></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="rowB">
+        <section class="panel">
+          <div class="ph"><span class="lbl strong">Resolution funnel</span><span class="lbl">{{ rangeLbl }}</span></div>
+          <div class="funnel">
+            <sc-for list="{{ funnel }}" as="f" hint-placeholder-count="3">
+              <div class="fn-row"><span>{{ f.name }}</span><span>{{ f.n }} <em>· {{ f.pct }}</em></span><div class="fn-bar"><b style="width: {{ f.w }}"></b></div></div>
+            </sc-for>
+          </div>
+          <div class="note">Median time to resolve · {{ ttr }}</div>
+        </section>
+
+        <section class="panel">
+          <div class="ph"><span class="lbl strong">Confidence distribution</span><span class="badge b-sim">Sample</span></div>
+          <div class="chart">
+            <svg width="300" height="176" viewBox="0 0 300 176">
+              <line x1="10" x2="290" y1="150" y2="150" stroke="rgba(120,170,255,.35)"></line>
+              <sc-for list="{{ conf.bins }}" as="b" hint-placeholder-count="20">
+                <g onMouseEnter="{{ b.hover }}" onMouseLeave="{{ clearTip }}">
+                  <rect x="{{ b.hx }}" y="10" width="14" height="140" fill="{{ b.hoverFill }}"></rect>
+                  <rect x="{{ b.x }}" y="{{ b.y }}" width="10" height="{{ b.h }}" fill="{{ b.fill }}"></rect>
+                </g>
+              </sc-for>
+              <line x1="150" x2="150" y1="6" y2="150" stroke="#FFB547" stroke-width="1.5" stroke-dasharray="4 3"></line>
+              <text class="ax" x="156" y="16" style="fill: #FFB547">Threshold 0.50</text>
+              <text class="ax" x="10" y="168">0.0</text><text class="ax" x="150" y="168" text-anchor="middle">0.5</text><text class="ax" x="290" y="168" text-anchor="end">1.0</text>
+            </svg>
+            <sc-if value="{{ tipConf }}" hint-placeholder-val="{{ false }}">
+              <div class="tip" style="left: {{ tip.left }}; top: {{ tip.top }}"><b>{{ tip.title }}</b><div><span>Detections</span><em>{{ tip.a }}</em></div><div><span>Reported</span><em>{{ tip.b }}</em></div></div>
+            </sc-if>
+          </div>
+          <div class="note">Grey bins fall below threshold and are not reported</div>
+        </section>
+
+        <section class="panel">
+          <div class="ph"><span class="lbl strong">Inference time per mission</span><span class="badge b-sim">Sample</span></div>
+          <div class="chart">
+            <svg width="300" height="176" viewBox="0 0 300 176">
+              <sc-for list="{{ perf.grid }}" as="g" hint-placeholder-count="3">
+                <line x1="34" x2="292" y1="{{ g.y }}" y2="{{ g.y }}" stroke="rgba(120,170,255,.1)"></line>
+                <text class="ax" x="28" y="{{ g.ty }}" text-anchor="end">{{ g.label }}</text>
+              </sc-for>
+              <sc-if value="{{ tipPerf }}" hint-placeholder-val="{{ false }}"><line x1="{{ tip.cx }}" x2="{{ tip.cx }}" y1="10" y2="150" stroke="rgba(230,236,245,.35)"></line></sc-if>
+              <polyline points="{{ perf.pts }}" fill="none" stroke="#3FB3E0" stroke-width="2"></polyline>
+              <sc-for list="{{ perf.dots }}" as="d" hint-placeholder-count="12">
+                <g onMouseEnter="{{ d.hover }}" onMouseLeave="{{ clearTip }}">
+                  <rect x="{{ d.hx }}" y="10" width="22" height="150" fill="transparent"></rect>
+                  <circle cx="{{ d.x }}" cy="{{ d.y }}" r="4" fill="#3FB3E0" stroke="#06112A" stroke-width="2"></circle>
+                </g>
+              </sc-for>
+              <text class="ax" x="34" y="170">{{ perf.first }}</text><text class="ax" x="292" y="170" text-anchor="end">{{ perf.last }}</text>
+            </svg>
+            <sc-if value="{{ tipPerf }}" hint-placeholder-val="{{ false }}">
+              <div class="tip" style="left: {{ tip.left }}; top: {{ tip.top }}"><b>{{ tip.title }}</b><div><span>ms / frame</span><em>{{ tip.a }}</em></div><div><span>Frames</span><em>{{ tip.b }}</em></div></div>
+            </sc-if>
+          </div>
+          <div class="note">Model {{ pc.model }} · accuracy not measured yet</div>
+        </section>
+
+        <section class="panel sites">
+          <div class="ph"><span class="lbl strong">Top sites</span><span class="lbl">By detections</span></div>
+          <div class="scroll" style="flex: 1">
+            <table class="tbl tbl-sm">
+              <thead><tr><th>Site</th><th>Missions</th><th>Det.</th><th>Trend</th></tr></thead>
+              <tbody>
+                <sc-for list="{{ sites }}" as="s" hint-placeholder-count="4">
+                  <tr><td style="color: #fff">{{ s.short }}</td><td>{{ s.missions }}</td><td>{{ s.dets }}</td><td><svg class="spark" width="64" height="18" viewBox="0 0 64 18"><polyline points="{{ s.spark }}" fill="none" stroke="#3FB3E0" stroke-width="1.5"></polyline></svg></td></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pillar: 'energy', range: 30, tip: null };
+  }
+
+  _rng(seed) {
+    let s = seed;
+    return () => (s = (s * 16807) % 2147483647) / 2147483647;
+  }
+
+  renderVals() {
+    const D = this._data();
+    const { pillar, range, tip } = this.state;
+    const pc = D.P[pillar];
+    const seedBase = { energy: 101, agri: 202, rescue: 303 }[pillar];
+    const scale = { energy: 1, agri: 0.8, rescue: 0.35 }[pillar];
+
+    // --- trend: daily for 7/30 days, weekly for 90 days ---
+    const rnd = this._rng(seedBase + range);
+    const weekly = range === 90;
+    const n = weekly ? 13 : range;
+    const days = Array.from({ length: n }, (_, i) => {
+      const k = weekly ? 7 : 1;
+      const crit = Math.round((rnd() * 2.6 + (i % 6 === 2 ? 2 : 0)) * scale * k);
+      const warn = Math.round((rnd() * 4 + 1) * scale * k);
+      const dt = new Date(Date.UTC(2026, 8, 14) - (n - 1 - i) * k * 86400000);
+      return { crit, warn, label: dt.getUTCDate() + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][dt.getUTCMonth()] };
+    });
+    const maxT = Math.max(4, ...days.map((d) => d.crit + d.warn));
+    const step = Math.ceil(maxT / 4);
+    const top = step * 4;
+    const PX0 = 40, PW = 688, PY = 230, PH = 210;
+    const slot = PW / n, bw = Math.max(4, Math.min(22, slot * 0.6));
+    const yOf = (v) => PY - (v / top) * PH;
+    const setTip = (obj) => this.setState({ tip: obj });
+    const trend = {
+      grid: [0, 1, 2, 3, 4].map((i) => ({ y: yOf(step * i).toFixed(1), ty: (yOf(step * i) + 3).toFixed(1), label: String(step * i) })),
+      bars: days.map((d, i) => {
+        const x = PX0 + slot * i + (slot - bw) / 2;
+        const ch = (d.crit / top) * PH, wh = (d.warn / top) * PH;
+        const gap = d.crit && d.warn ? 2 : 0;
+        const hovered = tip && tip.chart === 'trend' && tip.i === i;
+        return {
+          x: x.toFixed(1), w: bw.toFixed(1), hx: (PX0 + slot * i).toFixed(1), hw: slot.toFixed(1),
+          cy: (PY - ch).toFixed(1), ch: ch.toFixed(1),
+          wy: (PY - ch - gap - wh).toFixed(1), wh: Math.max(0, wh).toFixed(1),
+          hoverFill: hovered ? 'rgba(120,170,255,.08)' : 'transparent',
+          hover: () => setTip({ chart: 'trend', i, left: (12 + PX0 + slot * i + slot / 2) + 'px', top: (8 + yOf(d.crit + d.warn)) + 'px', title: (weekly ? 'Week of ' : '') + d.label, a: d.crit, b: d.warn, c: d.crit + d.warn }),
+        };
+      }),
+      xlabels: days.map((d, i) => ({ i, d })).filter(({ i }) => i % Math.ceil(n / 6) === 0 || i === n - 1).map(({ i, d }) => ({ x: (PX0 + slot * i + slot / 2).toFixed(1), label: d.label })),
+    };
+    const totCrit = days.reduce((s, d) => s + d.crit, 0), totWarn = days.reduce((s, d) => s + d.warn, 0), tot = totCrit + totWarn;
+
+    // --- confidence histogram (20 bins) ---
+    const r2 = this._rng(seedBase * 7 + range);
+    const bins = Array.from({ length: 20 }, (_, i) => {
+      const c = (i + 0.5) / 20;
+      return Math.round((Math.exp(-((c - 0.74) ** 2) / 0.03) * 26 + Math.exp(-((c - 0.3) ** 2) / 0.02) * 9 + r2() * 3) * scale * (range / 30 + 0.4));
+    });
+    const maxB = Math.max(1, ...bins);
+    const conf = {
+      bins: bins.map((v, i) => {
+        const h = (v / maxB) * 136, hovered = tip && tip.chart === 'conf' && tip.i === i;
+        return {
+          x: (12 + i * 14 + 2).toFixed(1), hx: (12 + i * 14).toFixed(1), y: (150 - h).toFixed(1), h: h.toFixed(1),
+          fill: i < 10 ? 'rgba(160,176,204,.35)' : '#3FB3E0', hoverFill: hovered ? 'rgba(120,170,255,.1)' : 'transparent',
+          hover: () => setTip({ chart: 'conf', i, left: (12 + 12 + i * 14 + 7) + 'px', top: (8 + 150 - h) + 'px', title: (i / 20).toFixed(2) + '–' + ((i + 1) / 20).toFixed(2), a: v, b: i < 10 ? 'No' : 'Yes' }),
+        };
+      }),
+    };
+
+    // --- inference time per mission ---
+    const r3 = this._rng(seedBase * 13);
+    const mids = D.missionsAll.slice(0, 12).reverse();
+    const ms = mids.map((m, i) => +(34 + r3() * 9 + (i === 4 ? 6 : 0)).toFixed(1));
+    const lo = 25, hi = 55, px = (i) => 34 + (i / (ms.length - 1)) * 258, py = (v) => 150 - ((v - lo) / (hi - lo)) * 140;
+    const perf = {
+      grid: [30, 40, 50].map((v) => ({ y: py(v).toFixed(1), ty: (py(v) + 3).toFixed(1), label: String(v) })),
+      pts: ms.map((v, i) => px(i).toFixed(1) + ',' + py(v).toFixed(1)).join(' '),
+      dots: ms.map((v, i) => ({
+        x: px(i).toFixed(1), y: py(v).toFixed(1), hx: (px(i) - 11).toFixed(1),
+        hover: () => setTip({ chart: 'perf', i, cx: px(i).toFixed(1), left: (12 + px(i)) + 'px', top: (8 + py(v)) + 'px', title: mids[i].id, a: v.toFixed(1), b: mids[i].frames }),
+      })),
+      first: mids[0].id.slice(-4), last: mids[mids.length - 1].id.slice(-4),
+    };
+
+    // --- funnel ---
+    const assigned = Math.round(tot * 0.68), resolved = Math.round(tot * 0.41);
+    const funnel = [['Detected', tot], [pillar === 'rescue' ? 'Dispatched' : 'Assigned', assigned], [pillar === 'rescue' ? 'Confirmed' : 'Resolved', resolved]]
+      .map(([name, v]) => ({ name, n: v, pct: tot ? Math.round((v / tot) * 100) + '%' : '0%', w: tot ? (v / tot) * 100 + '%' : '0%' }));
+
+    const sites = D.sites.filter((s) => s.pillar === pillar).map((s, i) => {
+      const r4 = this._rng(seedBase + i * 31);
+      const pts = Array.from({ length: 8 }, () => r4());
+      return {
+        short: s.short,
+        missions: D.missionsAll.filter((m) => m.siteKey === s.key).length,
+        dets: Math.round(tot * (i === 0 ? 0.62 : 0.38 / Math.max(1, i))),
+        spark: pts.map((v, j) => (j * 9 + 1).toFixed(0) + ',' + (16 - v * 14).toFixed(1)).join(' '),
+      };
+    });
+    const flown = D.missionsAll.filter((m) => m.pillar === pillar).length;
+    return {
+      pillars: this._pillarTabs(pillar, (k) => { this.setState({ pillar: k, tip: null }); if (this._surf) this._surf.setPillar(k); }),
+      pc,
+      rangeLbl: range === 7 ? 'Last 7 days' : range === 30 ? 'Last 30 days' : 'Last 90 days',
+      bucketLbl: weekly ? 'week' : 'day',
+      ranges: [[7, '7D'], [30, '30D'], [90, '90D']].map(([k, name]) => ({ name, cls: range === k ? 'on' : '', pick: () => this.setState({ range: k, tip: null }) })),
+      tiles: [
+        { k: 'Missions flown', v: String(Math.max(1, Math.round((flown * range) / 30))), unit: '', note: 'All sites · ' + pc.name, cls: '' },
+        { k: pillar === 'agri' ? 'Area scanned' : pillar === 'rescue' ? 'Area searched' : 'Panels inspected', v: pillar === 'energy' ? (range * 71).toLocaleString('en-US') : (range * (pillar === 'agri' ? 1.4 : 0.08)).toFixed(1), unit: pillar === 'energy' ? '' : pillar === 'agri' ? 'ha' : 'km²', note: 'Manifest-estimated', cls: '' },
+        { k: 'Detections', v: String(tot), unit: '', note: totCrit + ' critical · ' + totWarn + ' warning', cls: '' },
+        { k: 'Critical share', v: tot ? Math.round((totCrit / tot) * 100) + '' : '0', unit: '%', note: 'Of all detections', cls: '' },
+        { k: 'Median time to resolve', v: pillar === 'rescue' ? '0.8' : '6.4', unit: 'h', note: 'Detection → resolved', cls: '' },
+        { k: 'Model precision / recall', v: 'Not measured', unit: '', note: 'Needs labelled validation set', cls: 'na' },
+      ],
+      trend,
+      conf,
+      perf,
+      funnel,
+      ttr: pillar === 'rescue' ? '48 min · sample' : '6.4 h · sample',
+      sites,
+      densMax: String(Math.max(3, Math.round(pc.dets.length * 1.8))),
+      clearTip: () => this.setState({ tip: null }),
+      tip: tip || { left: '0px', top: '0px', title: '', a: '', b: '', c: '', cx: '0' },
+      tipTrend: !!tip && tip.chart === 'trend',
+      tipConf: !!tip && tip.chart === 'conf',
+      tipPerf: !!tip && tip.chart === 'perf',
+    };
+  }
+
+  componentDidMount() {
+    this._alive = true;
+    this._startClock();
+    this._boot(0);
+  }
+
+  componentWillUnmount() {
+    this._alive = false;
+    this._stopClock();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._surf) this._surf.destroy();
+  }
+
+  _boot(tries) {
+    if (!this._alive) return;
+    const canvas = document.querySelector('[data-gl="surface"]');
+    if (!canvas) { if (tries < 120) requestAnimationFrame(() => this._boot(tries + 1)); return; }
+    this._surf = this._surfaceScene(this._engine(), canvas);
+    this._loop([this._surf]);
+  }
+
+  // 3D detection-density columns over the site grid; height and a single-hue ramp both encode count.
+  _surfaceScene(K, canvas) {
+    const R = K.renderer(canvas, [0.016, 0.043, 0.11]);
+    if (!R) return null;
+    const { Batch, a, lerp, clamp } = K;
+    const self = this;
+    const NX = 16, NZ = 11, CELL = 8;
+    const ramp = (k) => {
+      const stops = [[0.07, 0.19, 0.37], [0.12, 0.44, 0.69], [0.25, 0.7, 0.88], [0.72, 0.95, 1]];
+      const f = clamp(k, 0, 1) * 3, i = Math.min(2, Math.floor(f)), t = f - i;
+      return [lerp(stops[i][0], stops[i + 1][0], t), lerp(stops[i][1], stops[i + 1][1], t), lerp(stops[i][2], stops[i + 1][2], t)];
+    };
+    let pillar = null, cols = [], grow = 0;
+    const build = (k) => {
+      pillar = k;
+      const dets = self._data().P[k].dets;
+      cols = [];
+      let max = 0;
+      for (let i = 0; i < NX; i++) for (let j = 0; j < NZ; j++) {
+        const x = (i - (NX - 1) / 2) * CELL, z = (j - (NZ - 1) / 2) * CELL;
+        const sx = x * 0.9, sz = z * 0.9;
+        let v = 0.15 + 0.15 * Math.sin(i * 1.7 + j * 0.9) ** 2;
+        dets.forEach((q) => { v += 3 * Math.exp(-((sx - q.x) ** 2 + (sz - q.z) ** 2) / 160); });
+        max = Math.max(max, v);
+        cols.push({ x, z, v });
+      }
+      cols.forEach((c) => { c.k = c.v / max; });
+      grow = 0;
+    };
+    build(self.state.pillar);
+    let drag = null, yaw = 0.8, pitch = 0.62;
+    const onDown = (e) => { drag = { x: e.clientX, y: e.clientY, yaw, pitch }; };
+    const onMove = (e) => { if (!drag) return; yaw = drag.yaw - (e.clientX - drag.x) * 0.006; pitch = clamp(drag.pitch + (e.clientY - drag.y) * 0.004, 0.2, 1.3); };
+    const onUp = () => { drag = null; };
+    canvas.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+
+    return {
+      setPillar(k) { build(k); },
+      destroy() { canvas.removeEventListener('pointerdown', onDown); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); },
+      frame(t, dt) {
+        const asp = R.resize();
+        if (self.state.pillar !== pillar) build(self.state.pillar);
+        grow = Math.min(1, grow + dt * 0.9);
+        const e = 1 - Math.pow(1 - grow, 3);
+        const cy = yaw + (drag ? 0 : t * 0.08), rad = 150 * Math.max(1, 1.3 / asp);
+        const eye = [rad * Math.cos(pitch) * Math.sin(cy), rad * Math.sin(pitch), rad * Math.cos(pitch) * Math.cos(cy)];
+        const M = K.camera(asp, eye, [0, 6, 0], 0.7);
+        R.begin(M, eye, 120, 320);
+        const fill = new Batch(), ln = new Batch(), pts = new Batch();
+        for (let i = -NX / 2; i <= NX / 2; i++) ln.line(i * CELL, 0, -NZ / 2 * CELL, i * CELL, 0, NZ / 2 * CELL, [0.3, 0.55, 1, 0.12]);
+        for (let j = -NZ / 2; j <= NZ / 2; j++) ln.line(-NX / 2 * CELL, 0, j * CELL, NX / 2 * CELL, 0, j * CELL, [0.3, 0.55, 1, 0.12]);
+        const s = CELL * 0.36;
+        cols.forEach((c) => {
+          const h = 1 + c.k * 34 * e, col = ramp(c.k);
+          const T = [[c.x - s, h, c.z - s], [c.x + s, h, c.z - s], [c.x + s, h, c.z + s], [c.x - s, h, c.z + s]];
+          fill.quad(T[0], T[1], T[2], T[3], [col[0], col[1], col[2], 0.85]);
+          fill.quad([c.x - s, 0, c.z + s], [c.x + s, 0, c.z + s], [c.x + s, h, c.z + s], [c.x - s, h, c.z + s], [col[0], col[1], col[2], 0.28]);
+          fill.quad([c.x + s, 0, c.z - s], [c.x + s, 0, c.z + s], [c.x + s, h, c.z + s], [c.x + s, h, c.z - s], [col[0] * 0.7, col[1] * 0.7, col[2] * 0.7, 0.28]);
+          for (let q = 0; q < 4; q++) {
+            ln.line(...T[q], ...T[(q + 1) % 4], [col[0], col[1], col[2], 0.9]);
+            ln.line(T[q][0], 0, T[q][2], T[q][0], h, T[q][2], [col[0], col[1], col[2], 0.25]);
+          }
+          if (c.k > 0.8) pts.v(c.x, h + 2, c.z, [0.85, 0.98, 1, 0.5 + 0.5 * Math.sin(t * 3 + c.x)]);
+        });
+        R.draw(fill, 'tris', 'alpha');
+        R.draw(ln, 'lines', 'add');
+        R.draw(pts, 'points', 'add', 50);
+      },
+    };
+  }
+
+  /*SHARED*/
+}
+</script>
+</body>
+</html>
